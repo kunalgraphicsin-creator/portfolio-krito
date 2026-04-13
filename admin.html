@@ -1,0 +1,1161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KRITO — Admin Panel</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#0f0705;--bg2:#1a0e0c;--bg3:#150a07;
+  --orange:#F0660A;--orange2:#c44d00;
+  --border:rgba(240,102,10,.15);--border2:rgba(240,102,10,.28);
+  --text:rgba(255,255,255,.85);--muted:rgba(255,255,255,.4);
+  --card:#1e0f09;--card2:#251208;
+  --sidebar:200px;
+}
+html,body{height:100%;overflow:hidden}
+body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif;display:flex;flex-direction:column}
+::-webkit-scrollbar{width:4px;height:4px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--orange2);border-radius:2px}
+a{text-decoration:none;color:inherit}
+
+/* ===== TOPBAR ===== */
+#topbar{
+  height:56px;flex-shrink:0;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 24px;
+  background:rgba(15,7,5,0.92);
+  border-bottom:1px solid var(--border);
+  backdrop-filter:blur(12px);
+  position:relative;z-index:100;
+}
+.tb-logo{font-family:'Orbitron',sans-serif;font-size:17px;font-weight:900;letter-spacing:2px;display:flex;align-items:center;gap:8px}
+.tb-logo .disc{width:22px;height:22px;border-radius:50%;background:conic-gradient(#111 0%,#2a2a2a 30%,#111 60%,#3a1f14 100%);display:flex;align-items:center;justify-content:center;animation:spin 6s linear infinite;flex-shrink:0}
+.tb-logo .disc::after{content:'';width:8px;height:8px;border-radius:50%;background:var(--orange)}
+@keyframes spin{to{transform:rotate(360deg)}}
+.tb-logo .ort{color:var(--orange)}
+.tb-badge{font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--orange);border:1px solid var(--border2);padding:3px 10px;border-radius:2px;font-weight:700}
+.tb-right{display:flex;align-items:center;gap:12px}
+.tb-preview{display:flex;align-items:center;gap:7px;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--orange);border:1px solid var(--border2);padding:7px 16px;border-radius:6px;cursor:pointer;transition:background .2s,color .2s}
+.tb-preview:hover{background:var(--orange);color:#fff}
+.tb-preview svg{flex-shrink:0}
+#saveBtn{display:flex;align-items:center;gap:7px;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#fff;background:var(--orange);border:none;padding:7px 18px;border-radius:6px;cursor:pointer;transition:background .2s;font-family:inherit}
+#saveBtn:hover{background:var(--orange2)}
+#saveBtn svg{flex-shrink:0}
+#saveFeedback{font-size:11px;color:rgba(255,255,255,.5);transition:opacity .4s;opacity:0}
+#saveFeedback.show{opacity:1}
+
+/* ===== LAYOUT ===== */
+#layout{display:flex;flex:1;overflow:hidden}
+
+/* ===== SIDEBAR ===== */
+#sidebar{
+  width:var(--sidebar);flex-shrink:0;
+  background:var(--bg2);
+  border-right:1px solid var(--border);
+  display:flex;flex-direction:column;
+  overflow-y:auto;
+}
+.sb-section{padding:18px 0 8px}
+.sb-label{font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--muted);font-weight:700;padding:0 16px 8px}
+.sb-item{
+  display:flex;align-items:center;gap:9px;
+  padding:9px 16px;font-size:12px;font-weight:600;
+  cursor:pointer;transition:background .15s,color .15s;
+  border-left:2px solid transparent;color:var(--muted);
+}
+.sb-item:hover{background:rgba(240,102,10,.06);color:var(--text)}
+.sb-item.on{background:rgba(240,102,10,.1);color:var(--orange);border-left-color:var(--orange)}
+.sb-item svg{flex-shrink:0;opacity:.7}
+.sb-item.on svg{opacity:1}
+
+/* ===== MAIN PANEL ===== */
+#main{flex:1;overflow-y:auto;padding:24px}
+
+/* ===== PANELS ===== */
+.panel{display:none}
+.panel.on{display:block}
+
+/* ===== SECTION HEADER ===== */
+.sec-hd{margin-bottom:22px}
+.sec-hd h2{font-size:18px;font-weight:800;letter-spacing:1px;margin-bottom:4px}
+.sec-hd p{font-size:12px;color:var(--muted)}
+
+/* ===== CARDS ===== */
+.card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:20px;margin-bottom:16px}
+.card-title{font-size:11px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--orange);margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.card-title svg{flex-shrink:0}
+
+/* ===== FORM ELEMENTS ===== */
+.field{margin-bottom:14px}
+.field label{display:block;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
+.field input,.field textarea,.field select{
+  width:100%;background:#110705;border:1px solid var(--border);border-radius:6px;
+  color:var(--text);font-family:inherit;font-size:13px;
+  padding:9px 12px;transition:border-color .2s;outline:none;
+}
+.field input:focus,.field textarea:focus,.field select:focus{border-color:var(--orange)}
+.field textarea{resize:vertical;min-height:70px;line-height:1.5}
+.field input[type=file]{padding:7px 10px;cursor:pointer;color:var(--muted);font-size:12px}
+.field input[type=file]::file-selector-button{background:var(--orange);color:#fff;border:none;padding:5px 12px;border-radius:4px;font-size:11px;font-weight:700;letter-spacing:1px;cursor:pointer;margin-right:10px;font-family:inherit}
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.field-row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+
+/* Beat card in admin */
+.beat-card{background:var(--card2);border:1px solid var(--border);border-radius:8px;padding:16px;margin-bottom:12px}
+.beat-card-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.beat-card-num{font-size:10px;font-weight:700;letter-spacing:3px;color:var(--orange);text-transform:uppercase}
+.beat-img-preview{width:64px;height:64px;border-radius:6px;object-fit:cover;background:#1a0908;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;flex-shrink:0;overflow:hidden}
+.beat-img-preview img{width:100%;height:100%;object-fit:cover;border-radius:6px;display:none}
+.beat-img-preview span{font-size:22px}
+.beat-top{display:flex;gap:14px;align-items:flex-start;margin-bottom:12px}
+.beat-fields{flex:1}
+/* Delete beat button */
+.beat-del-btn{display:flex;align-items:center;gap:5px;background:rgba(255,60,60,.08);border:1px solid rgba(255,60,60,.2);color:rgba(255,100,100,.75);padding:5px 11px;border-radius:5px;cursor:pointer;font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;transition:all .2s;font-family:inherit}
+.beat-del-btn:hover{background:rgba(255,60,60,.18);color:#ff6666;border-color:rgba(255,60,60,.45)}
+/* Add beat button */
+.add-beat-btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:14px;background:rgba(240,102,10,.06);border:1.5px dashed rgba(240,102,10,.3);border-radius:8px;color:var(--orange);cursor:pointer;font-size:12px;font-weight:700;letter-spacing:1px;text-transform:uppercase;transition:all .2s;margin-bottom:16px;font-family:inherit}
+.add-beat-btn:hover{background:rgba(240,102,10,.12);border-color:rgba(240,102,10,.6)}
+/* No price toggle */
+.no-price-wrap{display:flex;align-items:center;gap:8px;margin-top:9px}
+.no-price-wrap label{font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--muted);cursor:pointer;user-select:none}
+.no-price-wrap input[type=checkbox]{accent-color:var(--orange);width:14px;height:14px;cursor:pointer;flex-shrink:0}
+/* Audio upload section */
+.beat-audio-sec{display:flex;align-items:center;gap:10px;margin-top:10px;padding-top:10px;border-top:1px solid var(--border);flex-wrap:wrap}
+.beat-audio-status{font-size:11px;color:var(--muted);flex:1;display:flex;align-items:center;gap:6px;min-width:120px}
+.beat-audio-status.has-audio{color:#5dba74}
+.beat-audio-status.has-audio svg{color:#5dba74}
+.beat-audio-btn{display:inline-flex;align-items:center;gap:6px;font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--orange);cursor:pointer;border:1px solid var(--border2);border-radius:5px;padding:5px 12px;transition:all .2s;white-space:nowrap;user-select:none}
+.beat-audio-btn:hover{background:rgba(240,102,10,.1);border-color:rgba(240,102,10,.5)}
+.beat-audio-remove{display:inline-flex;align-items:center;gap:5px;font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:rgba(255,90,90,.6);cursor:pointer;border:1px solid rgba(255,60,60,.15);border-radius:5px;padding:5px 10px;transition:all .2s;background:none;font-family:inherit}
+.beat-audio-remove:hover{background:rgba(255,60,60,.08);color:#ff7070;border-color:rgba(255,60,60,.35)}
+
+/* Testimonial card */
+.testi-card{background:var(--card2);border:1px solid var(--border);border-radius:8px;padding:16px;margin-bottom:12px}
+.testi-card-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.testi-num{font-size:10px;font-weight:700;letter-spacing:3px;color:var(--orange);text-transform:uppercase}
+.testi-av-wrap{display:flex;align-items:center;gap:12px;margin-bottom:10px}
+.testi-av-preview{width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,var(--orange),var(--orange2));display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:800;flex-shrink:0;overflow:hidden}
+.testi-av-preview img{width:100%;height:100%;object-fit:cover;border-radius:50%;display:none}
+
+/* Social links row */
+.social-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.soc-field{background:var(--card2);border:1px solid var(--border);border-radius:8px;padding:12px}
+.soc-field label{display:flex;align-items:center;gap:6px;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--muted);margin-bottom:7px}
+.soc-field input{width:100%;background:#110705;border:1px solid var(--border);border-radius:5px;color:var(--text);font-family:inherit;font-size:12px;padding:7px 10px;outline:none;transition:border-color .2s}
+.soc-field input:focus{border-color:var(--orange)}
+
+/* Save bar at bottom of each section */
+.save-bar{display:flex;align-items:center;gap:12px;padding-top:6px}
+.btn-save{display:inline-flex;align-items:center;gap:7px;background:var(--orange);color:#fff;border:none;padding:9px 22px;border-radius:7px;font-size:12px;font-weight:700;letter-spacing:1px;text-transform:uppercase;cursor:pointer;transition:background .2s;font-family:inherit}
+.btn-save:hover{background:var(--orange2)}
+.btn-save:active{transform:scale(.98)}
+.save-note{font-size:11px;color:var(--muted)}
+
+/* Toast */
+#toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(20px);background:rgba(240,102,10,.95);color:#fff;padding:10px 22px;border-radius:8px;font-size:12px;font-weight:700;letter-spacing:1px;text-transform:uppercase;opacity:0;pointer-events:none;transition:opacity .3s,transform .3s;z-index:9999}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* Sidebar badge (unread count) */
+.sb-badge{margin-left:auto;background:var(--orange);color:#fff;font-size:9px;font-weight:800;padding:2px 6px;border-radius:8px;min-width:18px;text-align:center;line-height:1.4}
+.sb-badge.hidden{display:none}
+
+/* Inbox panel */
+.inbox-empty{text-align:center;padding:52px 20px;color:var(--muted)}
+.inbox-empty svg{opacity:.3;margin-bottom:14px;display:block;margin-left:auto;margin-right:auto}
+.inbox-empty p{font-size:13px}
+.inq-card{background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:16px 18px;margin-bottom:10px;position:relative;transition:border-color .2s}
+.inq-card.unread{border-color:rgba(240,102,10,.35);background:rgba(240,102,10,.04)}
+.inq-card.unread::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--orange);border-radius:10px 0 0 10px}
+.inq-hd{display:flex;align-items:flex-start;gap:10px;margin-bottom:10px}
+.inq-av{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--orange),var(--orange2));display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;flex-shrink:0}
+.inq-meta{flex:1;min-width:0}
+.inq-name{font-size:13px;font-weight:700;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.inq-email{font-size:11px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.inq-time{font-size:10px;color:var(--muted);white-space:nowrap;flex-shrink:0}
+.inq-tags{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px}
+.inq-tag{font-size:10px;font-weight:700;letter-spacing:.5px;background:rgba(240,102,10,.1);color:var(--orange);border:1px solid rgba(240,102,10,.2);padding:3px 9px;border-radius:4px}
+.inq-vision{font-size:12px;color:rgba(255,255,255,.55);line-height:1.55;border-top:1px solid var(--border);padding-top:9px;margin-top:4px;white-space:pre-wrap}
+.inq-actions{display:flex;gap:8px;margin-top:10px}
+.inq-btn{display:inline-flex;align-items:center;gap:5px;font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:5px 11px;border-radius:5px;cursor:pointer;border:1px solid var(--border);background:none;color:var(--muted);font-family:inherit;transition:all .2s}
+.inq-btn:hover{border-color:var(--orange);color:var(--orange)}
+.inq-btn.wa{border-color:rgba(37,211,102,.3);color:rgba(37,211,102,.8)}
+.inq-btn.wa:hover{background:rgba(37,211,102,.1);border-color:rgba(37,211,102,.6)}
+.inq-btn.del{border-color:rgba(255,60,60,.15);color:rgba(255,100,100,.6)}
+.inq-btn.del:hover{background:rgba(255,60,60,.08);border-color:rgba(255,60,60,.4);color:#ff7070}
+.inbox-toolbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;gap:10px}
+.inbox-count{font-size:12px;color:var(--muted)}
+.inbox-clear-btn{display:inline-flex;align-items:center;gap:5px;font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:5px 12px;border-radius:5px;cursor:pointer;border:1px solid rgba(255,60,60,.15);background:none;color:rgba(255,100,100,.55);font-family:inherit;transition:all .2s}
+.inbox-clear-btn:hover{background:rgba(255,60,60,.08);color:#ff7070;border-color:rgba(255,60,60,.4)}
+
+/* Photo upload preview */
+.photo-upload-wrap{display:flex;align-items:center;gap:14px;margin-bottom:8px}
+.photo-circle{width:72px;height:72px;border-radius:50%;background:linear-gradient(135deg,var(--orange),var(--orange2));display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:900;flex-shrink:0;overflow:hidden;border:2px solid var(--border2)}
+.photo-circle img{width:100%;height:100%;object-fit:cover;border-radius:50%;display:none}
+.hero-photo-wrap{display:flex;align-items:center;gap:14px;margin-bottom:12px}
+.hero-photo-box{width:100px;height:130px;border-radius:10px;background:var(--card2);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;flex-shrink:0;overflow:hidden}
+.hero-photo-box img{width:100%;height:100%;object-fit:cover;border-radius:10px;display:none}
+.hero-photo-box span{font-size:32px}
+</style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<div id="topbar">
+  <div style="display:flex;align-items:center;gap:14px">
+    <div class="tb-logo">
+      <div class="disc"></div>
+      <span class="ort">K</span><span>RITO</span>
+    </div>
+    <div class="tb-badge">Admin Panel</div>
+  </div>
+  <div class="tb-right">
+    <span id="saveFeedback">✓ Saved</span>
+    <a href="index.html" target="_blank" class="tb-preview">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+      View Portfolio
+    </a>
+    <button id="saveBtn" onclick="saveAll()">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+      Save All
+    </button>
+  </div>
+</div>
+
+<div id="layout">
+
+<!-- SIDEBAR -->
+<div id="sidebar">
+  <div class="sb-section">
+    <div class="sb-label">Sections</div>
+    <div class="sb-item on" data-panel="hero" onclick="switchPanel('hero',this)">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      Hero
+    </div>
+    <div class="sb-item" data-panel="beats" onclick="switchPanel('beats',this)">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+      Beats
+    </div>
+    <div class="sb-item" data-panel="services" onclick="switchPanel('services',this)">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>
+      Services
+    </div>
+    <div class="sb-item" data-panel="testi" onclick="switchPanel('testi',this)">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+      Testimonials
+    </div>
+    <div class="sb-item" data-panel="contact" onclick="switchPanel('contact',this)">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="3"/><path d="m2 4 10 9 10-9"/></svg>
+      Contact
+    </div>
+    <div class="sb-item" data-panel="footer" onclick="switchPanel('footer',this)">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+      Footer
+    </div>
+  </div>
+  <div class="sb-section">
+    <div class="sb-label">Leads</div>
+    <div class="sb-item" id="sbInbox" data-panel="inbox" onclick="switchPanel('inbox',this);markAllRead()">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 16 12 14 15 10 15 8 12 2 12"/><path d="M5.45 5.11L2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/></svg>
+      Inbox
+      <span class="sb-badge hidden" id="inboxBadge">0</span>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div id="main">
+
+  <!-- ===== HERO PANEL ===== -->
+  <div class="panel on" id="panel-hero">
+    <div class="sec-hd">
+      <h2>Hero Section</h2>
+      <p>Edit the headline badge, subtext, and your hero photo</p>
+    </div>
+
+    <div class="card">
+      <div class="card-title">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        Badge & Subtext
+      </div>
+      <div class="field">
+        <label>Badge Text</label>
+        <input type="text" id="f_heroBadge" placeholder="e.g. Mohali's Finest Producer">
+      </div>
+      <div class="field">
+        <label>Hero Subtext</label>
+        <input type="text" id="f_heroSubtext" placeholder="Premium beats & studio-quality mixing...">
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+        Hero / Card Photo
+      </div>
+      <div class="hero-photo-wrap">
+        <div class="hero-photo-box" id="heroPhotoPreview">
+          <span>🎧</span>
+          <img id="heroPhotoImg" src="" alt="hero photo">
+        </div>
+        <div style="flex:1">
+          <div class="field" style="margin-bottom:6px">
+            <label>Upload Photo</label>
+            <input type="file" id="f_heroPhoto" accept="image/*" onchange="previewHeroPhoto(this)">
+          </div>
+          <p style="font-size:11px;color:var(--muted);line-height:1.6">This photo appears on the flying card in the hero section. Recommended: square image, min 400×400px.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="save-bar">
+      <button class="btn-save" onclick="saveSection('hero')">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+        Save Hero
+      </button>
+      <span class="save-note">Changes apply instantly to the portfolio</span>
+    </div>
+  </div>
+
+  <!-- ===== BEATS PANEL ===== -->
+  <div class="panel" id="panel-beats">
+    <div class="sec-hd">
+      <h2>Featured Beats</h2>
+      <p>Edit beat names, genres, BPM, key, price and cover art</p>
+    </div>
+
+    <!-- Hero / Default Beat card -->
+    <div class="card" style="border-color:rgba(240,102,10,.35);background:rgba(240,102,10,.04);margin-bottom:20px">
+      <div class="card-title">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        Hero / Default Featured Beat
+      </div>
+      <p style="font-size:11px;color:var(--muted);margin-bottom:14px;line-height:1.6">Portfolio ke hero card pe play button click karne pe ye beat chalegi. Visitors ki <b style="color:var(--orange)">pehli impression</b> yahi hogi.</p>
+      <div class="field-row" style="margin-bottom:12px">
+        <div class="field" style="margin:0"><label>Beat Name</label><input type="text" id="f_hbName" placeholder="e.g. Dark Nights"></div>
+        <div class="field" style="margin:0"><label>Genre</label>
+          <select id="f_hbGenre">
+            <option value="Trap">Trap</option><option value="Drill">Drill</option>
+            <option value="Hip-Hop">Hip-Hop</option><option value="R&B">R&amp;B</option>
+            <option value="Afrobeats">Afrobeats</option><option value="Pop">Pop</option>
+          </select>
+        </div>
+      </div>
+      <div class="field-row" style="margin-bottom:0">
+        <div class="field" style="margin:0"><label>BPM</label><input type="number" id="f_hbBpm" placeholder="140"></div>
+        <div class="field" style="margin:0"><!-- spacer --></div>
+      </div>
+      <!-- Audio upload -->
+      <div class="beat-audio-sec" style="margin-top:12px">
+        <div class="beat-audio-status" id="hbAudioStatus">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg> No audio uploaded
+        </div>
+        <input type="file" id="f_hbAudio" accept="audio/mp3,audio/mpeg,audio/wav,audio/*" onchange="heroBeatAudioChanged(this)" style="display:none">
+        <label for="f_hbAudio" class="beat-audio-btn">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+          Upload MP3
+        </label>
+      </div>
+    </div>
+
+    <div id="beatsContainer"></div>
+    <button class="add-beat-btn" onclick="addBeat()">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      Add New Beat
+    </button>
+
+    <div class="save-bar">
+      <button class="btn-save" onclick="saveSection('beats')">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+        Save Beats
+      </button>
+      <span class="save-note">Updates beat names, BPM, price & cover art</span>
+    </div>
+  </div>
+
+  <!-- ===== SERVICES PANEL ===== -->
+  <div class="panel" id="panel-services">
+    <div class="sec-hd">
+      <h2>My Services</h2>
+      <p>Edit service titles, descriptions and feature points</p>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Section Subtext</div>
+      <div class="field">
+        <label>Subheading</label>
+        <input type="text" id="f_srvSubtext" placeholder="From a single beat to a full album...">
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Service 1 — Beat Licensing</div>
+      <div class="field"><label>Title</label><input type="text" id="f_srv1title" placeholder="Beat Licensing"></div>
+      <div class="field"><label>Description</label><textarea id="f_srv1desc" rows="2"></textarea></div>
+      <div class="field"><label>Feature 1</label><input type="text" id="f_srv1f1" placeholder="MP3 &amp; WAV included"></div>
+      <div class="field"><label>Feature 2</label><input type="text" id="f_srv1f2" placeholder="Instant delivery"></div>
+      <div class="field"><label>Feature 3</label><input type="text" id="f_srv1f3" placeholder="Exclusive rights available"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Service 2 — Custom Beat</div>
+      <div class="field"><label>Title</label><input type="text" id="f_srv2title" placeholder="Custom Beat"></div>
+      <div class="field"><label>Description</label><textarea id="f_srv2desc" rows="2"></textarea></div>
+      <div class="field"><label>Feature 1</label><input type="text" id="f_srv2f1" placeholder="Reference-based production"></div>
+      <div class="field"><label>Feature 2</label><input type="text" id="f_srv2f2" placeholder="Unlimited revisions"></div>
+      <div class="field"><label>Feature 3</label><input type="text" id="f_srv2f3" placeholder="Fast delivery"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Service 3 — Mix &amp; Master</div>
+      <div class="field"><label>Title</label><input type="text" id="f_srv3title" placeholder="Mix &amp; Master"></div>
+      <div class="field"><label>Description</label><textarea id="f_srv3desc" rows="2"></textarea></div>
+      <div class="field"><label>Feature 1</label><input type="text" id="f_srv3f1" placeholder="Clean mix"></div>
+      <div class="field"><label>Feature 2</label><input type="text" id="f_srv3f2" placeholder="Loudness optimization"></div>
+      <div class="field"><label>Feature 3</label><input type="text" id="f_srv3f3" placeholder="Ready for Spotify, YouTube"></div>
+    </div>
+
+    <div class="save-bar">
+      <button class="btn-save" onclick="saveSection('services')">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+        Save Services
+      </button>
+    </div>
+  </div>
+
+  <!-- ===== TESTIMONIALS PANEL ===== -->
+  <div class="panel" id="panel-testi">
+    <div class="sec-hd">
+      <h2>Artists Love It</h2>
+      <p>Edit testimonial quotes, names, roles and client photos</p>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Section Subtext</div>
+      <div class="field">
+        <label>Subheading</label>
+        <input type="text" id="f_testiSubtext" placeholder="Real words from real artists...">
+      </div>
+    </div>
+
+    <!-- 5 testimonial cards -->
+    <script>
+    (function(){
+      var data=[
+        {n:'Arjun Singh',r:'Rapper, Delhi',q:'Bro this beat went crazy on Instagram 🔥 Got mad engagement in the first 24 hours — pure fire.'},
+        {n:'Karan Verma',r:'Artist, Chandigarh',q:'Mixing quality is insane, sounds so professional. My track literally sounds like a label release now.'},
+        {n:'Priya Sharma',r:'Singer, Mumbai',q:'Custom beat exactly how I imagined. Sent references and he nailed the vibe perfectly. 100% recommended.'},
+        {n:'Rahul Mehta',r:'Rapper, Bangalore',q:'Best producer I\'ve worked with. Fast delivery, clean sound, and the revisions were no problem at all.'},
+        {n:'Sahil Khan',r:'Artist, Pune',q:'Bought the exclusive license for Silent Pain and it became the best track on my EP. Worth every rupee.'}
+      ];
+      var html='';
+      for(var i=0;i<data.length;i++){
+        var d=data[i];var idx=i;
+        html+='<div class="testi-card">';
+        html+='<div class="testi-card-hd"><span class="testi-num">Client '+(i+1)+'</span></div>';
+        html+='<div class="testi-av-wrap">';
+        html+='<div class="testi-av-preview" id="tavprev'+i+'">'+d.n[0]+'<img id="tavimg'+i+'" src="" alt=""></div>';
+        html+='<div style="flex:1"><div class="field" style="margin:0"><label>Upload Photo (optional)</label>';
+        html+='<input type="file" accept="image/*" onchange="previewTestiAv(this,'+i+')" style="width:100%;background:#110705;border:1px solid var(--border);border-radius:5px;color:var(--muted);font-size:11px;padding:5px 8px;outline:none"></div></div>';
+        html+='</div>';
+        html+='<div class="field-row" style="margin-bottom:10px">';
+        html+='<div class="field" style="margin:0"><label>Name</label><input type="text" id="f_tc'+i+'name" value="'+d.n+'"></div>';
+        html+='<div class="field" style="margin:0"><label>Role / City</label><input type="text" id="f_tc'+i+'role" value="'+d.r+'"></div>';
+        html+='</div>';
+        html+='<div class="field" style="margin:0"><label>Quote</label><textarea id="f_tc'+i+'quote" rows="2">'+d.q+'</textarea></div>';
+        html+='</div>';
+      }
+      document.write(html);
+    })();
+    </script>
+
+    <div class="save-bar">
+      <button class="btn-save" onclick="saveSection('testi')">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+        Save Testimonials
+      </button>
+    </div>
+  </div>
+
+  <!-- ===== CONTACT PANEL ===== -->
+  <div class="panel" id="panel-contact">
+    <div class="sec-hd">
+      <h2>Get In Touch</h2>
+      <p>Edit contact info and social media links</p>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Contact Text</div>
+      <div class="field">
+        <label>Section Subtext</label>
+        <input type="text" id="f_contactSubtext" placeholder="Fill the form and let's get started...">
+      </div>
+      <div class="field-row">
+        <div class="field" style="margin:0"><label>Email</label><input type="email" id="f_contactEmail" placeholder="you@gmail.com"></div>
+        <div class="field" style="margin:0"><label>Phone / WhatsApp</label><input type="text" id="f_contactPhone" placeholder="+91 99999 99999"></div>
+      </div>
+      <div class="field" style="margin-top:12px"><label>Location</label><input type="text" id="f_contactLocation" placeholder="Mohali, India"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Social Media Links</div>
+      <div class="social-row">
+        <div class="soc-field">
+          <label><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5" stroke-width="2.5"/></svg> Instagram</label>
+          <input type="url" id="f_socInsta" placeholder="https://instagram.com/...">
+        </div>
+        <div class="soc-field">
+          <label><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-1.97C18.88 4 12 4 12 4s-6.88 0-8.6.45A2.78 2.78 0 0 0 1.46 6.42 29 29 0 0 0 1 12a29 29 0 0 0 .46 5.58 2.78 2.78 0 0 0 1.95 1.97C5.12 20 12 20 12 20s6.88 0 8.6-.45a2.78 2.78 0 0 0 1.94-1.97A29 29 0 0 0 23 12a29 29 0 0 0-.46-5.58z"/><polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02" fill="currentColor" stroke="none"/></svg> YouTube</label>
+          <input type="url" id="f_socYT" placeholder="https://youtube.com/...">
+        </div>
+        <div class="soc-field">
+          <label><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg> SoundCloud</label>
+          <input type="url" id="f_socSC" placeholder="https://soundcloud.com/...">
+        </div>
+        <div class="soc-field">
+          <label><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 18v-6a9 9 0 0 1 18 0v6"/><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3z"/><path d="M3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"/></svg> Spotify</label>
+          <input type="url" id="f_socSpotify" placeholder="https://open.spotify.com/...">
+        </div>
+      </div>
+    </div>
+
+    <div class="save-bar">
+      <button class="btn-save" onclick="saveSection('contact')">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+        Save Contact
+      </button>
+    </div>
+  </div>
+
+  <!-- ===== FOOTER PANEL ===== -->
+  <div class="panel" id="panel-footer">
+    <div class="sec-hd">
+      <h2>Footer</h2>
+      <p>Edit the footer tagline and copyright text</p>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Footer Content</div>
+      <div class="field">
+        <label>Tagline</label>
+        <input type="text" id="f_footerTagline" placeholder="Crafting the soundtrack for the next generation...">
+      </div>
+      <div class="field-row">
+        <div class="field" style="margin:0">
+          <label>Copyright Name</label>
+          <input type="text" id="f_footerCopy" placeholder="KRITO">
+        </div>
+        <div class="field" style="margin:0">
+          <label>Made in City</label>
+          <input type="text" id="f_footerCity" placeholder="Mohali">
+        </div>
+      </div>
+    </div>
+
+    <div class="save-bar">
+      <button class="btn-save" onclick="saveSection('footer')">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+        Save Footer
+      </button>
+    </div>
+  </div>
+
+  <!-- ===== INBOX PANEL ===== -->
+  <div class="panel" id="panel-inbox">
+    <div class="sec-hd">
+      <h2>Inbox</h2>
+      <p>Portfolio contact form se aaye sare inquiries yahan dikhte hain</p>
+    </div>
+    <div class="inbox-toolbar">
+      <span class="inbox-count" id="inboxCount">0 inquiries</span>
+      <button class="inbox-clear-btn" onclick="clearAllInbox()">
+        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/></svg>
+        Clear All
+      </button>
+    </div>
+    <div id="inboxList"></div>
+  </div>
+
+</div><!-- /main -->
+</div><!-- /layout -->
+
+<div id="toast">✓ Saved successfully</div>
+
+<script>
+// ===== PANEL SWITCH =====
+function switchPanel(id, el){
+  document.querySelectorAll('.panel').forEach(function(p){p.classList.remove('on');});
+  document.querySelectorAll('.sb-item').forEach(function(s){s.classList.remove('on');});
+  document.getElementById('panel-'+id).classList.add('on');
+  el.classList.add('on');
+}
+
+// ===== DYNAMIC BEATS ENGINE =====
+var STORE_KEY='krito_admin_data';
+var AUDIO_DB_NAME='krito_audio';
+var beatEmojis=['🔥','⚡','🎵','🌙','💀','🔊','🎶','💫','🎤','⭐'];
+var beatGenres=['trap','drill','hiphop','rnb','afrobeats','pop'];
+var beatGenreNames={'trap':'Trap','drill':'Drill','hiphop':'Hip-Hop','rnb':'R&B','afrobeats':'Afrobeats','pop':'Pop'};
+
+// UID generator
+function _mkuid(){return 'b'+Date.now().toString(36)+Math.random().toString(36).slice(2,5);}
+var heroBeatUID=_mkuid(); // will be overwritten on loadData if saved
+var heroBeatAudioName='';
+
+var beatsList=[
+  {uid:_mkuid(),name:'Dark Nights',  genre:'trap',  bpm:'140',key:'F Min',price:'999', art:'',noPrice:false,audioName:''},
+  {uid:_mkuid(),name:'Street Code',  genre:'drill', bpm:'135',key:'G Min',price:'1199',art:'',noPrice:false,audioName:''},
+  {uid:_mkuid(),name:"King's Road",  genre:'hiphop',bpm:'90', key:'C Maj',price:'899', art:'',noPrice:false,audioName:''},
+  {uid:_mkuid(),name:'Midnight Drill',genre:'drill',bpm:'138',key:'A Min',price:'1099',art:'',noPrice:false,audioName:''},
+  {uid:_mkuid(),name:'Silent Pain',  genre:'trap',  bpm:'145',key:'D Min',price:'1299',art:'',noPrice:false,audioName:''},
+  {uid:_mkuid(),name:'Hustle Mode',  genre:'drill', bpm:'92', key:'E Min',price:'999', art:'',noPrice:false,audioName:''}
+];
+
+// ===== IndexedDB for Audio =====
+var _audioDB=null;
+function openAudioDB(cb){
+  if(_audioDB){cb(_audioDB);return;}
+  try{
+    var req=indexedDB.open(AUDIO_DB_NAME,1);
+    req.onupgradeneeded=function(e){
+      e.target.result.createObjectStore('beats',{keyPath:'id'});
+    };
+    req.onsuccess=function(e){_audioDB=e.target.result;cb(_audioDB);};
+    req.onerror=function(){cb(null);};
+  }catch(e){cb(null);}
+}
+function saveAudioToDB(uid,data,cb){
+  openAudioDB(function(db){
+    if(!db){cb&&cb(false);return;}
+    try{
+      var tx=db.transaction('beats','readwrite');
+      tx.objectStore('beats').put({id:uid,data:data});
+      tx.oncomplete=function(){cb&&cb(true);};
+      tx.onerror=function(){cb&&cb(false);};
+    }catch(e){cb&&cb(false);}
+  });
+}
+function deleteAudioFromDB(uid,cb){
+  openAudioDB(function(db){
+    if(!db){cb&&cb();return;}
+    try{
+      var tx=db.transaction('beats','readwrite');
+      tx.objectStore('beats').delete(uid);
+      tx.oncomplete=function(){cb&&cb();};
+    }catch(e){cb&&cb();}
+  });
+}
+function checkAudioInDB(uid,cb){
+  openAudioDB(function(db){
+    if(!db){cb(false);return;}
+    try{
+      var req=db.transaction('beats').objectStore('beats').get(uid);
+      req.onsuccess=function(e){cb(!!(e.target.result&&e.target.result.data));};
+      req.onerror=function(){cb(false);};
+    }catch(e){cb(false);}
+  });
+}
+
+function escH(s){return s?(''+s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'):''}
+
+function renderBeats(){
+  var cont=document.getElementById('beatsContainer');
+  if(!cont)return;
+  var html='';
+  for(var i=0;i<beatsList.length;i++){
+    var b=beatsList[i];
+    var num=('0'+(i+1)).slice(-2);
+    var emoji=beatEmojis[i%beatEmojis.length];
+    var artSrc=b.art||'';
+    html+='<div class="beat-card" id="bcard'+i+'">';
+    // header
+    html+='<div class="beat-card-hd"><span class="beat-card-num">Beat '+num+'</span>';
+    if(beatsList.length>1){
+      html+='<button class="beat-del-btn" onclick="deleteBeat('+i+')">';
+      html+='<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg> Delete</button>';
+    }
+    html+='</div>';
+    // top row
+    html+='<div class="beat-top">';
+    // art
+    html+='<div><div class="beat-img-preview" id="bprev'+i+'">';
+    if(artSrc){
+      html+='<span style="display:none">'+emoji+'</span><img id="bprevImg'+i+'" src="'+artSrc+'" alt="" style="display:block">';
+    }else{
+      html+='<span>'+emoji+'</span><img id="bprevImg'+i+'" src="" alt="" style="display:none">';
+    }
+    html+='</div>';
+    html+='<div style="margin-top:6px"><input type="file" id="f_bart'+i+'" accept="image/*" onchange="beatArtChanged(this,'+i+')" style="display:none">';
+    html+='<label for="f_bart'+i+'" style="font-size:10px;color:var(--orange);cursor:pointer;font-weight:700;letter-spacing:1px">+ COVER</label></div></div>';
+    // fields
+    html+='<div class="beat-fields">';
+    html+='<div class="field-row" style="margin-bottom:10px">';
+    html+='<div class="field" style="margin:0"><label>Beat Name</label><input type="text" id="f_bname'+i+'" value="'+escH(b.name)+'" placeholder="Beat Name" oninput="beatsList['+i+'].name=this.value"></div>';
+    html+='<div class="field" style="margin:0"><label>Genre</label><select id="f_bgenre'+i+'" onchange="beatsList['+i+'].genre=this.value">';
+    for(var g=0;g<beatGenres.length;g++){
+      html+='<option value="'+beatGenres[g]+'"'+(b.genre===beatGenres[g]?' selected':'')+'>'+beatGenreNames[beatGenres[g]]+'</option>';
+    }
+    html+='</select></div></div>';
+    html+='<div class="field-row3">';
+    html+='<div class="field" style="margin:0"><label>BPM</label><input type="number" id="f_bbpm'+i+'" value="'+escH(b.bpm)+'" placeholder="140" oninput="beatsList['+i+'].bpm=this.value"></div>';
+    html+='<div class="field" style="margin:0"><label>Key</label><input type="text" id="f_bkey'+i+'" value="'+escH(b.key)+'" placeholder="F Min" oninput="beatsList['+i+'].key=this.value"></div>';
+    html+='<div class="field" style="margin:0"><label>Price (₹)</label><input type="text" id="f_bprice'+i+'" value="'+escH(b.noPrice?'':b.price)+'" placeholder="999"'+(b.noPrice?' disabled':'')+' oninput="beatsList['+i+'].price=this.value"></div>';
+    html+='</div>';
+    // no-price toggle
+    html+='<div class="no-price-wrap">';
+    html+='<input type="checkbox" id="f_bnoprice'+i+'"'+(b.noPrice?' checked':'')+' onchange="toggleNoPrice('+i+',this.checked)">';
+    html+='<label for="f_bnoprice'+i+'">No Price / On Request</label></div>';
+    html+='</div></div>'; // beat-fields / beat-top
+    // Audio upload section
+    html+='<div class="beat-audio-sec">';
+    html+='<div class="beat-audio-status'+(b.audioName?' has-audio':'')+'" id="baudiostatus'+i+'">';
+    if(b.audioName){
+      html+='<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> '+escH(b.audioName);
+    }else{
+      html+='<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg> No audio uploaded';
+    }
+    html+='</div>';
+    html+='<input type="file" id="f_baudio'+i+'" accept="audio/mp3,audio/mpeg,audio/wav,audio/*" onchange="beatAudioChanged(this,'+i+')" style="display:none">';
+    html+='<label for="f_baudio'+i+'" class="beat-audio-btn">';
+    html+='<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg> ';
+    html+=(b.audioName?'Change MP3':'Upload MP3')+'</label>';
+    if(b.audioName){
+      html+='<button class="beat-audio-remove" onclick="removeBeatAudio('+i+')">';
+      html+='<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg> Remove</button>';
+    }
+    html+='</div>';
+    html+='</div>'; // beat-card
+  }
+  cont.innerHTML=html;
+}
+
+function addBeat(){
+  beatsList.push({uid:_mkuid(),name:'',genre:'trap',bpm:'',key:'',price:'',art:'',noPrice:false,audioName:''});
+  renderBeats();
+  var idx=beatsList.length-1;
+  var card=document.getElementById('bcard'+idx);
+  if(card){card.scrollIntoView({behavior:'smooth',block:'center'});setTimeout(function(){var n=document.getElementById('f_bname'+idx);if(n)n.focus();},350);}
+}
+
+function deleteBeat(idx){
+  if(beatsList.length<=1){alert('Kam se kam ek beat zaroori hai!');return;}
+  if(!confirm('Beat '+(idx+1)+' delete karein?'))return;
+  var uid=beatsList[idx].uid;
+  if(uid)deleteAudioFromDB(uid,null);
+  beatsList.splice(idx,1);
+  renderBeats();
+}
+
+function beatAudioChanged(input,idx){
+  if(!input.files||!input.files[0])return;
+  var file=input.files[0];
+  var name=file.name;
+  var sizeMB=(file.size/1024/1024).toFixed(1);
+  // Warn if very large (>15MB)
+  if(file.size>15*1024*1024){
+    if(!confirm('Ye file badi hai ('+sizeMB+'MB). Upload karna continue karein?'))return;
+  }
+  var uid=beatsList[idx].uid;
+  // Show uploading state
+  var statusEl=document.getElementById('baudiostatus'+idx);
+  if(statusEl){statusEl.innerHTML='<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="animation:spin .8s linear infinite"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg> Uploading...';statusEl.className='beat-audio-status';}
+  var reader=new FileReader();
+  reader.onload=function(e){
+    saveAudioToDB(uid,e.target.result,function(ok){
+      beatsList[idx].audioName=name;
+      // Update UI
+      var st=document.getElementById('baudiostatus'+idx);
+      if(st){
+        st.innerHTML='<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> '+escH(name);
+        st.className='beat-audio-status has-audio';
+      }
+      // Add remove button if not present
+      var lbl=document.querySelector('label[for="f_baudio'+idx+'"]');
+      if(lbl){
+        lbl.textContent='';
+        lbl.innerHTML='<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg> Change MP3';
+        var existing=lbl.nextElementSibling;
+        if(!existing||!existing.classList.contains('beat-audio-remove')){
+          var rmBtn=document.createElement('button');
+          rmBtn.className='beat-audio-remove';
+          rmBtn.innerHTML='<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg> Remove';
+          rmBtn.setAttribute('onclick','removeBeatAudio('+idx+')');
+          lbl.parentNode.appendChild(rmBtn);
+        }
+      }
+      if(!ok){alert('Audio save mein problem aayi. Dobara try karein.');}
+    });
+  };
+  reader.onerror=function(){
+    var st=document.getElementById('baudiostatus'+idx);
+    if(st){st.innerHTML='⚠ Upload fail hua';st.className='beat-audio-status';}
+  };
+  reader.readAsDataURL(file);
+}
+
+// ===== HERO BEAT AUDIO =====
+function heroBeatAudioChanged(input){
+  if(!input.files||!input.files[0])return;
+  var file=input.files[0];
+  var name=file.name;
+  if(file.size>15*1024*1024){if(!confirm('File badi hai ('+(file.size/1024/1024).toFixed(1)+'MB). Continue?'))return;}
+  var st=document.getElementById('hbAudioStatus');
+  if(st){st.innerHTML='<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="animation:spin .8s linear infinite"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg> Uploading...';st.className='beat-audio-status';}
+  var reader=new FileReader();
+  reader.onload=function(e){
+    saveAudioToDB(heroBeatUID,e.target.result,function(ok){
+      heroBeatAudioName=name;
+      var st2=document.getElementById('hbAudioStatus');
+      if(st2){
+        st2.innerHTML='<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> '+escH(name);
+        st2.className='beat-audio-status has-audio';
+      }
+      var lbl=document.querySelector('label[for="f_hbAudio"]');
+      if(lbl)lbl.innerHTML='<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg> Change MP3';
+      if(!ok)alert('Audio save mein problem. Dobara try karein.');
+    });
+  };
+  reader.onerror=function(){var st3=document.getElementById('hbAudioStatus');if(st3){st3.innerHTML='⚠ Upload fail';st3.className='beat-audio-status';}};
+  reader.readAsDataURL(file);
+}
+
+function removeBeatAudio(idx){
+  if(!confirm('Beat '+(idx+1)+' ka audio remove karein?'))return;
+  var uid=beatsList[idx].uid;
+  if(uid)deleteAudioFromDB(uid,null);
+  beatsList[idx].audioName='';
+  // Re-render just this card's audio section
+  var sec=document.querySelector('#bcard'+idx+' .beat-audio-sec');
+  if(sec){
+    sec.innerHTML='<div class="beat-audio-status" id="baudiostatus'+idx+'"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg> No audio uploaded</div>'
+      +'<input type="file" id="f_baudio'+idx+'" accept="audio/mp3,audio/mpeg,audio/wav,audio/*" onchange="beatAudioChanged(this,'+idx+')" style="display:none">'
+      +'<label for="f_baudio'+idx+'" class="beat-audio-btn"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg> Upload MP3</label>';
+  }
+}
+
+function toggleNoPrice(idx,checked){
+  beatsList[idx].noPrice=checked;
+  var pr=document.getElementById('f_bprice'+idx);
+  if(pr){
+    pr.disabled=checked;
+    if(checked){beatsList[idx].price='';pr.value='';}
+  }
+}
+
+function beatArtChanged(input,idx){
+  if(!input.files||!input.files[0])return;
+  var reader=new FileReader();
+  reader.onload=function(e){
+    beatsList[idx].art=e.target.result;
+    var img=document.getElementById('bprevImg'+idx);
+    var span=document.querySelector('#bprev'+idx+' span');
+    if(img){img.src=e.target.result;img.style.display='block';}
+    if(span)span.style.display='none';
+  };
+  reader.readAsDataURL(input.files[0]);
+}
+
+// ===== LOAD VALUES FROM localStorage =====
+function loadData(){
+  var raw=localStorage.getItem(STORE_KEY);
+  if(!raw)return;
+  try{
+    var d=JSON.parse(raw);
+    // Hero Beat (default card beat)
+    if(d.heroBeat){
+      var hb=d.heroBeat;
+      if(hb.uid)heroBeatUID=hb.uid;
+      if(hb.audioName)heroBeatAudioName=hb.audioName;
+      if(hb.name){var el=document.getElementById('f_hbName');if(el)el.value=hb.name;}
+      if(hb.genre){var gl=document.getElementById('f_hbGenre');if(gl)gl.value=hb.genre;}
+      if(hb.bpm){var bl=document.getElementById('f_hbBpm');if(bl)bl.value=hb.bpm;}
+      if(hb.audioName){
+        var st=document.getElementById('hbAudioStatus');
+        if(st){st.innerHTML='<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> '+escH(hb.audioName);st.className='beat-audio-status has-audio';}
+        var lbl=document.querySelector('label[for="f_hbAudio"]');
+        if(lbl)lbl.innerHTML='<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg> Change MP3';
+      }
+    }
+    // Hero
+    if(d.heroBadge) document.getElementById('f_heroBadge').value=d.heroBadge;
+    if(d.heroSubtext) document.getElementById('f_heroSubtext').value=d.heroSubtext;
+    if(d.heroPhoto){setHeroPhotoSrc(d.heroPhoto);}
+    // Beats — new array format
+    if(d.beats&&Array.isArray(d.beats)&&d.beats.length){
+      beatsList=d.beats.map(function(b){
+        return{uid:b.uid||_mkuid(),name:b.name||'',genre:b.genre||'trap',bpm:b.bpm||'',key:b.key||'',price:b.price||'',art:b.art||'',noPrice:!!b.noPrice,audioName:b.audioName||''};
+      });
+      renderBeats();
+    }
+    // Services
+    if(d.srvSubtext) document.getElementById('f_srvSubtext').value=d.srvSubtext;
+    for(var j=1;j<=3;j++){
+      var s=d['srv'+j];if(!s)continue;
+      if(s.title) document.getElementById('f_srv'+j+'title').value=s.title;
+      if(s.desc) document.getElementById('f_srv'+j+'desc').value=s.desc;
+      if(s.f1) document.getElementById('f_srv'+j+'f1').value=s.f1;
+      if(s.f2) document.getElementById('f_srv'+j+'f2').value=s.f2;
+      if(s.f3) document.getElementById('f_srv'+j+'f3').value=s.f3;
+    }
+    // Testi
+    if(d.testiSubtext) document.getElementById('f_testiSubtext').value=d.testiSubtext;
+    for(var k=0;k<5;k++){
+      var t=d['tc'+k];if(!t)continue;
+      if(t.name) document.getElementById('f_tc'+k+'name').value=t.name;
+      if(t.role) document.getElementById('f_tc'+k+'role').value=t.role;
+      if(t.quote) document.getElementById('f_tc'+k+'quote').value=t.quote;
+      if(t.photo){setTestiAv(k,t.photo);}
+    }
+    // Contact
+    if(d.contactSubtext) document.getElementById('f_contactSubtext').value=d.contactSubtext;
+    if(d.contactEmail) document.getElementById('f_contactEmail').value=d.contactEmail;
+    if(d.contactPhone) document.getElementById('f_contactPhone').value=d.contactPhone;
+    if(d.contactLocation) document.getElementById('f_contactLocation').value=d.contactLocation;
+    if(d.socInsta) document.getElementById('f_socInsta').value=d.socInsta;
+    if(d.socYT) document.getElementById('f_socYT').value=d.socYT;
+    if(d.socSC) document.getElementById('f_socSC').value=d.socSC;
+    if(d.socSpotify) document.getElementById('f_socSpotify').value=d.socSpotify;
+    // Footer
+    if(d.footerTagline) document.getElementById('f_footerTagline').value=d.footerTagline;
+    if(d.footerCopy) document.getElementById('f_footerCopy').value=d.footerCopy;
+    if(d.footerCity) document.getElementById('f_footerCity').value=d.footerCity;
+  }catch(e){}
+}
+
+// ===== COLLECT ALL DATA =====
+function collectData(){
+  var d={};
+  // Hero
+  // Hero Beat (default card beat)
+  d.heroBeat={
+    uid:heroBeatUID,
+    name:v('f_hbName'),
+    genre:(function(){var el=document.getElementById('f_hbGenre');return el?el.value:'Trap';})(),
+    bpm:v('f_hbBpm'),
+    audioName:heroBeatAudioName
+  };
+  d.heroBadge=v('f_heroBadge');
+  d.heroSubtext=v('f_heroSubtext');
+  var hpimg=document.getElementById('heroPhotoImg');
+  if(hpimg&&hpimg.src&&hpimg.style.display!=='none') d.heroPhoto=hpimg.src;
+  else{var raw=localStorage.getItem(STORE_KEY);if(raw){try{var p=JSON.parse(raw);if(p.heroPhoto)d.heroPhoto=p.heroPhoto;}catch(e){}}}
+  // Beats — always save as array
+  d.beats=beatsList.map(function(b,i){
+    var nameEl=document.getElementById('f_bname'+i);
+    var genreEl=document.getElementById('f_bgenre'+i);
+    var bpmEl=document.getElementById('f_bbpm'+i);
+    var keyEl=document.getElementById('f_bkey'+i);
+    var priceEl=document.getElementById('f_bprice'+i);
+    var npEl=document.getElementById('f_bnoprice'+i);
+    var noP=npEl?npEl.checked:b.noPrice;
+    return{
+      uid:b.uid||_mkuid(),
+      name:nameEl?nameEl.value.trim():b.name,
+      genre:genreEl?genreEl.value:b.genre,
+      bpm:bpmEl?bpmEl.value.trim():b.bpm,
+      key:keyEl?keyEl.value.trim():b.key,
+      price:noP?'':(priceEl?priceEl.value.trim():b.price),
+      art:b.art||'',
+      noPrice:noP,
+      audioName:b.audioName||''
+    };
+  });
+  // Services
+  d.srvSubtext=v('f_srvSubtext');
+  for(var j=1;j<=3;j++){
+    d['srv'+j]={title:v('f_srv'+j+'title'),desc:v('f_srv'+j+'desc'),f1:v('f_srv'+j+'f1'),f2:v('f_srv'+j+'f2'),f3:v('f_srv'+j+'f3')};
+  }
+  // Testi
+  d.testiSubtext=v('f_testiSubtext');
+  for(var k=0;k<5;k++){
+    var t={name:v('f_tc'+k+'name'),role:v('f_tc'+k+'role'),quote:v('f_tc'+k+'quote')};
+    var tavimg=document.getElementById('tavimg'+k);
+    if(tavimg&&tavimg.src&&tavimg.style.display!=='none') t.photo=tavimg.src;
+    else{var raw3=localStorage.getItem(STORE_KEY);if(raw3){try{var p3=JSON.parse(raw3);if(p3['tc'+k]&&p3['tc'+k].photo)t.photo=p3['tc'+k].photo;}catch(e){}}}
+    d['tc'+k]=t;
+  }
+  // Contact
+  d.contactSubtext=v('f_contactSubtext');
+  d.contactEmail=v('f_contactEmail');
+  d.contactPhone=v('f_contactPhone');
+  d.contactLocation=v('f_contactLocation');
+  d.socInsta=v('f_socInsta');
+  d.socYT=v('f_socYT');
+  d.socSC=v('f_socSC');
+  d.socSpotify=v('f_socSpotify');
+  // Footer
+  d.footerTagline=v('f_footerTagline');
+  d.footerCopy=v('f_footerCopy');
+  d.footerCity=v('f_footerCity');
+  return d;
+}
+function v(id){var el=document.getElementById(id);return el?el.value.trim():'';}
+
+// ===== SAVE SECTION =====
+function saveSection(sec){
+  var d=collectData();
+  localStorage.setItem(STORE_KEY,JSON.stringify(d));
+  try{if(window.opener)window.opener.postMessage({type:'KRITO_UPDATE',data:d},'*');}catch(e){}
+  showToast();
+}
+
+// ===== SAVE ALL =====
+function saveAll(){
+  var d=collectData();
+  localStorage.setItem(STORE_KEY,JSON.stringify(d));
+  try{if(window.opener)window.opener.postMessage({type:'KRITO_UPDATE',data:d},'*');}catch(e){}
+  showToast();
+  var fb=document.getElementById('saveFeedback');
+  fb.classList.add('show');
+  setTimeout(function(){fb.classList.remove('show');},2500);
+}
+
+// ===== TOAST =====
+function showToast(){
+  var t=document.getElementById('toast');
+  t.classList.add('show');
+  setTimeout(function(){t.classList.remove('show');},2200);
+}
+
+// ===== PHOTO PREVIEWS =====
+function previewHeroPhoto(input){
+  if(!input.files||!input.files[0])return;
+  var reader=new FileReader();
+  reader.onload=function(e){setHeroPhotoSrc(e.target.result);};
+  reader.readAsDataURL(input.files[0]);
+}
+function setHeroPhotoSrc(src){
+  var img=document.getElementById('heroPhotoImg');
+  var span=document.querySelector('#heroPhotoPreview span');
+  if(img){img.src=src;img.style.display='block';}
+  if(span)span.style.display='none';
+}
+
+function previewTestiAv(input,idx){
+  if(!input.files||!input.files[0])return;
+  var reader=new FileReader();
+  reader.onload=function(e){setTestiAv(idx,e.target.result);};
+  reader.readAsDataURL(input.files[0]);
+}
+function setTestiAv(idx,src){
+  var img=document.getElementById('tavimg'+idx);
+  var prev=document.getElementById('tavprev'+idx);
+  if(img){img.src=src;img.style.display='block';}
+  if(prev)prev.style.fontSize='0';
+}
+
+// ===== INBOX =====
+var SUBS_KEY='krito_submissions';
+
+function loadInbox(){
+  var subs=[];
+  try{subs=JSON.parse(localStorage.getItem(SUBS_KEY)||'[]');}catch(e){}
+  var list=document.getElementById('inboxList');
+  var countEl=document.getElementById('inboxCount');
+  var badge=document.getElementById('inboxBadge');
+  var unread=subs.filter(function(s){return !s.read;}).length;
+  // Badge
+  if(unread>0){badge.textContent=unread;badge.classList.remove('hidden');}
+  else{badge.classList.add('hidden');}
+  // Count
+  if(countEl)countEl.textContent=subs.length+' inquir'+(subs.length===1?'y':'ies')+(unread>0?' · '+unread+' new':'');
+  if(!list)return;
+  if(subs.length===0){
+    list.innerHTML='<div class="inbox-empty"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 16 12 14 15 10 15 8 12 2 12"/><path d="M5.45 5.11L2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/></svg><p>Abhi koi inquiry nahi aayi.<br>Jab portfolio pe koi form fill karega, yahan dikhega.</p></div>';
+    return;
+  }
+  var html='';
+  for(var i=0;i<subs.length;i++){
+    var s=subs[i];
+    var initials=(s.name||'?').split(' ').map(function(w){return w[0];}).join('').slice(0,2).toUpperCase();
+    var dt=new Date(s.time);
+    var timeStr=dt.toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'})+' '+dt.toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'});
+    html+='<div class="inq-card'+(s.read?'':' unread')+'" id="inq'+s.id+'">';
+    html+='<div class="inq-hd">';
+    html+='<div class="inq-av">'+escH(initials)+'</div>';
+    html+='<div class="inq-meta"><div class="inq-name">'+escH(s.name||'—')+'</div><div class="inq-email">'+escH(s.email||'—')+'</div></div>';
+    html+='<div class="inq-time">'+timeStr+'</div>';
+    html+='</div>';
+    html+='<div class="inq-tags">';
+    if(s.service)html+='<span class="inq-tag">'+escH(s.service)+'</span>';
+    if(s.budget)html+='<span class="inq-tag">'+escH(s.budget)+'</span>';
+    html+='</div>';
+    if(s.vision)html+='<div class="inq-vision">'+escH(s.vision)+'</div>';
+    html+='<div class="inq-actions">';
+    // WhatsApp reply button
+    var phone='';
+    try{var ad=JSON.parse(localStorage.getItem(STORE_KEY)||'{}');phone=(ad.contactPhone||'').replace(/\D/g,'');}catch(x){}
+    if(phone||s.email){
+      var replyMsg='Hi '+escH(s.name||'')+', thanks for reaching out to KRITO! I received your inquiry about '+escH(s.service||'beats')+'. Let\'s discuss further!';
+      if(phone){
+        html+='<button class="inq-btn wa" onclick="replyWA(\''+escH(s.name||'')+'\',\''+escH(s.service||'')+'\')"><svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347"/></svg> WhatsApp Reply</button>';
+      }
+    }
+    if(s.email){
+      html+='<a class="inq-btn" href="mailto:'+escH(s.email)+'?subject=Re: '+encodeURIComponent('Your Beat Inquiry - KRITO')+'" target="_blank"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg> Email</a>';
+    }
+    html+='<button class="inq-btn del" onclick="deleteInq('+s.id+')"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg> Delete</button>';
+    html+='</div>';
+    html+='</div>';
+  }
+  list.innerHTML=html;
+}
+
+function markAllRead(){
+  try{
+    var subs=JSON.parse(localStorage.getItem(SUBS_KEY)||'[]');
+    subs.forEach(function(s){s.read=true;});
+    localStorage.setItem(SUBS_KEY,JSON.stringify(subs));
+  }catch(e){}
+  loadInbox();
+}
+
+function deleteInq(id){
+  try{
+    var subs=JSON.parse(localStorage.getItem(SUBS_KEY)||'[]');
+    subs=subs.filter(function(s){return s.id!==id;});
+    localStorage.setItem(SUBS_KEY,JSON.stringify(subs));
+  }catch(e){}
+  var el=document.getElementById('inq'+id);
+  if(el){el.style.transition='opacity .25s,transform .25s';el.style.opacity='0';el.style.transform='translateX(-8px)';setTimeout(function(){loadInbox();},260);}
+  else{loadInbox();}
+}
+
+function clearAllInbox(){
+  if(!confirm('Saari inquiries delete karein?'))return;
+  localStorage.removeItem(SUBS_KEY);
+  loadInbox();
+}
+
+function replyWA(name,service){
+  var phone='';
+  try{var ad=JSON.parse(localStorage.getItem(STORE_KEY)||'{}');phone=(ad.contactPhone||'').replace(/\D/g,'');}catch(x){}
+  if(!phone){alert('Pehle Contact section mein apna WhatsApp number save karo.');return;}
+  var msg='Hi '+name+'! Thanks for reaching out to KRITO 🎵 I received your inquiry about *'+service+'*. Let\'s discuss further!';
+  window.open('https://wa.me/91'+phone+'?text='+encodeURIComponent(msg),'_blank');
+}
+
+// Poll for new submissions while inbox is open (live update)
+setInterval(function(){
+  var panel=document.getElementById('panel-inbox');
+  if(panel&&panel.classList.contains('on'))loadInbox();
+  else{
+    // Just update badge
+    var subs=[];try{subs=JSON.parse(localStorage.getItem(SUBS_KEY)||'[]');}catch(e){}
+    var unread=subs.filter(function(s){return !s.read;}).length;
+    var badge=document.getElementById('inboxBadge');
+    if(badge){if(unread>0){badge.textContent=unread;badge.classList.remove('hidden');}else{badge.classList.add('hidden');}}
+  }
+},3000);
+
+// ===== INIT =====
+renderBeats();
+loadData();
+loadInbox();
+</script>
+</body>
+</html>
