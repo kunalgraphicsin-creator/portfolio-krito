@@ -649,13 +649,13 @@ function _initFirebase(){
   try{
     if(!firebase.apps.length)firebase.initializeApp(FIREBASE_CONFIG);
     _fbDB=firebase.database();
-    firebase.auth().signInAnonymously()
-      .then(function(){_fbReady=true;console.log('Firebase ready');})
-      .catch(function(e){
-        // Auth may be disabled — try without auth (test mode DB still works)
-        _fbReady=true;
-        console.log('Firebase ready (no auth)');
-      });
+    // Mark ready immediately — rules allow open write (personal portfolio)
+    _fbReady=true;
+    console.log('Firebase ready');
+    // Test write to confirm connection
+    _fbDB.ref('krito_portfolio/.connected').set(true).catch(function(e){
+      console.log('Firebase write test failed:',e.message);
+    });
   }catch(e){console.log('Firebase init error',e);}
 }
 
@@ -684,10 +684,9 @@ function _cloudinaryUpload(file,onProgress,onDone){
 
 function _fbSaveData(d){
   if(!_fbDB||!_fbReady)return;
-  // Strip large base64 images (heroPhoto, beat art, testi photos) — keep audioURL only
-  var clean=JSON.parse(JSON.stringify(d));
-  // Keep everything except we mark audioURL separately — images are fine (they're small)
-  _fbDB.ref('krito_portfolio/data').set(clean).catch(function(e){console.log('FB save fail',e);});
+  _fbDB.ref('krito_portfolio/data').set(d)
+    .then(function(){console.log('Firebase saved ok');showToast();})
+    .catch(function(e){console.log('FB save fail:',e.message);});
 }
 
 function _fbSaveSubmission(sub){

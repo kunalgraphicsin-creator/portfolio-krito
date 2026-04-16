@@ -1657,6 +1657,27 @@ function _fbPortInit(){
       try{
         localStorage.setItem('krito_admin_data',JSON.stringify(d));
         applyData(d);
+        // Re-run hero audio preload with new data (fixes timing issue)
+        _heroReady=false;
+        _heroURL=null;
+        _preloadHeroAudio();
+        // If hero beat already active, update now-playing bar with real name
+        if(_heroBeatActive&&d.heroBeat){
+          var nb=document.getElementById('npName');
+          var ng=document.getElementById('npGenre');
+          var tn=document.getElementById('fcTrackName');
+          var ct=document.getElementById('fcCdTrack');
+          var tm=document.getElementById('fcTrackMeta');
+          if(d.heroBeat.name){
+            if(nb)nb.textContent=d.heroBeat.name;
+            if(tn)tn.textContent=d.heroBeat.name;
+            if(ct)ct.textContent=d.heroBeat.name;
+          }
+          var genre=d.heroBeat.genre||'';
+          var bpm=d.heroBeat.bpm||'';
+          if(ng)ng.textContent=genre;
+          if(tm)tm.textContent=genre+(bpm?' · '+bpm+' BPM':'');
+        }
       }catch(e){}
     });
   }catch(e){}
