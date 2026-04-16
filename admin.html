@@ -204,7 +204,6 @@ a{text-decoration:none;color:inherit}
 <!-- Firebase SDK (compat v10) -->
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-storage-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 <script src="firebase-config.js"></script>
 </head>
@@ -643,16 +642,44 @@ function checkAdminPass(){
 }
 
 // ===== FIREBASE =====
-var _fbDB=null,_fbStorage=null,_fbReady=false;
+var _fbDB=null,_fbReady=false;
 
 function _initFirebase(){
   if(typeof firebase==='undefined'||!isFirebaseConfigured()){_fbReady=false;return;}
   try{
     if(!firebase.apps.length)firebase.initializeApp(FIREBASE_CONFIG);
     _fbDB=firebase.database();
-    _fbStorage=firebase.storage();
-    firebase.auth().signInAnonymously().then(function(){_fbReady=true;console.log('Firebase ready');}).catch(function(e){console.log('FB auth fail',e);});
+    firebase.auth().signInAnonymously()
+      .then(function(){_fbReady=true;console.log('Firebase ready');})
+      .catch(function(e){
+        // Auth may be disabled — try without auth (test mode DB still works)
+        _fbReady=true;
+        console.log('Firebase ready (no auth)');
+      });
   }catch(e){console.log('Firebase init error',e);}
+}
+
+// ===== CLOUDINARY AUDIO UPLOAD (free, no credit card) =====
+function _cloudinaryUpload(file,onProgress,onDone){
+  if(!isCloudinaryConfigured()){onDone(null);return;}
+  var fd=new FormData();
+  fd.append('file',file);
+  fd.append('upload_preset',CLOUDINARY_CONFIG.uploadPreset);
+  fd.append('resource_type','video'); // Cloudinary uses 'video' for audio files
+  var xhr=new XMLHttpRequest();
+  xhr.open('POST','https://api.cloudinary.com/v1_1/'+CLOUDINARY_CONFIG.cloudName+'/video/upload');
+  xhr.upload.onprogress=function(e){
+    if(e.lengthComputable&&onProgress)onProgress(Math.round(e.loaded/e.total*100));
+  };
+  xhr.onload=function(){
+    try{
+      var res=JSON.parse(xhr.responseText);
+      if(res.secure_url){onDone(res.secure_url);}
+      else{console.log('Cloudinary error',res);onDone(null);}
+    }catch(e){onDone(null);}
+  };
+  xhr.onerror=function(){onDone(null);};
+  xhr.send(fd);
 }
 
 function _fbSaveData(d){
@@ -897,9 +924,9 @@ function beatAudioChanged(input,idx){
       }
     }
   }
-  if(_fbStorage&&_fbReady){
+  if(isCloudinaryConfigured()){
     if(statusEl2)statusEl2.innerHTML='<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="animation:spin .8s linear infinite"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg> Uploading to Cloud... 0%';
-    _fbUploadAudio(uid,file,
+    _cloudinaryUpload(file,
       function(pct){if(statusEl2)statusEl2.innerHTML='<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="animation:spin .8s linear infinite"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg> Uploading '+pct+'%';},
       function(url){
         _finishBeatUpload(url);
@@ -948,9 +975,9 @@ function heroBeatAudioChanged(input){
     var lbl=document.querySelector('label[for="f_hbAudio"]');
     if(lbl)lbl.innerHTML='<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg> Change MP3';
   }
-  if(_fbStorage&&_fbReady){
+  if(isCloudinaryConfigured()){
     if(hbSt)hbSt.innerHTML='<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="animation:spin .8s linear infinite"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg> Uploading to Cloud... 0%';
-    _fbUploadAudio(heroBeatUID,file,
+    _cloudinaryUpload(file,
       function(pct){if(hbSt)hbSt.innerHTML='<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="animation:spin .8s linear infinite"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg> Uploading '+pct+'%';},
       function(url){
         _finishHeroUpload(url);

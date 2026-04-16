@@ -1,9 +1,8 @@
 // ============================================================
-//  KRITO — Firebase Configuration
-//  Fill in YOUR project values from Firebase Console
-//  Firebase Console → Project Settings → Your Apps → SDK setup
+//  KRITO — Firebase + Cloudinary Configuration
 // ============================================================
 
+// ── Firebase (for data sync — fill in after creating Firebase project) ──
 const FIREBASE_CONFIG = {
   apiKey:            "YOUR_API_KEY",
   authDomain:        "YOUR_PROJECT_ID.firebaseapp.com",
@@ -14,41 +13,33 @@ const FIREBASE_CONFIG = {
   appId:             "YOUR_APP_ID"
 };
 
+// ── Cloudinary (for FREE audio/image storage — ALREADY SET UP) ──
+const CLOUDINARY_CONFIG = {
+  cloudName:    "dl1paq19e",
+  uploadPreset: "krito_beats"
+};
+
 // ============================================================
-//  HOW TO SET UP FIREBASE
-//  1. Go to https://console.firebase.google.com/
-//  2. Create a new project (e.g., "krito-portfolio")
-//  3. Enable Realtime Database (Start in test mode, then add rules below)
-//  4. Enable Storage (Start in test mode)
-//  5. Click gear ⚙ → Project Settings → General → Your apps
-//  6. Click </> (Web app) → Register app → copy the config above
+//  FIREBASE SETUP (one-time):
+//  1. console.firebase.google.com → New project
+//  2. Left menu → Realtime Database → Create → Test mode
+//  3. ⚙ Project Settings → Your apps → </> Web → Copy config above
 //
-//  REALTIME DATABASE RULES (paste in Firebase Console → Realtime DB → Rules):
+//  REALTIME DATABASE RULES:
 //  {
 //    "rules": {
 //      "krito_portfolio": {
-//        "data": { ".read": true, ".write": false },
-//        "submissions": { ".read": false, ".write": true },
-//        "admin": { ".read": false, ".write": false }
+//        "data":        { ".read": true,  ".write": "auth != null" },
+//        "submissions": { ".read": "auth != null", ".write": true  }
 //      }
 //    }
 //  }
-//
-//  STORAGE RULES (Firebase Console → Storage → Rules):
-//  rules_version = '2';
-//  service firebase.storage {
-//    match /b/{bucket}/o {
-//      match /beats/{allPaths=**} { allow read; allow write: if false; }
-//    }
-//  }
-//
-//  ADMIN WRITE ACCESS: Use Firebase Console → Realtime DB → manually set
-//  data via the admin panel (it uses Service Account logic — see admin.html).
-//
-//  ⚠ Once filled in, push to GitHub — Cloudflare will auto-deploy.
 // ============================================================
 
-// Checks if Firebase config is filled in (not placeholder)
 function isFirebaseConfigured() {
   return FIREBASE_CONFIG.apiKey !== "YOUR_API_KEY";
+}
+
+function isCloudinaryConfigured() {
+  return CLOUDINARY_CONFIG.cloudName !== "" && CLOUDINARY_CONFIG.uploadPreset !== "";
 }
