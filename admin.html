@@ -694,7 +694,7 @@ function _cloudinaryUpload(file,onProgress,onDone){
 function _fbSaveData(d){
   if(!_fbDB||!_fbReady)return;
   _fbDB.ref('krito_portfolio/data').set(d)
-    .then(function(){console.log('Firebase saved ok');showToast();})
+    .then(function(){console.log('Firebase saved ok');})
     .catch(function(e){console.log('FB save fail:',e.message);});
 }
 
@@ -1012,6 +1012,7 @@ function removeBeatAudio(idx){
   var uid=beatsList[idx].uid;
   if(uid)deleteAudioFromDB(uid,null);
   beatsList[idx].audioName='';
+  beatsList[idx].audioURL=null;
   // Re-render just this card's audio section
   var sec=document.querySelector('#bcard'+idx+' .beat-audio-sec');
   if(sec){

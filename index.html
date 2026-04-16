@@ -1681,6 +1681,11 @@ function _fbPortInit(){
           if(ng)ng.textContent=genre;
           if(tm)tm.textContent=genre+(bpm?' · '+bpm+' BPM':'');
         }
+        // Retry pending regular beat if user clicked BEFORE Firebase data arrived
+        if(nowP&&(!_audioEl||_audioEl.paused||_audioEl.src===''||_audioEl.src===window.location.href)){
+          var _pendingIdx=parseInt(nowP.replace('b',''),10)-1;
+          if(!isNaN(_pendingIdx))_tryPlayAudio(_pendingIdx);
+        }
       }catch(e){}
     });
   }catch(e){}
@@ -1909,7 +1914,7 @@ function _tryPlayAudio(beatIdx){
       _audioURL=null;
       el.src=audioURL;
       el.currentTime=0;
-      el.play().catch(function(){});
+      _startAudioPlayback(el);
       return;
     }
     var uid=beats[beatIdx].uid;if(!uid)return;
@@ -1934,7 +1939,7 @@ function _tryPlayAudio(beatIdx){
           var el=_getAudio();
           el.src=_audioURL;
           el.currentTime=0;
-          el.play().catch(function(){});
+          _startAudioPlayback(el);
         }catch(x){}
       };
       req.onerror=function(){};
