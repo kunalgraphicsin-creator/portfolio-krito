@@ -1752,6 +1752,8 @@ function playHeroBeat(){
         var req=db.transaction('beats').objectStore('beats').get(bUid);
         req.onsuccess=function(e){
           if(!e.target.result||!e.target.result.data||!_heroBeatActive)return;
+          // Guard: preload may have already completed and started playback
+          if(_heroReady&&_heroURL)return;
           try{
             if(_heroURL){try{URL.revokeObjectURL(_heroURL);}catch(x){}}
             _heroURL=URL.createObjectURL(_b64ToBlob(e.target.result.data));
