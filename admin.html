@@ -665,20 +665,29 @@ function _cloudinaryUpload(file,onProgress,onDone){
   var fd=new FormData();
   fd.append('file',file);
   fd.append('upload_preset',CLOUDINARY_CONFIG.uploadPreset);
-  fd.append('resource_type','video'); // Cloudinary uses 'video' for audio files
+  // Use 'raw' type — works for ALL file types with unsigned presets (audio, video, etc.)
   var xhr=new XMLHttpRequest();
-  xhr.open('POST','https://api.cloudinary.com/v1_1/'+CLOUDINARY_CONFIG.cloudName+'/video/upload');
+  xhr.open('POST','https://api.cloudinary.com/v1_1/'+CLOUDINARY_CONFIG.cloudName+'/raw/upload');
   xhr.upload.onprogress=function(e){
     if(e.lengthComputable&&onProgress)onProgress(Math.round(e.loaded/e.total*100));
   };
   xhr.onload=function(){
     try{
       var res=JSON.parse(xhr.responseText);
-      if(res.secure_url){onDone(res.secure_url);}
-      else{console.log('Cloudinary error',res);onDone(null);}
-    }catch(e){onDone(null);}
+      if(res.secure_url){
+        console.log('Cloudinary upload ok:',res.secure_url);
+        onDone(res.secure_url);
+      }else{
+        console.log('Cloudinary error:',JSON.stringify(res));
+        alert('Audio upload fail hua: '+(res.error&&res.error.message?res.error.message:'Unknown error')+'\nDobara try karein.');
+        onDone(null);
+      }
+    }catch(e){console.log('Cloudinary parse error',e);onDone(null);}
   };
-  xhr.onerror=function(){onDone(null);};
+  xhr.onerror=function(){
+    alert('Network error — audio upload nahi hua. Internet check karein.');
+    onDone(null);
+  };
   xhr.send(fd);
 }
 
@@ -1056,12 +1065,14 @@ function _loadDataFromStorage(){
       var hb=d.heroBeat;
       if(hb.uid)heroBeatUID=hb.uid;
       if(hb.audioName)heroBeatAudioName=hb.audioName;
+      // Restore audioURL so re-saves don't lose it
+      if(hb.audioURL)window._heroBeatAudioURL=hb.audioURL;
       if(hb.name){var el=document.getElementById('f_hbName');if(el)el.value=hb.name;}
       if(hb.genre){var gl=document.getElementById('f_hbGenre');if(gl)gl.value=hb.genre;}
       if(hb.bpm){var bl=document.getElementById('f_hbBpm');if(bl)bl.value=hb.bpm;}
       if(hb.audioName){
         var st=document.getElementById('hbAudioStatus');
-        if(st){st.innerHTML='<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> '+escH(hb.audioName);st.className='beat-audio-status has-audio';}
+        if(st){st.innerHTML='<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> '+escH(hb.audioName)+(hb.audioURL?' ☁':'');st.className='beat-audio-status has-audio';}
         var lbl=document.querySelector('label[for="f_hbAudio"]');
         if(lbl)lbl.innerHTML='<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg> Change MP3';
       }

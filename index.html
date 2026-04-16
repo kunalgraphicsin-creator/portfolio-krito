@@ -1658,8 +1658,11 @@ function _fbPortInit(){
         localStorage.setItem('krito_admin_data',JSON.stringify(d));
         applyData(d);
         // Re-run hero audio preload with new data (fixes timing issue)
-        _heroReady=false;
-        _heroURL=null;
+        // Only reset if URL actually changed (don't interrupt playing audio)
+        var _newHeroURL=d.heroBeat&&d.heroBeat.audioURL?d.heroBeat.audioURL:null;
+        if(_newHeroURL&&_newHeroURL!==_heroURL){
+          _heroReady=false;_heroURL=null;
+        }
         _preloadHeroAudio();
         // If hero beat already active, update now-playing bar with real name
         if(_heroBeatActive&&d.heroBeat){
