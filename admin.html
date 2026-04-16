@@ -201,8 +201,33 @@ a{text-decoration:none;color:inherit}
 .hero-photo-box img{width:100%;height:100%;object-fit:cover;border-radius:10px;display:none}
 .hero-photo-box span{font-size:32px}
 </style>
+<!-- Firebase SDK (compat v10) -->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-storage-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="firebase-config.js"></script>
 </head>
 <body>
+
+<!-- ===== ADMIN PASSWORD GATE ===== -->
+<div id="adminGate" style="position:fixed;inset:0;background:#0f0705;z-index:99999;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:20px">
+  <div style="text-align:center;margin-bottom:8px">
+    <div style="font-family:'Orbitron',sans-serif;font-size:22px;color:#F0660A;letter-spacing:2px;font-weight:900">K<span style="color:#fff">RITO</span></div>
+    <div style="color:rgba(255,255,255,.45);font-size:12px;margin-top:6px;letter-spacing:1px">ADMIN PANEL</div>
+  </div>
+  <div style="background:#1a0e0c;border:1px solid rgba(240,102,10,.25);border-radius:14px;padding:32px 36px;width:320px;display:flex;flex-direction:column;gap:16px">
+    <div style="color:rgba(255,255,255,.7);font-size:13px;text-align:center">Enter Admin Password</div>
+    <input id="gatePassInput" type="password" placeholder="Password" autocomplete="current-password"
+      style="background:#0f0705;border:1px solid rgba(240,102,10,.3);border-radius:8px;padding:12px 16px;color:#fff;font-size:14px;outline:none;width:100%"
+      onkeydown="if(event.key==='Enter')checkAdminPass()"
+    >
+    <div id="gateError" style="color:#f06;font-size:12px;text-align:center;display:none">Galat password. Dobara try karein.</div>
+    <button onclick="checkAdminPass()" style="background:#F0660A;border:none;border-radius:8px;padding:12px;color:#fff;font-weight:700;font-size:14px;cursor:pointer;letter-spacing:.5px">
+      ENTER
+    </button>
+  </div>
+</div>
 
 <!-- TOPBAR -->
 <div id="topbar">
@@ -594,6 +619,91 @@ function switchPanel(id, el){
   el.classList.add('on');
 }
 
+// ===== ADMIN PASSWORD GATE =====
+var ADMIN_PASS_HASH='4f4c468563e6fea1f5db7d7df07bb6bfe3c9d4f402537c224816a7a461d53750'; // SHA-256 of krito@2024
+
+async function _sha256(str){
+  var buf=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(str));
+  return Array.from(new Uint8Array(buf)).map(function(b){return b.toString(16).padStart(2,'0');}).join('');
+}
+function checkAdminPass(){
+  var val=document.getElementById('gatePassInput').value;
+  if(!val)return;
+  _sha256(val).then(function(h){
+    if(h===ADMIN_PASS_HASH){
+      sessionStorage.setItem('krito_admin_ok','1');
+      document.getElementById('adminGate').style.display='none';
+      _afterAuth();
+    }else{
+      document.getElementById('gateError').style.display='block';
+      document.getElementById('gatePassInput').value='';
+      setTimeout(function(){document.getElementById('gateError').style.display='none';},2500);
+    }
+  });
+}
+
+// ===== FIREBASE =====
+var _fbDB=null,_fbStorage=null,_fbReady=false;
+
+function _initFirebase(){
+  if(typeof firebase==='undefined'||!isFirebaseConfigured()){_fbReady=false;return;}
+  try{
+    if(!firebase.apps.length)firebase.initializeApp(FIREBASE_CONFIG);
+    _fbDB=firebase.database();
+    _fbStorage=firebase.storage();
+    firebase.auth().signInAnonymously().then(function(){_fbReady=true;console.log('Firebase ready');}).catch(function(e){console.log('FB auth fail',e);});
+  }catch(e){console.log('Firebase init error',e);}
+}
+
+function _fbSaveData(d){
+  if(!_fbDB||!_fbReady)return;
+  // Strip large base64 images (heroPhoto, beat art, testi photos) — keep audioURL only
+  var clean=JSON.parse(JSON.stringify(d));
+  // Keep everything except we mark audioURL separately — images are fine (they're small)
+  _fbDB.ref('krito_portfolio/data').set(clean).catch(function(e){console.log('FB save fail',e);});
+}
+
+function _fbSaveSubmission(sub){
+  if(!_fbDB)return;
+  // Submissions can be written by anyone (public write rule)
+  firebase.database().ref('krito_portfolio/submissions').push(sub).catch(function(){});
+}
+
+function _fbUploadAudio(uid,file,onProgress,onDone){
+  if(!_fbStorage||!_fbReady){onDone(null);return;}
+  var ref=_fbStorage.ref('beats/'+uid);
+  var task=ref.put(file);
+  task.on('state_changed',
+    function(snap){if(onProgress)onProgress(Math.round(snap.bytesTransferred/snap.totalBytes*100));},
+    function(err){console.log('Storage upload fail',err);onDone(null);},
+    function(){ref.getDownloadURL().then(function(url){onDone(url);}).catch(function(){onDone(null);});}
+  );
+}
+
+function _fbLoadData(cb){
+  if(!_fbDB){cb(null);return;}
+  _fbDB.ref('krito_portfolio/data').once('value').then(function(snap){
+    cb(snap.val());
+  }).catch(function(){cb(null);});
+}
+
+function _fbLoadSubmissions(cb){
+  if(!_fbDB){cb(null);return;}
+  _fbDB.ref('krito_portfolio/submissions').once('value').then(function(snap){
+    var obj=snap.val()||{};
+    var arr=Object.values(obj).sort(function(a,b){return new Date(b.time)-new Date(a.time);});
+    cb(arr);
+  }).catch(function(){cb(null);});
+}
+
+// Called after password is verified
+function _afterAuth(){
+  _initFirebase();
+  loadData();
+  loadInbox();
+  updateInboxBadge();
+}
+
 // ===== DYNAMIC BEATS ENGINE =====
 var STORE_KEY='krito_admin_data';
 var AUDIO_DB_NAME='krito_audio';
@@ -763,38 +873,56 @@ function beatAudioChanged(input,idx){
   // Show uploading state
   var statusEl=document.getElementById('baudiostatus'+idx);
   if(statusEl){statusEl.innerHTML='<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="animation:spin .8s linear infinite"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg> Uploading...';statusEl.className='beat-audio-status';}
-  var reader=new FileReader();
-  reader.onload=function(e){
-    saveAudioToDB(uid,e.target.result,function(ok){
-      beatsList[idx].audioName=name;
-      // Update UI
-      var st=document.getElementById('baudiostatus'+idx);
-      if(st){
-        st.innerHTML='<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> '+escH(name);
-        st.className='beat-audio-status has-audio';
-      }
-      // Add remove button if not present
-      var lbl=document.querySelector('label[for="f_baudio'+idx+'"]');
-      if(lbl){
-        lbl.textContent='';
-        lbl.innerHTML='<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg> Change MP3';
-        var existing=lbl.nextElementSibling;
-        if(!existing||!existing.classList.contains('beat-audio-remove')){
-          var rmBtn=document.createElement('button');
-          rmBtn.className='beat-audio-remove';
-          rmBtn.innerHTML='<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg> Remove';
-          rmBtn.setAttribute('onclick','removeBeatAudio('+idx+')');
-          lbl.parentNode.appendChild(rmBtn);
-        }
-      }
-      if(!ok){alert('Audio save mein problem aayi. Dobara try karein.');}
-    });
-  };
-  reader.onerror=function(){
+  // Upload to Firebase Storage first (if configured), then IndexedDB
+  var statusEl2=document.getElementById('baudiostatus'+idx);
+  function _finishBeatUpload(audioURL){
+    if(audioURL)beatsList[idx].audioURL=audioURL;
+    beatsList[idx].audioName=name;
     var st=document.getElementById('baudiostatus'+idx);
-    if(st){st.innerHTML='⚠ Upload fail hua';st.className='beat-audio-status';}
-  };
-  reader.readAsDataURL(file);
+    if(st){
+      st.innerHTML='<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> '+escH(name)+(audioURL?' ☁':'');
+      st.className='beat-audio-status has-audio';
+    }
+    var lbl=document.querySelector('label[for="f_baudio'+idx+'"]');
+    if(lbl){
+      lbl.textContent='';
+      lbl.innerHTML='<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg> Change MP3';
+      var existing=lbl.nextElementSibling;
+      if(!existing||!existing.classList.contains('beat-audio-remove')){
+        var rmBtn=document.createElement('button');
+        rmBtn.className='beat-audio-remove';
+        rmBtn.innerHTML='<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg> Remove';
+        rmBtn.setAttribute('onclick','removeBeatAudio('+idx+')');
+        lbl.parentNode.appendChild(rmBtn);
+      }
+    }
+  }
+  if(_fbStorage&&_fbReady){
+    if(statusEl2)statusEl2.innerHTML='<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="animation:spin .8s linear infinite"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg> Uploading to Cloud... 0%';
+    _fbUploadAudio(uid,file,
+      function(pct){if(statusEl2)statusEl2.innerHTML='<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="animation:spin .8s linear infinite"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg> Uploading '+pct+'%';},
+      function(url){
+        _finishBeatUpload(url);
+        // Also save to local IndexedDB as backup
+        var reader2=new FileReader();
+        reader2.onload=function(e2){saveAudioToDB(uid,e2.target.result,function(){});};
+        reader2.readAsDataURL(file);
+      }
+    );
+  } else {
+    var reader=new FileReader();
+    reader.onload=function(e){
+      saveAudioToDB(uid,e.target.result,function(ok){
+        _finishBeatUpload(null);
+        if(!ok){alert('Audio save mein problem aayi. Dobara try karein.');}
+      });
+    };
+    reader.onerror=function(){
+      var st=document.getElementById('baudiostatus'+idx);
+      if(st){st.innerHTML='⚠ Upload fail hua';st.className='beat-audio-status';}
+    };
+    reader.readAsDataURL(file);
+  }
 }
 
 // ===== HERO BEAT AUDIO =====
@@ -805,22 +933,43 @@ function heroBeatAudioChanged(input){
   if(file.size>15*1024*1024){if(!confirm('File badi hai ('+(file.size/1024/1024).toFixed(1)+'MB). Continue?'))return;}
   var st=document.getElementById('hbAudioStatus');
   if(st){st.innerHTML='<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="animation:spin .8s linear infinite"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg> Uploading...';st.className='beat-audio-status';}
-  var reader=new FileReader();
-  reader.onload=function(e){
-    saveAudioToDB(heroBeatUID,e.target.result,function(ok){
-      heroBeatAudioName=name;
-      var st2=document.getElementById('hbAudioStatus');
-      if(st2){
-        st2.innerHTML='<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> '+escH(name);
-        st2.className='beat-audio-status has-audio';
+  var hbSt=document.getElementById('hbAudioStatus');
+  function _finishHeroUpload(audioURL){
+    heroBeatAudioName=name;
+    if(audioURL){
+      // Store audioURL in a module variable for collectData() to include
+      window._heroBeatAudioURL=audioURL;
+    }
+    var st2=document.getElementById('hbAudioStatus');
+    if(st2){
+      st2.innerHTML='<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> '+escH(name)+(audioURL?' ☁':'');
+      st2.className='beat-audio-status has-audio';
+    }
+    var lbl=document.querySelector('label[for="f_hbAudio"]');
+    if(lbl)lbl.innerHTML='<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg> Change MP3';
+  }
+  if(_fbStorage&&_fbReady){
+    if(hbSt)hbSt.innerHTML='<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="animation:spin .8s linear infinite"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg> Uploading to Cloud... 0%';
+    _fbUploadAudio(heroBeatUID,file,
+      function(pct){if(hbSt)hbSt.innerHTML='<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="animation:spin .8s linear infinite"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg> Uploading '+pct+'%';},
+      function(url){
+        _finishHeroUpload(url);
+        var reader2=new FileReader();
+        reader2.onload=function(e2){saveAudioToDB(heroBeatUID,e2.target.result,function(){});};
+        reader2.readAsDataURL(file);
       }
-      var lbl=document.querySelector('label[for="f_hbAudio"]');
-      if(lbl)lbl.innerHTML='<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg> Change MP3';
-      if(!ok)alert('Audio save mein problem. Dobara try karein.');
-    });
-  };
-  reader.onerror=function(){var st3=document.getElementById('hbAudioStatus');if(st3){st3.innerHTML='⚠ Upload fail';st3.className='beat-audio-status';}};
-  reader.readAsDataURL(file);
+    );
+  } else {
+    var reader=new FileReader();
+    reader.onload=function(e){
+      saveAudioToDB(heroBeatUID,e.target.result,function(ok){
+        _finishHeroUpload(null);
+        if(!ok)alert('Audio save mein problem. Dobara try karein.');
+      });
+    };
+    reader.onerror=function(){if(hbSt){hbSt.innerHTML='⚠ Upload fail';hbSt.className='beat-audio-status';}};
+    reader.readAsDataURL(file);
+  }
 }
 
 function removeBeatAudio(idx){
@@ -859,8 +1008,19 @@ function beatArtChanged(input,idx){
   reader.readAsDataURL(input.files[0]);
 }
 
-// ===== LOAD VALUES FROM localStorage =====
+// ===== LOAD VALUES FROM localStorage / Firebase =====
 function loadData(){
+  if(_fbDB){
+    _fbLoadData(function(fbData){
+      if(fbData){
+        localStorage.setItem(STORE_KEY,JSON.stringify(fbData));
+        if(fbData.heroBeat&&fbData.heroBeat.audioURL)window._heroBeatAudioURL=fbData.heroBeat.audioURL;
+      }
+      _loadDataFromStorage();
+    });
+  }else{_loadDataFromStorage();}
+}
+function _loadDataFromStorage(){
   var raw=localStorage.getItem(STORE_KEY);
   if(!raw)return;
   try{
@@ -887,7 +1047,7 @@ function loadData(){
     // Beats — new array format
     if(d.beats&&Array.isArray(d.beats)&&d.beats.length){
       beatsList=d.beats.map(function(b){
-        return{uid:b.uid||_mkuid(),name:b.name||'',genre:b.genre||'trap',bpm:b.bpm||'',key:b.key||'',price:b.price||'',art:b.art||'',noPrice:!!b.noPrice,audioName:b.audioName||''};
+        return{uid:b.uid||_mkuid(),name:b.name||'',genre:b.genre||'trap',bpm:b.bpm||'',key:b.key||'',price:b.price||'',art:b.art||'',noPrice:!!b.noPrice,audioName:b.audioName||'',audioURL:b.audioURL||null};
       });
       renderBeats();
     }
@@ -936,7 +1096,8 @@ function collectData(){
     name:v('f_hbName'),
     genre:(function(){var el=document.getElementById('f_hbGenre');return el?el.value:'Trap';})(),
     bpm:v('f_hbBpm'),
-    audioName:heroBeatAudioName
+    audioName:heroBeatAudioName,
+    audioURL:window._heroBeatAudioURL||null
   };
   d.heroBadge=v('f_heroBadge');
   d.heroSubtext=v('f_heroSubtext');
@@ -961,7 +1122,8 @@ function collectData(){
       price:noP?'':(priceEl?priceEl.value.trim():b.price),
       art:b.art||'',
       noPrice:noP,
-      audioName:b.audioName||''
+      audioName:b.audioName||'',
+      audioURL:b.audioURL||null
     };
   });
   // Services
@@ -999,6 +1161,7 @@ function v(id){var el=document.getElementById(id);return el?el.value.trim():'';}
 function saveSection(sec){
   var d=collectData();
   localStorage.setItem(STORE_KEY,JSON.stringify(d));
+  _fbSaveData(d);
   try{if(window.opener)window.opener.postMessage({type:'KRITO_UPDATE',data:d},'*');}catch(e){}
   showToast();
 }
@@ -1007,6 +1170,7 @@ function saveSection(sec){
 function saveAll(){
   var d=collectData();
   localStorage.setItem(STORE_KEY,JSON.stringify(d));
+  _fbSaveData(d);
   try{if(window.opener)window.opener.postMessage({type:'KRITO_UPDATE',data:d},'*');}catch(e){}
   showToast();
   var fb=document.getElementById('saveFeedback');
@@ -1052,6 +1216,22 @@ function setTestiAv(idx,src){
 var SUBS_KEY='krito_submissions';
 
 function loadInbox(){
+  if(_fbDB&&_fbReady){
+    _fbLoadSubmissions(function(fbSubs){
+      if(fbSubs&&fbSubs.length){
+        localStorage.setItem(SUBS_KEY,JSON.stringify(fbSubs));
+      }
+      _renderInbox();
+    });
+  }else{_renderInbox();}
+}
+function updateInboxBadge(){
+  var subs=[];try{subs=JSON.parse(localStorage.getItem(SUBS_KEY)||'[]');}catch(e){}
+  var unread=subs.filter(function(s){return !s.read;}).length;
+  var badge=document.getElementById('inboxBadge');
+  if(badge){if(unread>0){badge.textContent=unread;badge.classList.remove('hidden');}else{badge.classList.add('hidden');}}
+}
+function _renderInbox(){
   var subs=[];
   try{subs=JSON.parse(localStorage.getItem(SUBS_KEY)||'[]');}catch(e){}
   var list=document.getElementById('inboxList');
@@ -1154,8 +1334,12 @@ setInterval(function(){
 
 // ===== INIT =====
 renderBeats();
-loadData();
-loadInbox();
+// Check if already authenticated in this session
+if(sessionStorage.getItem('krito_admin_ok')==='1'){
+  document.getElementById('adminGate').style.display='none';
+  _afterAuth();
+}
+// Otherwise show gate (it's already visible by default)
 </script>
 </body>
 </html>

@@ -744,6 +744,11 @@ footer{background:#180c08}
     transparent 35%,rgba(0,0,0,0.55) 100%);
 }
 </style>
+<!-- Firebase SDK (read-only for portfolio) -->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-storage-compat.js"></script>
+<script src="firebase-config.js"></script>
 </head>
 <body>
 
@@ -1211,6 +1216,8 @@ function init(){
   initNav();initParticles();initReveal();
   initWaveforms();initHeroWave();initTestimonials();
   initFlip();
+  // Try to load live data from Firebase first
+  _fbPortInit();
   // Pre-load hero beat immediately so audio is ready by the time user scrolls
   _preloadHeroAudio();
 }
@@ -1635,6 +1642,26 @@ function animNP(){
   tick();
 }
 
+// ===== FIREBASE READ (portfolio side — read-only) =====
+var _fbPortDB=null;
+
+function _fbPortInit(){
+  if(typeof firebase==='undefined'||!isFirebaseConfigured())return;
+  try{
+    if(!firebase.apps.length)firebase.initializeApp(FIREBASE_CONFIG);
+    _fbPortDB=firebase.database();
+    // Load data and listen for real-time changes
+    _fbPortDB.ref('krito_portfolio/data').on('value',function(snap){
+      var d=snap.val();
+      if(!d)return;
+      try{
+        localStorage.setItem('krito_admin_data',JSON.stringify(d));
+        applyData(d);
+      }catch(e){}
+    });
+  }catch(e){}
+}
+
 // ===== HERO PLAY EASE (module-level, read by initFlip's raf) =====
 var _hpEase=0, _hpTarget=0, _heroBeatActive=false;
 
@@ -1652,11 +1679,26 @@ function _b64ToBlob(b64){
 }
 
 function _preloadHeroAudio(){
-  var bUid=null;
+  var bUid=null,bAudioURL=null;
   try{
     var raw=localStorage.getItem('krito_admin_data');
-    if(raw){var dd=JSON.parse(raw);if(dd.heroBeat){bUid=dd.heroBeat.uid||null;}}
+    if(raw){var dd=JSON.parse(raw);if(dd.heroBeat){bUid=dd.heroBeat.uid||null;bAudioURL=dd.heroBeat.audioURL||null;}}
   }catch(e){}
+  if(!bUid&&!bAudioURL)return;
+  // If Firebase Storage URL available, use it directly
+  if(bAudioURL){
+    _heroPreloadUID=bUid||'hero';
+    _heroReady=false;
+    if(_heroURL){try{URL.revokeObjectURL(_heroURL);}catch(x){}}
+    _heroURL=bAudioURL; // HTTPS URL — no blob needed
+    _heroReady=true;
+    if(_heroBeatActive){
+      var el=_getAudio();
+      el.src=_heroURL;el.currentTime=0;
+      _startAudioPlayback(el);
+    }
+    return;
+  }
   if(!bUid)return;
   _heroPreloadUID=bUid;
   _heroReady=false;
@@ -1834,6 +1876,18 @@ function _tryPlayAudio(beatIdx){
     var raw=localStorage.getItem('krito_admin_data');if(!raw)return;
     var d=JSON.parse(raw);
     var beats=d.beats;if(!beats||!beats[beatIdx])return;
+    // Use Firebase Storage URL if available
+    var audioURL=beats[beatIdx].audioURL||null;
+    if(audioURL){
+      var expected='b'+(beatIdx+1);if(nowP!==expected)return;
+      var el=_getAudio();
+      if(_audioURL){try{URL.revokeObjectURL(_audioURL);}catch(x){}}
+      _audioURL=null;
+      el.src=audioURL;
+      el.currentTime=0;
+      el.play().catch(function(){});
+      return;
+    }
     var uid=beats[beatIdx].uid;if(!uid)return;
     _openADB(function(db){
       if(!db)return;
@@ -2032,7 +2086,7 @@ function sendForm(e){
   var budget=(document.getElementById('cf_budget').value||'').trim();
   var vision=(document.getElementById('cf_vision').value||'').trim();
 
-  // ── Save submission to localStorage (admin inbox reads this) ──
+  // ── Save submission to localStorage + Firebase ──
   try{
     var sub={
       id:Date.now(),
@@ -2045,6 +2099,12 @@ function sendForm(e){
     try{subs=JSON.parse(localStorage.getItem('krito_submissions')||'[]');}catch(x){}
     subs.unshift(sub);
     localStorage.setItem('krito_submissions',JSON.stringify(subs));
+    // Also save to Firebase so admin sees it from any browser
+    try{
+      if(typeof firebase!=='undefined'&&_fbPortDB){
+        firebase.database().ref('krito_portfolio/submissions').push(sub).catch(function(){});
+      }
+    }catch(fx){}
   }catch(x){}
 
   // ── Read admin contact settings ──
