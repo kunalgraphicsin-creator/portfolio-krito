@@ -704,16 +704,6 @@ function _fbSaveSubmission(sub){
   firebase.database().ref('krito_portfolio/submissions').push(sub).catch(function(){});
 }
 
-function _fbUploadAudio(uid,file,onProgress,onDone){
-  if(!_fbStorage||!_fbReady){onDone(null);return;}
-  var ref=_fbStorage.ref('beats/'+uid);
-  var task=ref.put(file);
-  task.on('state_changed',
-    function(snap){if(onProgress)onProgress(Math.round(snap.bytesTransferred/snap.totalBytes*100));},
-    function(err){console.log('Storage upload fail',err);onDone(null);},
-    function(){ref.getDownloadURL().then(function(url){onDone(url);}).catch(function(){onDone(null);});}
-  );
-}
 
 function _fbLoadData(cb){
   if(!_fbDB){cb(null);return;}
@@ -726,7 +716,9 @@ function _fbLoadSubmissions(cb){
   if(!_fbDB){cb(null);return;}
   _fbDB.ref('krito_portfolio/submissions').once('value').then(function(snap){
     var obj=snap.val()||{};
-    var arr=Object.values(obj).sort(function(a,b){return new Date(b.time)-new Date(a.time);});
+    // Include Firebase key (_fbKey) in each submission so we can delete by key
+    var arr=Object.keys(obj).map(function(k){return Object.assign({},obj[k],{_fbKey:k});});
+    arr.sort(function(a,b){return new Date(b.time)-new Date(a.time);});
     cb(arr);
   }).catch(function(){cb(null);});
 }
@@ -1024,6 +1016,8 @@ function removeBeatAudio(idx){
       +'<input type="file" id="f_baudio'+idx+'" accept="audio/mp3,audio/mpeg,audio/wav,audio/*" onchange="beatAudioChanged(this,'+idx+')" style="display:none">'
       +'<label for="f_baudio'+idx+'" class="beat-audio-btn"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg> Upload MP3</label>';
   }
+  // Auto-save so Firebase is updated immediately (audioURL=null)
+  setTimeout(function(){saveAll();},100);
 }
 
 function toggleNoPrice(idx,checked){
@@ -1281,8 +1275,7 @@ function _renderInbox(){
   var badge=document.getElementById('inboxBadge');
   var unread=subs.filter(function(s){return !s.read;}).length;
   // Badge
-  if(unread>0){badge.textContent=unread;badge.classList.remove('hidden');}
-  else{badge.classList.add('hidden');}
+  if(badge){if(unread>0){badge.textContent=unread;badge.classList.remove('hidden');}else{badge.classList.add('hidden');}}
   // Count
   if(countEl)countEl.textContent=subs.length+' inquir'+(subs.length===1?'y':'ies')+(unread>0?' · '+unread+' new':'');
   if(!list)return;
@@ -1314,7 +1307,7 @@ function _renderInbox(){
     if(phone||s.email){
       var replyMsg='Hi '+escH(s.name||'')+', thanks for reaching out to KRITO! I received your inquiry about '+escH(s.service||'beats')+'. Let\'s discuss further!';
       if(phone){
-        html+='<button class="inq-btn wa" onclick="replyWA(\''+escH(s.name||'')+'\',\''+escH(s.service||'')+'\')"><svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347"/></svg> WhatsApp Reply</button>';
+        html+='<button class="inq-btn wa" onclick="replyWA('"+JSON.stringify(s.name||'')+"','"+JSON.stringify(s.service||'')+"')"><svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347"/></svg> WhatsApp Reply</button>';
       }
     }
     if(s.email){
@@ -1339,8 +1332,15 @@ function markAllRead(){
 function deleteInq(id){
   try{
     var subs=JSON.parse(localStorage.getItem(SUBS_KEY)||'[]');
+    // Find the submission to get its Firebase key before removing
+    var toDelete=null;
+    for(var _di=0;_di<subs.length;_di++){if(subs[_di].id===id){toDelete=subs[_di];break;}}
     subs=subs.filter(function(s){return s.id!==id;});
     localStorage.setItem(SUBS_KEY,JSON.stringify(subs));
+    // Also delete from Firebase (so it doesn't reappear on next load)
+    if(toDelete&&toDelete._fbKey&&_fbDB&&_fbReady){
+      _fbDB.ref('krito_portfolio/submissions/'+toDelete._fbKey).remove().catch(function(){});
+    }
   }catch(e){}
   var el=document.getElementById('inq'+id);
   if(el){el.style.transition='opacity .25s,transform .25s';el.style.opacity='0';el.style.transform='translateX(-8px)';setTimeout(function(){loadInbox();},260);}
@@ -1349,6 +1349,10 @@ function deleteInq(id){
 
 function clearAllInbox(){
   if(!confirm('Saari inquiries delete karein?'))return;
+  // Delete all from Firebase first
+  if(_fbDB&&_fbReady){
+    _fbDB.ref('krito_portfolio/submissions').remove().catch(function(){});
+  }
   localStorage.removeItem(SUBS_KEY);
   loadInbox();
 }
@@ -1357,8 +1361,11 @@ function replyWA(name,service){
   var phone='';
   try{var ad=JSON.parse(localStorage.getItem(STORE_KEY)||'{}');phone=(ad.contactPhone||'').replace(/\D/g,'');}catch(x){}
   if(!phone){alert('Pehle Contact section mein apna WhatsApp number save karo.');return;}
+  // Normalize: 10-digit Indian → add 91; 11-digit with leading 0 → replace 0 with 91
+  if(phone.length===10)phone='91'+phone;
+  else if(phone.length===11&&phone[0]==='0')phone='91'+phone.slice(1);
   var msg='Hi '+name+'! Thanks for reaching out to KRITO 🎵 I received your inquiry about *'+service+'*. Let\'s discuss further!';
-  window.open('https://wa.me/91'+phone+'?text='+encodeURIComponent(msg),'_blank');
+  window.open('https://wa.me/'+phone+'?text='+encodeURIComponent(msg),'_blank');
 }
 
 // Poll for new submissions while inbox is open (live update)

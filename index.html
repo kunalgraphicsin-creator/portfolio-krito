@@ -1658,9 +1658,9 @@ function _fbPortInit(){
         localStorage.setItem('krito_admin_data',JSON.stringify(d));
         applyData(d);
         // Re-run hero audio preload with new data (fixes timing issue)
-        // Only reset if URL actually changed (don't interrupt playing audio)
+        // Only reset URL if it actually changed AND audio is NOT currently playing
         var _newHeroURL=d.heroBeat&&d.heroBeat.audioURL?d.heroBeat.audioURL:null;
-        if(_newHeroURL&&_newHeroURL!==_heroURL){
+        if(_newHeroURL&&_newHeroURL!==_heroURL&&!_heroBeatActive){
           _heroReady=false;_heroURL=null;
         }
         _preloadHeroAudio();
@@ -1676,10 +1676,12 @@ function _fbPortInit(){
             if(tn)tn.textContent=d.heroBeat.name;
             if(ct)ct.textContent=d.heroBeat.name;
           }
-          var genre=d.heroBeat.genre||'';
+          var _gRaw=d.heroBeat.genre||'';
+          var genre=_gRaw==='hiphop'?'Hip-Hop':_gRaw==='rnb'?'R&B':(_gRaw?_gRaw.charAt(0).toUpperCase()+_gRaw.slice(1):'');
           var bpm=d.heroBeat.bpm||'';
           if(ng)ng.textContent=genre;
-          if(tm)tm.textContent=genre+(bpm?' · '+bpm+' BPM':'');
+          var metaStr=genre+(genre&&bpm?' · ':'')+( bpm?bpm+' BPM':'');
+          if(tm)tm.textContent=metaStr;
         }
         // Retry pending regular beat if user clicked BEFORE Firebase data arrived
         if(nowP&&(!_audioEl||_audioEl.paused||_audioEl.src===''||_audioEl.src===window.location.href)){
@@ -1761,20 +1763,30 @@ function _preloadHeroAudio(){
 
 // Autoplay helper — tries play(), falls back to next user interaction if blocked
 var _playbackListenerActive=false;
+var _pendingPlayEvts=null;
+var _pendingOnFirst=null;
+
+function _cancelPendingPlayback(){
+  if(_pendingOnFirst&&_pendingPlayEvts){
+    _pendingPlayEvts.forEach(function(e){document.removeEventListener(e,_pendingOnFirst,true);});
+  }
+  _pendingOnFirst=null;_pendingPlayEvts=null;_playbackListenerActive=false;
+}
+
 function _startAudioPlayback(el){
   if(!el.src||el.src===window.location.href)return; // no src set yet
+  _cancelPendingPlayback(); // cancel any previous fallback listeners first
   var p=el.play();
   if(p!==undefined){
     p.catch(function(){
-      if(_playbackListenerActive)return; // already waiting for interaction
+      if(_playbackListenerActive)return;
       _playbackListenerActive=true;
-      var evts=['click','touchstart','touchend','pointerdown','keydown'];
-      function onFirst(){
-        _playbackListenerActive=false;
+      _pendingPlayEvts=['click','touchstart','touchend','pointerdown','keydown'];
+      _pendingOnFirst=function(){
+        _cancelPendingPlayback();
         if(el.src&&el.src!==window.location.href)el.play().catch(function(){});
-        evts.forEach(function(e){document.removeEventListener(e,onFirst,true);});
-      }
-      evts.forEach(function(e){document.addEventListener(e,onFirst,{capture:true,passive:true});});
+      };
+      _pendingPlayEvts.forEach(function(e){document.addEventListener(e,_pendingOnFirst,{capture:true,passive:true});});
     });
   }
 }
@@ -1789,7 +1801,7 @@ function playHeroBeat(){
     if(raw){var dd=JSON.parse(raw);if(dd.heroBeat){
       bUid=dd.heroBeat.uid||null;
       if(dd.heroBeat.name)bName=dd.heroBeat.name;
-      if(dd.heroBeat.genre)bGenre=dd.heroBeat.genre;
+      if(dd.heroBeat.genre){var _gr=dd.heroBeat.genre;bGenre=_gr==='hiphop'?'Hip-Hop':_gr==='rnb'?'R&B':(_gr.charAt(0).toUpperCase()+_gr.slice(1));}
       if(dd.heroBeat.bpm)bBpm=dd.heroBeat.bpm;
     }}
   }catch(e){}
@@ -1809,7 +1821,7 @@ function playHeroBeat(){
   // Update card back-face labels
   var tn=document.getElementById('fcTrackName');if(tn)tn.textContent=bName;
   var ct=document.getElementById('fcCdTrack');if(ct)ct.textContent=bName;
-  var tm=document.getElementById('fcTrackMeta');if(tm)tm.textContent=bGenre+(bBpm?' · '+bBpm+' BPM':'');
+  var tm=document.getElementById('fcTrackMeta');if(tm)tm.textContent=bGenre+(bGenre&&bBpm?' · ':'')+( bBpm?bBpm+' BPM':'');
 
   // Show now-playing bar + waveform
   document.getElementById('npName').textContent=bName;
@@ -1896,6 +1908,7 @@ function _getAudio(){
       _updateNPProgress(0,0);
       document.getElementById('now-playing').classList.remove('show');
       nowP=null;nowBtn=null;
+      _cancelPendingPlayback();
       // Card flies back to hero
       _heroBeatActive=false;_hpTarget=0;
     });
@@ -1963,7 +1976,22 @@ function _tryPlayAudio(beatIdx){
           _startAudioPlayback(el);
         }catch(x){}
       };
-      req.onerror=function(){};
+      req.onerror=function(){
+        // IndexedDB failed — try Cloudinary URL as last resort
+        try{
+          var _r2=localStorage.getItem('krito_admin_data');
+          if(!_r2)return;
+          var _d2=JSON.parse(_r2);
+          var _bts=_d2.beats;if(!_bts||!_bts[beatIdx])return;
+          var _fb=_bts[beatIdx].audioURL;if(!_fb)return;
+          var _ex='b'+(beatIdx+1);if(nowP!==_ex)return;
+          var _elFb=_getAudio();
+          if(_audioURL){try{URL.revokeObjectURL(_audioURL);}catch(x){}}
+          _audioURL=null;
+          _elFb.src=_fb;_elFb.currentTime=0;
+          _startAudioPlayback(_elFb);
+        }catch(x){}
+      };
     });
   }catch(e){}
 }
@@ -1972,7 +2000,7 @@ function _tryPlayAudio(beatIdx){
 function npSeek(e){
   if(!_audioEl||!_audioEl.duration)return;
   var rect=e.currentTarget.getBoundingClientRect();
-  var pct=(e.clientX-rect.left)/rect.width;
+  var pct=Math.min(Math.max((e.clientX-rect.left)/rect.width,0),1);
   _audioEl.currentTime=pct*_audioEl.duration;
 }
 
@@ -2017,6 +2045,7 @@ function stopAll(){
   _updateNPProgress(0,0);
   document.getElementById('now-playing').classList.remove('show');
   nowP=null;nowBtn=null;
+  _cancelPendingPlayback(); // cancel any waiting autoplay fallback
   // Reset hero card fly-back to hero position
   _heroBeatActive=false;
   _hpTarget=0;
@@ -2135,6 +2164,8 @@ function sendForm(e){
   var service=(document.getElementById('cf_service').value||'').trim();
   var budget=(document.getElementById('cf_budget').value||'').trim();
   var vision=(document.getElementById('cf_vision').value||'').trim();
+  // JS-level guard (browser `required` attr also prevents submit, but just in case)
+  if(!name||!email||!service){return;}
 
   // ── Save submission to localStorage + Firebase ──
   try{
@@ -2178,8 +2209,12 @@ function sendForm(e){
       +(budget?'\n*Budget:* '+budget:'')
       +(vision?'\n\n*Vision:*\n'+vision:'');
     if(phone){
+      // Normalize phone: if 10 digits add India code 91; if already starts with 91 (12 digits) use as-is
+      var waNum=phone;
+      if(waNum.length===10)waNum='91'+waNum;
+      else if(waNum.length===11&&waNum[0]==='0')waNum='91'+waNum.slice(1);
       setTimeout(function(){
-        window.open('https://wa.me/91'+phone+'?text='+encodeURIComponent(msg),'_blank');
+        window.open('https://wa.me/'+waNum+'?text='+encodeURIComponent(msg),'_blank');
       },500);
     } else if(adminEmail){
       // ── Email fallback ──
@@ -2728,7 +2763,14 @@ function sendForm(e){
       if(fc){fc.src=d.heroPhoto;fc.style.display='block';}
       else{
         var ph=document.querySelector('.fc-photo');
-        if(ph){var img=document.createElement('img');img.src=d.heroPhoto;img.style.cssText='width:100%;height:100%;object-fit:cover;border-radius:inherit;position:absolute;inset:0';ph.appendChild(img);}
+        if(ph&&!ph.querySelector('img')){
+          var img=document.createElement('img');
+          img.src=d.heroPhoto;
+          img.style.cssText='width:100%;height:100%;object-fit:cover;border-radius:inherit;position:absolute;inset:0';
+          ph.appendChild(img);
+        } else if(ph&&ph.querySelector('img')){
+          ph.querySelector('img').src=d.heroPhoto;ph.querySelector('img').style.display='block';
+        }
       }
     }
     // Beats — supports both new d.beats[] array and legacy d.beat1...d.beat6
