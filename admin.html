@@ -1046,11 +1046,14 @@ function beatArtChanged(input,idx){
   if(!input.files||!input.files[0])return;
   var reader=new FileReader();
   reader.onload=function(e){
-    beatsList[idx].art=e.target.result;
-    var img=document.getElementById('bprevImg'+idx);
-    var span=document.querySelector('#bprev'+idx+' span');
-    if(img){img.src=e.target.result;img.style.display='block';}
-    if(span)span.style.display='none';
+    // Compress to max 300×300 JPEG @85% — keeps Firebase payload small for 6 covers
+    _compressImg(e.target.result,300,300,0.85,function(compressed){
+      beatsList[idx].art=compressed;
+      var img=document.getElementById('bprevImg'+idx);
+      var span=document.querySelector('#bprev'+idx+' span');
+      if(img){img.src=compressed;img.style.display='block';}
+      if(span)span.style.display='none';
+    });
   };
   reader.readAsDataURL(input.files[0]);
 }

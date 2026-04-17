@@ -1657,7 +1657,7 @@ function _fbPortInit(){
       if(!d)return;
       try{
         localStorage.setItem('krito_admin_data',JSON.stringify(d));
-        applyData(d);
+        if(typeof _kApplyData==='function')_kApplyData(d);
         // Re-run hero audio preload with new data (fixes timing issue)
         // Only reset URL if it actually changed AND audio is NOT currently playing
         var _newHeroURL=d.heroBeat&&d.heroBeat.audioURL?d.heroBeat.audioURL:null;
@@ -2782,10 +2782,11 @@ function sendForm(e){
 })();
 
 // ===== ADMIN PANEL LIVE SYNC =====
+var _kApplyData=null; // exposed so _fbPortInit Firebase callback can call it
 (function(){
   var STORE_KEY='krito_admin_data';
 
-  function applyData(d){
+  _kApplyData=function(d){
     if(!d)return;
     // Hero
     if(d.heroBadge){var b=document.getElementById('hBadgeTxt');if(b)b.textContent=d.heroBadge;}
@@ -2926,18 +2927,18 @@ function sendForm(e){
         fb.innerHTML='<p>© 2025 '+copy+'. All Rights Reserved.</p><p>Made with <span class="red">♥</span> in '+city+'</p>';
       }
     }
-  }
+  }; // end _kApplyData
 
   // Apply saved data on page load
   try{
     var raw=localStorage.getItem(STORE_KEY);
-    if(raw)applyData(JSON.parse(raw));
+    if(raw)_kApplyData(JSON.parse(raw));
   }catch(e){}
 
   // Listen for live updates from admin panel
   window.addEventListener('message',function(e){
     if(e.data&&e.data.type==='KRITO_UPDATE'){
-      try{applyData(e.data.data);}catch(e2){}
+      try{if(_kApplyData)_kApplyData(e.data.data);}catch(e2){}
     }
   });
 })();
