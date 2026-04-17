@@ -1158,11 +1158,11 @@ footer{background:#180c08}
       <div class="f-box-outer rv rgt"><div class="f-box">
         <form class="c-form" id="cForm" onsubmit="sendForm(event)">
           <div class="f-row">
-            <div class="fg"><label>Your Name</label><input type="text" id="cf_name" placeholder="Arjun Singh" required></div>
-            <div class="fg"><label>Email</label><input type="email" id="cf_email" placeholder="artist@gmail.com" required></div>
+            <div class="fg"><label for="cf_name">Your Name</label><input type="text" id="cf_name" name="name" placeholder="Arjun Singh" required></div>
+            <div class="fg"><label for="cf_email">Email</label><input type="email" id="cf_email" name="email" placeholder="artist@gmail.com" required></div>
           </div>
-          <div class="fg"><label>Service</label>
-            <select id="cf_service" required>
+          <div class="fg"><label for="cf_service">Service</label>
+            <select id="cf_service" name="service" required>
               <option value="">— Select —</option>
               <option>Beat Licensing (MP3)</option>
               <option>Beat Licensing (WAV)</option>
@@ -1172,8 +1172,8 @@ footer{background:#180c08}
               <option>Full Production</option>
             </select>
           </div>
-          <div class="fg"><label>Budget</label><input type="text" id="cf_budget" placeholder="₹999 – ₹9,999"></div>
-          <div class="fg"><label>Your Vision</label><textarea rows="5" id="cf_vision" placeholder="Describe your sound, mood, references, release date..." required></textarea></div>
+          <div class="fg"><label for="cf_budget">Budget</label><input type="text" id="cf_budget" name="budget" placeholder="₹999 – ₹9,999"></div>
+          <div class="fg"><label for="cf_vision">Your Vision</label><textarea rows="5" id="cf_vision" name="vision" placeholder="Describe your sound, mood, references, release date..." required></textarea></div>
           <button type="submit" class="btn btn-apple fw"><span class="btn-apple-wrap" style="width:100%"><span class="btn-apple-shell"><span class="btn-apple-inner"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle;margin-right:6px;margin-top:-1px"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>Send Message</span></span></span></button>
         </form>
         <div class="f-success" id="fSuc">
@@ -1195,7 +1195,7 @@ footer{background:#180c08}
     </div>
     <div class="ft-col"><h4>Navigate</h4><ul><li><a href="#home">Home</a></li><li><a href="#beats">Beats</a></li><li><a href="#services">Services</a></li><li><a href="#contact">Contact</a></li></ul></div>
     <div class="ft-col"><h4>Services</h4><ul><li><a href="#services">Beat Licensing</a></li><li><a href="#services">Custom Beats</a></li><li><a href="#services">Mix &amp; Master</a></li><li><a href="#services">Full Production</a></li></ul></div>
-    <div class="ft-col ft-news"><h4>Free Beat Pack</h4><p>Subscribe and get an exclusive 5-beat pack — free.</p><div class="nl-f"><input type="email" placeholder="your@email.com"><button><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg></button></div></div>
+    <div class="ft-col ft-news"><h4>Free Beat Pack</h4><p>Subscribe and get an exclusive 5-beat pack — free.</p><div class="nl-f"><label for="nl_email" style="display:none">Email for Free Beat Pack</label><input type="email" id="nl_email" name="email" placeholder="your@email.com" aria-label="Email for Free Beat Pack"><button><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg></button></div></div>
   </div>
   <div class="ft-bot"><p>© 2025 KRITO. All Rights Reserved.</p><p>Made with <span class="red">♥</span> in Mohali</p></div>
 </footer>

@@ -807,6 +807,14 @@ function escH(s){return s?(''+s).replace(/&/g,'&amp;').replace(/</g,'&lt;').repl
 function renderBeats(){
   var cont=document.getElementById('beatsContainer');
   if(!cont)return;
+  // Show warning banner if any beat is missing audioURL
+  var missingAudio=beatsList.filter(function(b){return!b.audioURL;});
+  var warn=document.getElementById('beatsAudioWarn');
+  if(!warn){warn=document.createElement('div');warn.id='beatsAudioWarn';warn.style.cssText='background:rgba(240,102,10,.12);border:1px solid rgba(240,102,10,.35);border-radius:8px;padding:12px 16px;margin-bottom:18px;font-size:12px;color:#F0660A;display:none;';cont.parentNode.insertBefore(warn,cont);}
+  if(missingAudio.length>0){
+    warn.style.display='block';
+    warn.innerHTML='<b>⚠ '+missingAudio.length+' beat'+(missingAudio.length>1?'s':'')+' mein audio upload nahi hai.</b> Har beat ke "Upload MP3" button se apni audio file dobara upload karo — tab hi sab browsers pe play hoga.';
+  }else{warn.style.display='none';}
   var html='';
   for(var i=0;i<beatsList.length;i++){
     var b=beatsList[i];
@@ -1301,11 +1309,34 @@ function showToast(){
   setTimeout(function(){t.classList.remove('show');},2200);
 }
 
+// ===== IMAGE COMPRESSION (keeps Firebase payload small) =====
+function _compressImg(dataUrl,maxW,maxH,quality,cb){
+  var im=new Image();
+  im.onload=function(){
+    var w=im.width,h=im.height;
+    var scale=Math.min(maxW/w,maxH/h,1);
+    var cw=Math.round(w*scale),ch=Math.round(h*scale);
+    var cv=document.createElement('canvas');
+    cv.width=cw;cv.height=ch;
+    cv.getContext('2d').drawImage(im,0,0,cw,ch);
+    cb(cv.toDataURL('image/jpeg',quality));
+  };
+  im.onerror=function(){cb(dataUrl);}; // fallback: use original
+  im.src=dataUrl;
+}
+
 // ===== PHOTO PREVIEWS =====
 function previewHeroPhoto(input){
   if(!input.files||!input.files[0])return;
   var reader=new FileReader();
-  reader.onload=function(e){setHeroPhotoSrc(e.target.result);};
+  reader.onload=function(e){
+    // Compress to max 420×520 JPEG @85% — keeps Firebase payload under 150KB
+    _compressImg(e.target.result,420,520,0.85,function(compressed){
+      setHeroPhotoSrc(compressed);
+      // Auto-save so Firebase immediately has the new photo
+      setTimeout(function(){saveAll();},200);
+    });
+  };
   reader.readAsDataURL(input.files[0]);
 }
 function setHeroPhotoSrc(src){
@@ -1318,7 +1349,9 @@ function setHeroPhotoSrc(src){
 function previewTestiAv(input,idx){
   if(!input.files||!input.files[0])return;
   var reader=new FileReader();
-  reader.onload=function(e){setTestiAv(idx,e.target.result);};
+  reader.onload=function(e){
+    _compressImg(e.target.result,120,120,0.82,function(c){setTestiAv(idx,c);});
+  };
   reader.readAsDataURL(input.files[0]);
 }
 function setTestiAv(idx,src){
