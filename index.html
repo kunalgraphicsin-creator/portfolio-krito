@@ -1646,6 +1646,7 @@ function animNP(){
 var _fbPortDB=null;
 
 function _fbPortInit(){
+  if(_fbPortDB)return; // already initialised — prevents double listener
   if(typeof firebase==='undefined'||!isFirebaseConfigured())return;
   try{
     if(!firebase.apps.length)firebase.initializeApp(FIREBASE_CONFIG);
@@ -1692,6 +1693,8 @@ function _fbPortInit(){
     });
   }catch(e){}
 }
+// Fire immediately so Firebase data is ready before user touches any beat button
+_fbPortInit();
 
 // ===== HERO PLAY EASE (module-level, read by initFlip's raf) =====
 var _hpEase=0, _hpTarget=0, _heroBeatActive=false;
@@ -1916,6 +1919,33 @@ function _getAudio(){
     _audioEl.addEventListener('timeupdate',function(){
       if(_audioEl.duration)_updateNPProgress(_audioEl.currentTime,_audioEl.duration);
     });
+    // Error fallback — if Cloudinary raw URL can't be decoded (wrong Content-Type on some browsers),
+    // fetch it as a blob and force audio/mpeg MIME type, then retry playback
+    _audioEl.addEventListener('error',function(){
+      var src=_audioEl.src;
+      if(!src||src===window.location.href||src.indexOf('blob:')===0)return;
+      fetch(src).then(function(r){return r.blob();})
+        .then(function(blob){
+          if(_audioEl.src!==src)return; // beat changed while fetching
+          var mime=(blob.type&&blob.type!=='application/octet-stream')?blob.type:'audio/mpeg';
+          var fixed=new Blob([blob],{type:mime});
+          if(_audioURL){try{URL.revokeObjectURL(_audioURL);}catch(x){}}
+          _audioURL=URL.createObjectURL(fixed);
+          _audioEl.src=_audioURL;
+          _audioEl.currentTime=0;
+          _audioEl.play().catch(function(){
+            if(!_playbackListenerActive){
+              _playbackListenerActive=true;
+              _pendingPlayEvts=['click','touchstart','touchend','pointerdown','keydown'];
+              _pendingOnFirst=function(){
+                _cancelPendingPlayback();
+                if(_audioEl.src&&_audioEl.src!==window.location.href)_audioEl.play().catch(function(){});
+              };
+              _pendingPlayEvts.forEach(function(e){document.addEventListener(e,_pendingOnFirst,{capture:true,passive:true});});
+            }
+          });
+        }).catch(function(){});
+    });
   }
   return _audioEl;
 }
@@ -2016,6 +2046,8 @@ function playBeat(btn,id,name,genre){
   // Toggle same beat = stop
   if(nowP===id&&nowBtn===btn){
     nowP=null;nowBtn=null;
+    _cancelPendingPlayback(); // stop any queued autoplay-fallback
+    if(_audioEl){_audioEl.pause();_audioEl.currentTime=0;}
     document.getElementById('now-playing').classList.remove('show');
     if(npAnim)cancelAnimationFrame(npAnim);
     return;

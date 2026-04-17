@@ -658,33 +658,42 @@ function _initFirebase(){
 // ===== CLOUDINARY AUDIO UPLOAD (free, no credit card) =====
 function _cloudinaryUpload(file,onProgress,onDone){
   if(!isCloudinaryConfigured()){onDone(null);return;}
-  var fd=new FormData();
-  fd.append('file',file);
-  fd.append('upload_preset',CLOUDINARY_CONFIG.uploadPreset);
-  // Use 'raw' type — works for ALL file types with unsigned presets (audio, video, etc.)
-  var xhr=new XMLHttpRequest();
-  xhr.open('POST','https://api.cloudinary.com/v1_1/'+CLOUDINARY_CONFIG.cloudName+'/raw/upload');
-  xhr.upload.onprogress=function(e){
-    if(e.lengthComputable&&onProgress)onProgress(Math.round(e.loaded/e.total*100));
-  };
-  xhr.onload=function(){
-    try{
-      var res=JSON.parse(xhr.responseText);
-      if(res.secure_url){
-        console.log('Cloudinary upload ok:',res.secure_url);
-        onDone(res.secure_url);
-      }else{
-        console.log('Cloudinary error:',JSON.stringify(res));
-        alert('Audio upload fail hua: '+(res.error&&res.error.message?res.error.message:'Unknown error')+'\nDobara try karein.');
-        onDone(null);
-      }
-    }catch(e){console.log('Cloudinary parse error',e);onDone(null);}
-  };
-  xhr.onerror=function(){
-    alert('Network error — audio upload nahi hua. Internet check karein.');
-    onDone(null);
-  };
-  xhr.send(fd);
+  // Try 'video' resource type first — gives proper audio/mpeg Content-Type so beats
+  // play correctly in ALL browsers (Firefox, Safari, etc.). Falls back to 'raw' if
+  // the preset only allows raw uploads.
+  function doUpload(resType){
+    var fd=new FormData();
+    fd.append('file',file);
+    fd.append('upload_preset',CLOUDINARY_CONFIG.uploadPreset);
+    var xhr=new XMLHttpRequest();
+    xhr.open('POST','https://api.cloudinary.com/v1_1/'+CLOUDINARY_CONFIG.cloudName+'/'+resType+'/upload');
+    xhr.upload.onprogress=function(e){
+      if(e.lengthComputable&&onProgress)onProgress(Math.round(e.loaded/e.total*100));
+    };
+    xhr.onload=function(){
+      try{
+        var res=JSON.parse(xhr.responseText);
+        if(res.secure_url){
+          console.log('Cloudinary upload ok ('+resType+'):',res.secure_url);
+          onDone(res.secure_url);
+        }else if(resType==='video'&&res.error){
+          // Preset may not allow video resource type — silently retry as raw
+          console.log('video/upload rejected, retrying as raw:',res.error.message);
+          doUpload('raw');
+        }else{
+          console.log('Cloudinary error:',JSON.stringify(res));
+          alert('Audio upload fail hua: '+(res.error&&res.error.message?res.error.message:'Unknown error')+'\nDobara try karein.');
+          onDone(null);
+        }
+      }catch(e){console.log('Cloudinary parse error',e);onDone(null);}
+    };
+    xhr.onerror=function(){
+      if(resType==='video'){doUpload('raw');}// network glitch on video — try raw
+      else{alert('Network error — audio upload nahi hua. Internet check karein.');onDone(null);}
+    };
+    xhr.send(fd);
+  }
+  doUpload('video');
 }
 
 function _fbSaveData(d){
@@ -1116,6 +1125,81 @@ function _loadDataFromStorage(){
     if(d.footerCopy) document.getElementById('f_footerCopy').value=d.footerCopy;
     if(d.footerCity) document.getElementById('f_footerCity').value=d.footerCity;
   }catch(e){}
+  // After loading, silently sync any beats that have audio in IndexedDB but no Cloudinary URL
+  setTimeout(_autoSyncMissingAudio,800);
+}
+
+// ===== AUTO-SYNC: push IndexedDB audio to Cloudinary if audioURL is missing =====
+// Runs once on admin load — fixes beats uploaded before Cloudinary URL was saved to Firebase
+var _autoSyncRunning=false;
+function _autoSyncMissingAudio(){
+  if(_autoSyncRunning||!isCloudinaryConfigured())return;
+  _autoSyncRunning=true;
+  var toSync=[];
+  beatsList.forEach(function(b,idx){
+    if(b.uid&&!b.audioURL)toSync.push({idx:idx,uid:b.uid,name:b.audioName||('beat'+(idx+1)+'.mp3')});
+  });
+  // Also check hero beat
+  var heroNeedsSync=heroBeatUID&&!window._heroBeatAudioURL;
+  if(toSync.length===0&&!heroNeedsSync){_autoSyncRunning=false;return;}
+  var syncIdx=0;
+  function syncNext(){
+    if(syncIdx>=toSync.length){
+      // After beats done, check hero
+      if(heroNeedsSync){
+        openAudioDB(function(db){
+          if(!db){_autoSyncRunning=false;return;}
+          var req=db.transaction('beats').objectStore('beats').get(heroBeatUID);
+          req.onsuccess=function(e){
+            if(!e.target.result||!e.target.result.data){_autoSyncRunning=false;return;}
+            var b64=e.target.result.data;
+            var parts=b64.split(',');
+            var mime=(parts[0].match(/:(.*?);/)||['','audio/mpeg'])[1];
+            var bs=atob(parts[1]);var arr=new Uint8Array(bs.length);
+            for(var i=0;i<bs.length;i++)arr[i]=bs.charCodeAt(i);
+            var blob=new Blob([arr],{type:mime});
+            var fname=heroBeatAudioName||'hero.mp3';
+            var file=new File([blob],fname,{type:mime});
+            _cloudinaryUpload(file,null,function(url){
+              if(url){window._heroBeatAudioURL=url;setTimeout(function(){saveAll();},200);}
+              _autoSyncRunning=false;
+            });
+          };
+          req.onerror=function(){_autoSyncRunning=false;};
+        });
+      }else{_autoSyncRunning=false;}
+      return;
+    }
+    var item=toSync[syncIdx++];
+    openAudioDB(function(db){
+      if(!db){syncNext();return;}
+      var req=db.transaction('beats').objectStore('beats').get(item.uid);
+      req.onsuccess=function(e){
+        if(!e.target.result||!e.target.result.data){syncNext();return;}
+        var b64=e.target.result.data;
+        var parts=b64.split(',');
+        var mime=(parts[0].match(/:(.*?);/)||['','audio/mpeg'])[1];
+        var bs=atob(parts[1]);var arr=new Uint8Array(bs.length);
+        for(var i=0;i<bs.length;i++)arr[i]=bs.charCodeAt(i);
+        var blob=new Blob([arr],{type:mime});
+        var file=new File([blob],item.name,{type:mime});
+        // Show syncing indicator
+        var st=document.getElementById('baudiostatus'+item.idx);
+        if(st){st.innerHTML='<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="animation:spin .8s linear infinite"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg> Syncing to cloud...';st.className='beat-audio-status';}
+        _cloudinaryUpload(file,null,function(url){
+          if(url){
+            beatsList[item.idx].audioURL=url;
+            var st2=document.getElementById('baudiostatus'+item.idx);
+            if(st2){st2.innerHTML='<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> '+escH(item.name)+' ☁';st2.className='beat-audio-status has-audio';}
+            setTimeout(function(){saveAll();},200);
+          }
+          syncNext();
+        });
+      };
+      req.onerror=function(){syncNext();};
+    });
+  }
+  syncNext();
 }
 
 // ===== COLLECT ALL DATA =====
