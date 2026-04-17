@@ -2913,25 +2913,41 @@ function sendForm(e){
 // ===== SUBTLE SOUND INTERACTION =====
 (function(){
   var ctx=null;
-  function getCtx(){
-    if(!ctx)ctx=new(window.AudioContext||window.webkitAudioContext)();
-    return ctx;
-  }
-  function beep(freq,vol,dur,type){
+  var ctxUnlocked=false;
+
+  // Create + resume AudioContext ONLY after a real user gesture (click/key/touch)
+  // Scroll events from setInterval are synthetic — NOT user gestures → skip
+  function _tryUnlock(){
+    if(ctxUnlocked)return;
     try{
-      var ac=getCtx();
-      var osc=ac.createOscillator();
-      var gain=ac.createGain();
-      osc.connect(gain);gain.connect(ac.destination);
-      osc.type=type||'sine';
-      osc.frequency.setValueAtTime(freq,ac.currentTime);
-      gain.gain.setValueAtTime(0,ac.currentTime);
-      gain.gain.linearRampToValueAtTime(vol,ac.currentTime+0.01);
-      gain.gain.exponentialRampToValueAtTime(0.0001,ac.currentTime+dur);
-      osc.start(ac.currentTime);
-      osc.stop(ac.currentTime+dur+0.05);
+      if(!ctx)ctx=new(window.AudioContext||window.webkitAudioContext)();
+      if(ctx.state==='suspended')ctx.resume().catch(function(){});
+      ctxUnlocked=true;
     }catch(e){}
   }
+
+  function beep(freq,vol,dur,type){
+    // Silently skip if AudioContext not yet unlocked by user gesture
+    if(!ctxUnlocked||!ctx||ctx.state!=='running')return;
+    try{
+      var osc=ctx.createOscillator();
+      var gain=ctx.createGain();
+      osc.connect(gain);gain.connect(ctx.destination);
+      osc.type=type||'sine';
+      osc.frequency.setValueAtTime(freq,ctx.currentTime);
+      gain.gain.setValueAtTime(0,ctx.currentTime);
+      gain.gain.linearRampToValueAtTime(vol,ctx.currentTime+0.01);
+      gain.gain.exponentialRampToValueAtTime(0.0001,ctx.currentTime+dur);
+      osc.start(ctx.currentTime);
+      osc.stop(ctx.currentTime+dur+0.05);
+    }catch(e){}
+  }
+
+  // Unlock on first real user gesture (click / key / touch — NOT scroll/hover)
+  ['click','keydown','touchend'].forEach(function(ev){
+    document.addEventListener(ev,_tryUnlock,{once:true,capture:true,passive:true});
+  });
+
   // Hover on buttons/links — tiny high tick
   var hoverEls=document.querySelectorAll('.btn,a,.hire-btn,.n-links a');
   hoverEls.forEach(function(el){
@@ -2942,7 +2958,7 @@ function sendForm(e){
     if(e.target.closest('button,a,.btn,.bc')){beep(220,0.07,0.12,'triangle');}
     else{beep(440,0.03,0.08,'sine');}
   },{passive:true});
-  // Scroll ambient tick — every ~300px
+  // Scroll ambient tick — every ~300px (only fires after unlock)
   var lastTick=0;
   window.addEventListener('scroll',function(){
     var sy=window.scrollY;

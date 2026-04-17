@@ -652,10 +652,6 @@ function _initFirebase(){
     // Mark ready immediately — rules allow open write (personal portfolio)
     _fbReady=true;
     console.log('Firebase ready');
-    // Test write to confirm connection
-    _fbDB.ref('krito_portfolio/.connected').set(true).catch(function(e){
-      console.log('Firebase write test failed:',e.message);
-    });
   }catch(e){console.log('Firebase init error',e);}
 }
 
