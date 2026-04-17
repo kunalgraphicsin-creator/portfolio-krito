@@ -935,6 +935,8 @@ footer{background:#180c08}
       <button class="f-btn" data-f="drill">Drill</button>
       <button class="f-btn" data-f="hiphop">Hip-Hop</button>
       <button class="f-btn" data-f="rnb">R&amp;B</button>
+      <button class="f-btn" data-f="afrobeats">Afrobeats</button>
+      <button class="f-btn" data-f="pop">Pop</button>
     </div>
 
     <div class="bg" id="beatsGrid">
@@ -1195,7 +1197,7 @@ footer{background:#180c08}
     </div>
     <div class="ft-col"><h4>Navigate</h4><ul><li><a href="#home">Home</a></li><li><a href="#beats">Beats</a></li><li><a href="#services">Services</a></li><li><a href="#contact">Contact</a></li></ul></div>
     <div class="ft-col"><h4>Services</h4><ul><li><a href="#services">Beat Licensing</a></li><li><a href="#services">Custom Beats</a></li><li><a href="#services">Mix &amp; Master</a></li><li><a href="#services">Full Production</a></li></ul></div>
-    <div class="ft-col ft-news"><h4>Free Beat Pack</h4><p>Subscribe and get an exclusive 5-beat pack — free.</p><div class="nl-f"><label for="nl_email" style="display:none">Email for Free Beat Pack</label><input type="email" id="nl_email" name="email" placeholder="your@email.com" aria-label="Email for Free Beat Pack"><button><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg></button></div></div>
+    <div class="ft-col ft-news"><h4>Free Beat Pack</h4><p>Subscribe and get an exclusive 5-beat pack — free.</p><div class="nl-f"><label for="nl_email" style="display:none">Email for Free Beat Pack</label><input type="email" id="nl_email" name="email" placeholder="your@email.com" aria-label="Email for Free Beat Pack"><button onclick="subscribeNewsletter(event)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg></button></div></div>
   </div>
   <div class="ft-bot"><p>© 2025 KRITO. All Rights Reserved.</p><p>Made with <span class="red">♥</span> in Mohali</p></div>
 </footer>
@@ -1214,7 +1216,7 @@ var ldInterval=setInterval(function(){
 function init(){
   document.getElementById('home').classList.add('ready');
   initNav();initParticles();initReveal();
-  initWaveforms();initHeroWave();initTestimonials();
+  initWaveforms();initTestimonials();
   initFlip();
   // Try to load live data from Firebase first
   _fbPortInit();
@@ -1542,7 +1544,6 @@ function initReveal(){
       if(e.isIntersecting){
         e.target.classList.add('in');
         e.target.querySelectorAll('.sk-fill').forEach(function(f){f.style.width=f.dataset.w+'%'});
-        e.target.querySelectorAll('.cnt').forEach(animCnt);
       }
     });
   },{threshold:0,rootMargin:'0px 0px -40px 0px'});
@@ -1554,12 +1555,6 @@ function initReveal(){
       if(r.top<window.innerHeight)el.classList.add('in');
     });
   },100);
-  var co=new IntersectionObserver(function(e){e.forEach(function(en){if(en.isIntersecting)en.target.querySelectorAll('.cnt').forEach(animCnt)})},{threshold:.2});
-  var hs=document.querySelector('.h-stats');if(hs)co.observe(hs);
-}
-function animCnt(el){
-  var t=+el.dataset.t,d=2000,s=t/(d/16),c=0;
-  var tm=setInterval(function(){c+=s;if(c>=t){c=t;clearInterval(tm)}el.textContent=Math.floor(c)},16);
 }
 
 // ===== WAVEFORMS =====
@@ -1577,28 +1572,6 @@ function drawWave(id,playing){
 function initWaveforms(){setTimeout(function(){['b1','b2','b3','b4','b5','b6'].forEach(function(id){drawWave(id,false)})},300)}
 window.addEventListener('resize',function(){['b1','b2','b3','b4','b5','b6'].forEach(function(id){if(!wAnims[id])drawWave(id,false)})});
 
-// ===== HERO WAVE =====
-function initHeroWave(){
-  var cv=document.getElementById('heroWave');if(!cv)return;
-  var ctx=cv.getContext('2d');var t=0;
-  (function draw(){
-    ctx.clearRect(0,0,cv.width,cv.height);
-    ctx.beginPath();ctx.strokeStyle='rgba(240,102,10,.7)';ctx.lineWidth=2;
-    for(var x=0;x<cv.width;x++){
-      var y=cv.height/2+Math.sin((x+t)*0.05)*18+Math.sin((x+t)*0.02)*10;
-      x===0?ctx.moveTo(x,y):ctx.lineTo(x,y);
-    }
-    ctx.stroke();
-    ctx.beginPath();ctx.strokeStyle='rgba(240,102,10,.25)';
-    for(var x=0;x<cv.width;x++){
-      var y=cv.height/2+Math.sin((x+t)*0.08+2)*12+Math.cos((x+t)*0.03)*8;
-      x===0?ctx.moveTo(x,y):ctx.lineTo(x,y);
-    }
-    ctx.stroke();
-    t+=2;requestAnimationFrame(draw);
-  })();
-}
-
 // ===== NOW PLAYING WAVEFORM =====
 var npAnim=null;
 function animNP(){
@@ -1609,7 +1582,7 @@ function animNP(){
   var BARS=36;
   var cur=new Float32Array(BARS).fill(0.15);
   var tgt=new Float32Array(BARS).fill(0.15);
-  function rr(cx,cy,x,y,w,h,r){
+  function rr(cx,x,y,w,h,r){
     r=Math.min(r,w/2,h/2);if(r<0)r=0;
     cx.beginPath();cx.moveTo(x+r,y);cx.lineTo(x+w-r,y);
     cx.arcTo(x+w,y,x+w,y+r,r);cx.lineTo(x+w,y+h-r);
@@ -1635,7 +1608,7 @@ function animNP(){
       grd.addColorStop(0.5,'rgba(240,102,10,'+alpha+')');
       grd.addColorStop(1,'rgba(180,55,0,'+(alpha*.5)+')');
       ctx.fillStyle=grd;
-      rr(ctx,ctx,x,y,bw,h,bw/2);
+      rr(ctx,x,y,bw,h,bw/2);
     }
     npAnim=requestAnimationFrame(tick);
   }
@@ -1654,7 +1627,11 @@ function _fbPortInit(){
     // Load data and listen for real-time changes
     _fbPortDB.ref('krito_portfolio/data').on('value',function(snap){
       var d=snap.val();
-      if(!d)return;
+      if(!d){
+        // Firebase is empty — still try to apply any cached localStorage data
+        try{var _cached=localStorage.getItem('krito_admin_data');if(_cached&&typeof _kApplyData==='function')_kApplyData(JSON.parse(_cached));}catch(x){}
+        return;
+      }
       try{
         localStorage.setItem('krito_admin_data',JSON.stringify(d));
         if(typeof _kApplyData==='function')_kApplyData(d);
@@ -1706,6 +1683,7 @@ var _heroPreloadUID=null;
 
 function _b64ToBlob(b64){
   var parts=b64.split(',');
+  if(parts.length<2)throw new Error('Invalid base64');
   var mime=(parts[0].match(/:(.*?);/)||['','audio/mpeg'])[1];
   var bs=atob(parts[1]);var arr=new Uint8Array(bs.length);
   for(var i=0;i<bs.length;i++)arr[i]=bs.charCodeAt(i);
@@ -1994,6 +1972,7 @@ function _tryPlayAudio(beatIdx){
         try{
           if(_audioURL){try{URL.revokeObjectURL(_audioURL);}catch(x){}}
           var parts=b64.split(',');
+          if(parts.length<2)return;
           var mime=(parts[0].match(/:(.*?);/)||['','audio/mpeg'])[1];
           var bs=atob(parts[1]);
           var arr=new Uint8Array(bs.length);
@@ -2040,6 +2019,7 @@ function playBeat(btn,id,name,genre){
     if(nowBtn){nowBtn.innerHTML=SVG_PLAY;nowBtn.classList.remove('on');}
     stopWave(nowP);
     if(wAnims['np']){cancelAnimationFrame(wAnims['np']);wAnims['np']=null;}
+    if(_npProgAnim){cancelAnimationFrame(_npProgAnim);_npProgAnim=null;}
     if(_audioEl){_audioEl.pause();_audioEl.currentTime=0;}
     _updateNPProgress(0,0);
   }
@@ -2073,12 +2053,12 @@ function stopAll(){
   if(nowBtn){nowBtn.innerHTML=SVG_PLAY;nowBtn.classList.remove('on');}
   if(nowP){stopWave(nowP);}
   if(npAnim)cancelAnimationFrame(npAnim);
+  if(_npProgAnim){cancelAnimationFrame(_npProgAnim);_npProgAnim=null;}
   if(_audioEl){_audioEl.pause();_audioEl.currentTime=0;}
   _updateNPProgress(0,0);
   document.getElementById('now-playing').classList.remove('show');
   nowP=null;nowBtn=null;
-  _cancelPendingPlayback(); // cancel any waiting autoplay fallback
-  // Reset hero card fly-back to hero position
+  _cancelPendingPlayback();
   _heroBeatActive=false;
   _hpTarget=0;
 }
@@ -2574,6 +2554,7 @@ function sendForm(e){
       document.querySelectorAll('.f-btn').forEach(function(b){b.classList.remove('on');});
       btn.classList.add('on');
       document.querySelectorAll('#beatsGrid .bc-glow-wrap').forEach(function(wrap){
+        if(wrap.classList.contains('data-hidden'))return; // admin hid this beat (not enough beats)
         var card=wrap.querySelector('.bc');
         var show=f==='all'||card.dataset.g===f;
         wrap.classList.toggle('hidden',!show);
@@ -2646,29 +2627,6 @@ function sendForm(e){
     });
   },{threshold:0.3});
   sections.forEach(function(s){obs.observe(s);});
-
-  // Counter number roll animation — smooth count up
-  function rollNum(el,target){
-    var start=0,dur=1600,t0=null;
-    function step(ts){
-      if(!t0)t0=ts;
-      var p=Math.min((ts-t0)/dur,1);
-      var ease=p<0.5?2*p*p:1-Math.pow(-2*p+2,2)/2;
-      el.textContent=Math.round(ease*target)+(el.dataset.suffix||'');
-      if(p<1)requestAnimationFrame(step);
-    }
-    requestAnimationFrame(step);
-  }
-  var cntObs=new IntersectionObserver(function(entries){
-    entries.forEach(function(e){
-      if(e.isIntersecting){
-        var el=e.target,val=parseInt(el.dataset.target||el.textContent);
-        if(!isNaN(val)){el.dataset.target=el.dataset.target||val;rollNum(el,val);}
-        cntObs.unobserve(el);
-      }
-    });
-  },{threshold:0.5});
-  document.querySelectorAll('.cnt').forEach(function(el){cntObs.observe(el);});
 })();
 
 // ===== DOT ORBIT BACKGROUND =====
@@ -2821,14 +2779,14 @@ var _kApplyData=null; // exposed so _fbPortInit Firebase callback can call it
         var b2=_beats[_bi];
         bc.style.display='';
         var _bcWrap=bc.parentNode&&bc.parentNode.classList.contains('bc-glow-wrap')?bc.parentNode:null;
-        if(_bcWrap)_bcWrap.style.display='';
+        if(_bcWrap){_bcWrap.style.display='';_bcWrap.classList.remove('data-hidden');}
         if(b2.name){
           var h3=bc.querySelector('.bc-top h3');if(h3)h3.textContent=b2.name;
           var playBtn=bc.querySelector('.bc-play');
           if(playBtn){
             var _gl=b2.genre==='hiphop'?'Hip-Hop':b2.genre==='rnb'?'R&B':(b2.genre?(b2.genre.charAt(0).toUpperCase()+b2.genre.slice(1)):'');
             var _bid='b'+(_bi+1);
-            playBtn.setAttribute('onclick',"playBeat(this,'"+_bid+"','"+b2.name.replace(/'/g,"\\'")+"','"+_gl+"')");
+            playBtn.setAttribute('onclick','playBeat(this,\''+_bid+'\','+JSON.stringify(b2.name)+','+JSON.stringify(_gl)+')');
           }
         }
         if(b2.genre){
@@ -2853,9 +2811,11 @@ var _kApplyData=null; // exposed so _fbPortInit Firebase callback can call it
       }else{
         bc.style.display='none';
         var _bcWrap2=bc.parentNode&&bc.parentNode.classList.contains('bc-glow-wrap')?bc.parentNode:null;
-        if(_bcWrap2)_bcWrap2.style.display='none';
+        if(_bcWrap2){_bcWrap2.style.display='none';_bcWrap2.classList.add('data-hidden');}
       }
     }
+    // Update beats count in section header
+    if(_beats){var _bsub=document.querySelector('#beats .s-sub');if(_bsub)_bsub.textContent=_beats.length+' premium track'+(_beats.length===1?'':'s')+'. Each one a hit waiting to happen.';}
     // Services
     if(d.srvSubtext){var ss=document.getElementById('srvSubtext');if(ss)ss.textContent=d.srvSubtext;}
     for(var j=1;j<=3;j++){
@@ -2998,6 +2958,22 @@ var _kApplyData=null; // exposed so _fbPortInit Firebase callback can call it
     if(Math.abs(sy-lastTick)>300){lastTick=sy;beep(660,0.018,0.05,'sine');}
   },{passive:true});
 })();
+
+function subscribeNewsletter(e){
+  if(e)e.preventDefault();
+  var inp=document.getElementById('nl_email');
+  if(!inp)return;
+  var email=(inp.value||'').trim();
+  if(!email||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){inp.style.borderColor='#f06';setTimeout(function(){inp.style.borderColor='';},1200);return;}
+  // Save subscriber to Firebase
+  try{
+    if(typeof firebase!=='undefined'&&_fbPortDB){
+      firebase.database().ref('krito_portfolio/subscribers').push({email:email,time:new Date().toISOString()}).catch(function(){});
+    }
+  }catch(x){}
+  inp.value='';inp.placeholder='Subscribed! ✓';inp.style.borderColor='#F0660A';
+  setTimeout(function(){inp.placeholder='your@email.com';inp.style.borderColor='';},3000);
+}
 
 </script>
 </body>

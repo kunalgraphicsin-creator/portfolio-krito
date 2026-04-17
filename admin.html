@@ -691,6 +691,11 @@ function _cloudinaryUpload(file,onProgress,onDone){
       if(resType==='video'){doUpload('raw');}// network glitch on video — try raw
       else{alert('Network error — audio upload nahi hua. Internet check karein.');onDone(null);}
     };
+    xhr.timeout=120000; // 2 minute timeout
+    xhr.ontimeout=function(){
+      if(resType==='video'){doUpload('raw');}
+      else{onDone(null);}
+    };
     xhr.send(fd);
   }
   doUpload('video');
@@ -721,10 +726,12 @@ function _fbLoadSubmissions(cb){
   if(!_fbDB){cb(null);return;}
   _fbDB.ref('krito_portfolio/submissions').once('value').then(function(snap){
     var obj=snap.val()||{};
-    // Include Firebase key (_fbKey) in each submission so we can delete by key
     var arr=Object.keys(obj).map(function(k){return Object.assign({},obj[k],{_fbKey:k});});
-    arr.sort(function(a,b){return new Date(b.time)-new Date(a.time);});
-    cb(arr);
+    arr.sort(function(a,b){
+      var da=new Date(b.time),db=new Date(a.time);
+      return (isNaN(da)?0:da)-(isNaN(db)?0:db);
+    });
+    cb(arr); // always returns array (may be empty [])
   }).catch(function(){cb(null);});
 }
 
@@ -884,7 +891,7 @@ function renderBeats(){
 }
 
 function addBeat(){
-  beatsList.push({uid:_mkuid(),name:'',genre:'trap',bpm:'',key:'',price:'',art:'',noPrice:false,audioName:''});
+  beatsList.push({uid:_mkuid(),name:'',genre:'trap',bpm:'',key:'',price:'',art:'',noPrice:false,audioName:'',audioURL:null});
   renderBeats();
   var idx=beatsList.length-1;
   var card=document.getElementById('bcard'+idx);
@@ -898,6 +905,7 @@ function deleteBeat(idx){
   if(uid)deleteAudioFromDB(uid,null);
   beatsList.splice(idx,1);
   renderBeats();
+  saveAll(); // auto-save so deletion persists to Firebase
 }
 
 function beatAudioChanged(input,idx){
@@ -1353,7 +1361,10 @@ function previewTestiAv(input,idx){
   if(!input.files||!input.files[0])return;
   var reader=new FileReader();
   reader.onload=function(e){
-    _compressImg(e.target.result,120,120,0.82,function(c){setTestiAv(idx,c);});
+    _compressImg(e.target.result,120,120,0.82,function(c){
+      setTestiAv(idx,c);
+      setTimeout(function(){saveAll();},200);
+    });
   };
   reader.readAsDataURL(input.files[0]);
 }
@@ -1370,8 +1381,9 @@ var SUBS_KEY='krito_submissions';
 function loadInbox(){
   if(_fbDB&&_fbReady){
     _fbLoadSubmissions(function(fbSubs){
-      if(fbSubs&&fbSubs.length){
-        localStorage.setItem(SUBS_KEY,JSON.stringify(fbSubs));
+      // Always update localStorage from Firebase result (even if empty array)
+      if(fbSubs!==null){
+        localStorage.setItem(SUBS_KEY,JSON.stringify(fbSubs||[]));
       }
       _renderInbox();
     });
@@ -1447,31 +1459,37 @@ function markAllRead(){
 }
 
 function deleteInq(id){
+  // Remove from localStorage immediately
   try{
     var subs=JSON.parse(localStorage.getItem(SUBS_KEY)||'[]');
-    // Find the submission to get its Firebase key before removing
     var toDelete=null;
     for(var _di=0;_di<subs.length;_di++){if(subs[_di].id===id){toDelete=subs[_di];break;}}
     subs=subs.filter(function(s){return s.id!==id;});
     localStorage.setItem(SUBS_KEY,JSON.stringify(subs));
-    // Also delete from Firebase (so it doesn't reappear on next load)
-    if(toDelete&&toDelete._fbKey&&_fbDB&&_fbReady){
-      _fbDB.ref('krito_portfolio/submissions/'+toDelete._fbKey).remove().catch(function(){});
-    }
   }catch(e){}
+  // Animate out
   var el=document.getElementById('inq'+id);
-  if(el){el.style.transition='opacity .25s,transform .25s';el.style.opacity='0';el.style.transform='translateX(-8px)';setTimeout(function(){loadInbox();},260);}
-  else{loadInbox();}
+  if(el){el.style.transition='opacity .25s,transform .25s';el.style.opacity='0';el.style.transform='translateX(-8px)';}
+  // Delete from Firebase then re-render (wait for promise — no race condition)
+  if(toDelete&&toDelete._fbKey&&_fbDB&&_fbReady){
+    _fbDB.ref('krito_portfolio/submissions/'+toDelete._fbKey).remove()
+      .then(function(){setTimeout(function(){loadInbox();},260);})
+      .catch(function(){setTimeout(function(){loadInbox();},260);});
+  }else{
+    setTimeout(function(){loadInbox();},260);
+  }
 }
 
 function clearAllInbox(){
   if(!confirm('Saari inquiries delete karein?'))return;
-  // Delete all from Firebase first
-  if(_fbDB&&_fbReady){
-    _fbDB.ref('krito_portfolio/submissions').remove().catch(function(){});
-  }
   localStorage.removeItem(SUBS_KEY);
-  loadInbox();
+  if(_fbDB&&_fbReady){
+    _fbDB.ref('krito_portfolio/submissions').remove()
+      .then(function(){loadInbox();})
+      .catch(function(){loadInbox();});
+  }else{
+    loadInbox();
+  }
 }
 
 function replyWA(name,service){
