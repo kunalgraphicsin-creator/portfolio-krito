@@ -1723,8 +1723,13 @@ function _preloadHeroAudio(){
     _heroReady=true;
     if(_heroBeatActive){
       var el=_getAudio();
-      el.src=_heroURL;el.currentTime=0;
-      _startAudioPlayback(el);
+      if(el.src===_heroURL){
+        // Same URL already loaded — only resume if paused (don't restart from beginning)
+        if(el.paused)_startAudioPlayback(el);
+      } else {
+        el.src=_heroURL;el.currentTime=0;
+        _startAudioPlayback(el);
+      }
     }
     return;
   }
@@ -1744,8 +1749,8 @@ function _preloadHeroAudio(){
           // If scroll already triggered while loading, play now
           if(_heroBeatActive){
             var el=_getAudio();
-            el.src=_heroURL;el.currentTime=0;
-            _startAudioPlayback(el);
+            if(el.src===_heroURL){if(el.paused)_startAudioPlayback(el);}
+            else{el.src=_heroURL;el.currentTime=0;_startAudioPlayback(el);}
           }
         }catch(x){}
       };
@@ -1755,16 +1760,21 @@ function _preloadHeroAudio(){
 // ────────────────────────────────────────────────────────────────────────────
 
 // Autoplay helper — tries play(), falls back to next user interaction if blocked
+var _playbackListenerActive=false;
 function _startAudioPlayback(el){
+  if(!el.src||el.src===window.location.href)return; // no src set yet
   var p=el.play();
   if(p!==undefined){
     p.catch(function(){
-      var evts=['click','touchstart','wheel','keydown'];
-      function onFirst(ev){
-        el.play().catch(function(){});
+      if(_playbackListenerActive)return; // already waiting for interaction
+      _playbackListenerActive=true;
+      var evts=['click','touchstart','touchend','pointerdown','keydown'];
+      function onFirst(){
+        _playbackListenerActive=false;
+        if(el.src&&el.src!==window.location.href)el.play().catch(function(){});
         evts.forEach(function(e){document.removeEventListener(e,onFirst,true);});
       }
-      evts.forEach(function(e){document.addEventListener(e,onFirst,{once:true,capture:true,passive:true});});
+      evts.forEach(function(e){document.addEventListener(e,onFirst,{capture:true,passive:true});});
     });
   }
 }
@@ -1815,27 +1825,38 @@ function playHeroBeat(){
     el.src=_heroURL;
     el.currentTime=0;
     _startAudioPlayback(el);
-  } else if(bUid){
-    // Not pre-loaded yet — load from DB now, play when ready
-    _openADB(function(db){
-      if(!db)return;
-      try{
-        var req=db.transaction('beats').objectStore('beats').get(bUid);
-        req.onsuccess=function(e){
-          if(!e.target.result||!e.target.result.data||!_heroBeatActive)return;
-          // Guard: preload may have already completed and started playback
-          if(_heroReady&&_heroURL)return;
-          try{
-            if(_heroURL){try{URL.revokeObjectURL(_heroURL);}catch(x){}}
-            _heroURL=URL.createObjectURL(_b64ToBlob(e.target.result.data));
-            _heroReady=true;
-            var el=_getAudio();
-            el.src=_heroURL;el.currentTime=0;
-            _startAudioPlayback(el);
-          }catch(x){}
-        };
-      }catch(e){}
-    });
+  } else {
+    // Not pre-loaded: try direct Cloudinary URL from localStorage first (fastest path)
+    var _directHeroURL=null;
+    try{var _rr=localStorage.getItem('krito_admin_data');if(_rr){var _dd2=JSON.parse(_rr);_directHeroURL=_dd2.heroBeat&&_dd2.heroBeat.audioURL?_dd2.heroBeat.audioURL:null;}}catch(x){}
+    if(_directHeroURL){
+      _heroURL=_directHeroURL;_heroReady=true;
+      var el2=_getAudio();el2.src=_heroURL;el2.currentTime=0;
+      _startAudioPlayback(el2);
+    } else if(bUid){
+      // Last resort: load from IndexedDB (local-only fallback)
+      _openADB(function(db){
+        if(!db)return;
+        try{
+          var req=db.transaction('beats').objectStore('beats').get(bUid);
+          req.onsuccess=function(e){
+            if(!e.target.result||!e.target.result.data||!_heroBeatActive)return;
+            // Guard: preload may have already completed and started playback
+            if(_heroReady&&_heroURL)return;
+            try{
+              if(_heroURL){try{URL.revokeObjectURL(_heroURL);}catch(x){}}
+              _heroURL=URL.createObjectURL(_b64ToBlob(e.target.result.data));
+              _heroReady=true;
+              var el3=_getAudio();
+              el3.src=_heroURL;el3.currentTime=0;
+              _startAudioPlayback(el3);
+            }catch(x){}
+          };
+        }catch(e){}
+      });
+    }
+    // If neither URL nor UID: Firebase will arrive soon → _fbPortInit will call
+    // _preloadHeroAudio() which checks _heroBeatActive=true and plays automatically
   }
 }
 
