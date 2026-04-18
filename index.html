@@ -242,7 +242,7 @@ body{cursor:none}
 .fc-f,.fc-b{position:absolute;inset:0;border-radius:16px;backface-visibility:hidden;-webkit-backface-visibility:hidden}
 .fc-f{background:linear-gradient(160deg,#F0660A 0%,#c44d00 100%);border:1px solid rgba(255,255,255,.15);display:flex;flex-direction:column;align-items:center;justify-content:flex-end;padding:24px;overflow:hidden;box-shadow:0 40px 80px rgba(240,102,10,.35)}
 .fc-photo{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:90px;overflow:hidden}
-.fc-name-wrap{position:relative;z-index:2;text-align:center;width:100%;background:linear-gradient(to top,rgba(0,0,0,0.72) 0%,rgba(0,0,0,0.0) 100%);padding:14px 8px 4px;border-radius:0 0 14px 14px;margin:-14px -8px -4px}
+.fc-name-wrap{position:relative;z-index:2;text-align:center;width:100%;padding:14px 8px 4px;border-radius:0 0 14px 14px;margin:-14px -8px -4px}
 .fc-name{font-size:15px;font-weight:900;letter-spacing:.5px;color:#fff}
 .fc-role{font-size:8px;letter-spacing:3px;color:rgba(255,255,255,.75);font-weight:700;text-transform:uppercase;margin-top:3px}
 /* ===== CYBER CARD EFFECTS ===== */
@@ -820,7 +820,7 @@ footer{background:#180c08}
       <div class="fc-corners"><span></span><span></span><span></span><span></span></div>
       <div class="fc-scanline"></div>
       <div class="fc-particles"><span></span><span></span><span></span><span></span><span></span><span></span></div>
-      <div class="fc-photo"><img src="img/kroito.avif" alt="KRITO" style="width:100%;height:100%;object-fit:cover;object-position:65% center;display:block"></div>
+      <div class="fc-photo"><img src="img/kroito.avif" alt="KRITO" style="width:100%;height:100%;object-fit:cover;object-position:50% center;display:block;transform:scale(1.25) translateY(-3%);transform-origin:center center"></div>
       <div class="fc-name-wrap">
         <div class="fc-name" id="fcName">KRITO</div>
         <div class="fc-role">Music Producer</div>
@@ -928,12 +928,11 @@ footer{background:#180c08}
 
     <div class="filter-row rv" id="filterRow">
       <button class="f-btn on" data-f="all">All</button>
-      <button class="f-btn" data-f="trap">Trap</button>
-      <button class="f-btn" data-f="drill">Drill</button>
       <button class="f-btn" data-f="hiphop">Hip-Hop</button>
-      <button class="f-btn" data-f="rnb">R&amp;B</button>
+      <button class="f-btn" data-f="boombap">BoomBap</button>
       <button class="f-btn" data-f="afrobeats">Afrobeats</button>
-      <button class="f-btn" data-f="pop">Pop</button>
+      <button class="f-btn" data-f="rnb">R&amp;B</button>
+      <button class="f-btn" data-f="lofi">Lofi</button>
     </div>
 
     <div class="bg" id="beatsGrid">
@@ -956,7 +955,7 @@ footer{background:#180c08}
         </div>
       </div>
 
-      <div class="bc rv" data-g="hiphop" data-beat="b2">
+      <div class="bc rv" data-g="boombap" data-beat="b2">
         <div class="bc-cover">
           <div class="bc-art a2"><img src="img/beats/beat-b2.avif" alt="Famous Enough" style="width:100%;height:100%;object-fit:cover;display:block"></div>
           <div class="bc-hover-wave">
@@ -1028,7 +1027,7 @@ footer{background:#180c08}
         </div>
       </div>
 
-      <div class="bc rv" data-g="hiphop" data-beat="b6">
+      <div class="bc rv" data-g="lofi" data-beat="b6">
         <div class="bc-cover">
           <div class="bc-art a6"><img src="img/beats/beat-b6.jpg" alt="Ranjha" style="width:100%;height:100%;object-fit:cover;display:block"></div>
           <div class="bc-hover-wave">
@@ -1046,7 +1045,7 @@ footer{background:#180c08}
         </div>
       </div>
 
-      <div class="bc rv" data-g="hiphop" data-beat="b7">
+      <div class="bc rv" data-g="boombap" data-beat="b7">
         <div class="bc-cover">
           <div class="bc-art a7"><img src="img/beats/beat-b7.avif" alt="Naveezy" style="width:100%;height:100%;object-fit:cover;display:block"></div>
           <div class="bc-hover-wave">
@@ -1578,8 +1577,8 @@ function drawWave(id,playing){
     ctx.fillRect(i*(bw+1),(h-bh)/2,bw,bh);
   }
 }
-function initWaveforms(){setTimeout(function(){['b1','b2','b3','b4','b5','b6'].forEach(function(id){drawWave(id,false)})},300)}
-window.addEventListener('resize',function(){['b1','b2','b3','b4','b5','b6'].forEach(function(id){if(!wAnims[id])drawWave(id,false)})});
+function initWaveforms(){setTimeout(function(){['b1','b2','b3','b4','b5','b6','b7'].forEach(function(id){drawWave(id,false)})},300)}
+window.addEventListener('resize',function(){['b1','b2','b3','b4','b5','b6','b7'].forEach(function(id){if(!wAnims[id])drawWave(id,false)})});
 
 // ===== NOW PLAYING WAVEFORM =====
 var npAnim=null;
@@ -2013,6 +2012,14 @@ function sendForm(e){
   // Activate
   document.documentElement.classList.add('smooth-active');
   resize();
+  // If page loaded with a hash, sync scroll position
+  window.addEventListener('load',function(){
+    resize();
+    if(window.location.hash){
+      var h=document.querySelector(window.location.hash);
+      if(h){cur=Math.min(h.offsetTop,max);tar=cur;wrap.style.transform='translate3d(0,'+-cur+'px,0)';_vy=cur;}
+    }
+  });
   // Dispatch synthetic scroll events so nav/initNav listeners still fire
   var lastNav=-1;
   setInterval(function(){
