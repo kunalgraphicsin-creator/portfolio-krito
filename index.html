@@ -103,18 +103,13 @@ body{cursor:none}
   background:linear-gradient(135deg,rgba(240,102,10,.72),rgba(180,55,0,.85));
   box-shadow:0 0 16px rgba(240,102,10,.45),inset 0 0 8px rgba(255,255,255,.08);
   z-index:1;
-  transition:transform .5s cubic-bezier(.16,1,.3,1),width .5s cubic-bezier(.16,1,.3,1);
+  transition:transform .28s cubic-bezier(.16,1,.3,1),width .28s cubic-bezier(.16,1,.3,1);
   pointer-events:none;
 }
 .n-logo{font-size:20px;font-weight:900;letter-spacing:2px;display:flex;align-items:center;gap:8px;font-family:'Orbitron','Segoe UI',sans-serif;text-transform:uppercase}
 .n-disc{width:26px;height:26px;border-radius:50%;background:conic-gradient(#111 0%,#2a2a2a 30%,#111 60%,#3a1f14 100%);display:flex;align-items:center;justify-content:center;animation:spin 6s linear infinite;flex-shrink:0}
 .n-disc::after{content:'';width:9px;height:9px;border-radius:50%;background:#F0660A}
 @keyframes spin{to{transform:rotate(360deg)}}
-.n-links{display:flex;gap:34px}
-.n-links a{font-size:12px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,.55);position:relative;transition:color .3s}
-.n-links a::after{content:'';position:absolute;bottom:-4px;left:0;width:0;height:2px;background:#F0660A;transition:width .3s}
-.n-links a:hover,.n-links a.on{color:#fff}
-.n-links a:hover::after,.n-links a.on::after{width:100%}
 .hire-btn{background:transparent;color:#fff;padding:10px 26px;font-size:12px;font-weight:700;letter-spacing:2px;text-transform:uppercase;border-radius:30px;border:2px solid #F0660A;cursor:pointer;position:relative;overflow:hidden;transition:color .4s ease-in-out,box-shadow .4s,transform .3s;z-index:0}
 .hire-btn::after{content:'';position:absolute;left:50%;top:50%;width:10px;height:10px;background:#F0660A;border-radius:30px;transform:translate(-50%,-50%) scale(0);transition:transform .65s cubic-bezier(.16,1,.3,1);z-index:-1;visibility:hidden}
 .hire-btn:hover::after{visibility:visible;transform:translate(-50%,-50%) scale(20)}
@@ -1405,14 +1400,16 @@ function initNav(){
   // Init glider after layout settles
   setTimeout(function(){
     updateNav();
-    // Also move glider on hover for preview feel
+    // Move glider on hover — attach to both a and li to eliminate dead zones
     navLinks.forEach(function(lk){
       lk.addEventListener('mouseenter',function(){moveGlider(lk);},{passive:true});
-      lk.addEventListener('mouseleave',function(){
-        var on=document.querySelector('.n-links a.on');
-        if(on) moveGlider(on);
-      },{passive:true});
     });
+    // Snap back on leaving the whole nav list
+    var ul=document.getElementById('nLinks');
+    ul.addEventListener('mouseleave',function(){
+      var on=document.querySelector('.n-links a.on');
+      if(on) moveGlider(on);
+    },{passive:true});
   },300);
 
   // Mobile menu
