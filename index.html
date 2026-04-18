@@ -761,7 +761,7 @@ footer{background:#180c08}
 
 <!-- LOADER -->
 <div id="loader">
-  <div class="ld-logo">X<span style="color:#F0660A">BEATS</span></div>
+  <div class="ld-logo"><span style="color:#F0660A">K</span>RITO</div>
   <div class="ld-bars">
     <div class="ld-b"></div><div class="ld-b"></div><div class="ld-b"></div>
     <div class="ld-b"></div><div class="ld-b"></div><div class="ld-b"></div>
@@ -1945,7 +1945,12 @@ function sendForm(e){
 
   var cur=0,tar=0,max=0,raf=null,running=false;
 
-  function resize(){max=Math.max(0,wrap.scrollHeight-window.innerHeight);}
+  function resize(){
+    var footer=document.querySelector('footer');
+    var h=footer?footer.offsetTop+footer.offsetHeight:wrap.scrollHeight;
+    max=Math.max(0,h-window.innerHeight);
+    tar=Math.min(tar,max);
+  }
 
   function lerp(a,b,t){return a+(b-a)*t;}
 
@@ -2002,11 +2007,16 @@ function sendForm(e){
   // If page loaded with a hash, sync scroll position
   window.addEventListener('load',function(){
     resize();
+    setTimeout(resize,600); // catch late image-load layout shifts
     if(window.location.hash){
       var h=document.querySelector(window.location.hash);
       if(h){cur=Math.min(h.offsetTop,max);tar=cur;wrap.style.transform='translate3d(0,'+-cur+'px,0)';_vy=cur;}
     }
   });
+  // ResizeObserver — auto-recalculate max if content height changes
+  if(window.ResizeObserver){
+    new ResizeObserver(function(){resize();}).observe(wrap);
+  }
   // Dispatch synthetic scroll events so nav/initNav listeners still fire
   var lastNav=-1;
   setInterval(function(){
