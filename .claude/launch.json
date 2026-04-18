@@ -4,7 +4,8 @@
     {
       "name": "krito-portfolio",
       "runtimeExecutable": "python",
-      "runtimeArgs": ["-m", "http.server", "3457", "--directory", "D:/BOT/portfolio-krito"],
+      "runtimeArgs": ["-m", "http.server", "3457"],
+      "cwd": "D:/BOT/portfolio-krito",
       "port": 3457
     }
   ]
