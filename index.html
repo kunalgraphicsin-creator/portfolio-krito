@@ -1435,8 +1435,9 @@ function initParticles(){
   if(!cvs)return;
   var ctx=cvs.getContext('2d');
   var W,H,pts=[],mx=-999,my=-999;
-  var COUNT=70,LINK=130,ATTRACT=160,ATT_FORCE=0.012;
+  var COUNT=45,LINK=130,LINK2=LINK*LINK,ATTRACT=160,ATTRACT2=ATTRACT*ATTRACT,ATT_FORCE=0.012;
   var isTouch='ontouchstart' in window||navigator.maxTouchPoints>0;
+  var _ptPaused=false;
 
   function resize(){
     W=cvs.width=cvs.offsetWidth;
@@ -1458,62 +1459,58 @@ function initParticles(){
     for(var i=0;i<COUNT;i++) pts.push(new Particle());
   }
 
+  // batch helper — defined once, reused every frame
+  function _strokeBatch(arr,alpha){
+    if(!arr.length)return;
+    ctx.beginPath();
+    for(var k=0;k<arr.length;k+=4){ctx.moveTo(arr[k],arr[k+1]);ctx.lineTo(arr[k+2],arr[k+3]);}
+    ctx.strokeStyle='rgba(240,102,10,'+alpha+')';ctx.lineWidth=0.7;ctx.stroke();
+  }
+
   function draw(){
-    ctx.clearRect(0,0,W,H);
-    // update positions
-    for(var i=0;i<pts.length;i++){
-      var p=pts[i];
-      // attract toward mouse
-      if(!isTouch){
-        var dx=mx-p.x,dy=my-p.y;
-        var dist=Math.sqrt(dx*dx+dy*dy);
-        if(dist<ATTRACT&&dist>1){
-          p.vx+=dx/dist*ATT_FORCE;
-          p.vy+=dy/dist*ATT_FORCE;
+    if(!_ptPaused&&!document.hidden){
+      ctx.clearRect(0,0,W,H);
+      // update positions
+      for(var i=0;i<pts.length;i++){
+        var p=pts[i];
+        if(!isTouch){
+          var dx=mx-p.x,dy=my-p.y,d2=dx*dx+dy*dy;
+          if(d2<ATTRACT2&&d2>1){var dist=Math.sqrt(d2);p.vx+=dx/dist*ATT_FORCE;p.vy+=dy/dist*ATT_FORCE;}
+        }
+        p.vx*=0.985;p.vy*=0.985;
+        var s2=p.vx*p.vx+p.vy*p.vy;
+        if(s2>0.81){var inv=0.9/Math.sqrt(s2);p.vx*=inv;p.vy*=inv;}
+        p.x+=p.vx;p.y+=p.vy;
+        if(p.x<0)p.x=W;if(p.x>W)p.x=0;
+        if(p.y<0)p.y=H;if(p.y>H)p.y=0;
+      }
+      // draw links — 3 batched stroke() calls instead of ~1000 individual GPU flushes
+      var b1=[],b2=[],b3=[];
+      for(var i=0;i<pts.length;i++){
+        for(var j=i+1;j<pts.length;j++){
+          var dx=pts[i].x-pts[j].x,dy=pts[i].y-pts[j].y,d2=dx*dx+dy*dy;
+          if(d2<LINK2){
+            var d=Math.sqrt(d2),a=(1-d/LINK)*0.28;
+            (a>0.18?b1:a>0.1?b2:b3).push(pts[i].x,pts[i].y,pts[j].x,pts[j].y);
+          }
         }
       }
-      // damping
-      p.vx*=0.985; p.vy*=0.985;
-      // clamp speed
-      var spd=Math.sqrt(p.vx*p.vx+p.vy*p.vy);
-      if(spd>0.9){p.vx=p.vx/spd*0.9;p.vy=p.vy/spd*0.9;}
-      p.x+=p.vx; p.y+=p.vy;
-      // wrap edges
-      if(p.x<0)p.x=W; if(p.x>W)p.x=0;
-      if(p.y<0)p.y=H; if(p.y>H)p.y=0;
-    }
-    // draw links
-    for(var i=0;i<pts.length;i++){
-      for(var j=i+1;j<pts.length;j++){
-        var dx=pts[i].x-pts[j].x,dy=pts[i].y-pts[j].y;
-        var d=Math.sqrt(dx*dx+dy*dy);
-        if(d<LINK){
-          var a=(1-d/LINK)*0.28;
-          ctx.beginPath();
-          ctx.moveTo(pts[i].x,pts[i].y);
-          ctx.lineTo(pts[j].x,pts[j].y);
-          ctx.strokeStyle='rgba(240,102,10,'+a+')';
-          ctx.lineWidth=0.7;
-          ctx.stroke();
-        }
-      }
-    }
-    // draw nodes
-    for(var i=0;i<pts.length;i++){
-      var p=pts[i];
-      // glow near mouse
-      var dx=mx-p.x,dy=my-p.y;
-      var md=Math.sqrt(dx*dx+dy*dy);
-      var glow=!isTouch&&md<ATTRACT?Math.max(0,(1-md/ATTRACT)*0.9):0;
-      ctx.beginPath();
-      ctx.arc(p.x,p.y,p.r+(glow*1.8),0,Math.PI*2);
-      ctx.fillStyle='rgba(240,102,10,'+(0.22+glow*0.6)+')';
-      ctx.fill();
-      if(glow>0.2){
+      _strokeBatch(b1,0.25);_strokeBatch(b2,0.14);_strokeBatch(b3,0.06);
+      // draw nodes
+      for(var i=0;i<pts.length;i++){
+        var p=pts[i];
+        var dx=mx-p.x,dy=my-p.y,md2=dx*dx+dy*dy;
+        var glow=(!isTouch&&md2<ATTRACT2)?Math.max(0,(1-Math.sqrt(md2)/ATTRACT)*0.9):0;
         ctx.beginPath();
-        ctx.arc(p.x,p.y,p.r+glow*6,0,Math.PI*2);
-        ctx.fillStyle='rgba(240,102,10,'+(glow*0.08)+')';
+        ctx.arc(p.x,p.y,p.r+(glow*1.8),0,Math.PI*2);
+        ctx.fillStyle='rgba(240,102,10,'+(0.22+glow*0.6)+')';
         ctx.fill();
+        if(glow>0.2){
+          ctx.beginPath();
+          ctx.arc(p.x,p.y,p.r+glow*6,0,Math.PI*2);
+          ctx.fillStyle='rgba(240,102,10,'+(glow*0.08)+')';
+          ctx.fill();
+        }
       }
     }
     requestAnimationFrame(draw);
@@ -1527,6 +1524,10 @@ function initParticles(){
       mx=e.clientX-r.left; my=e.clientY-r.top;
     },{passive:true});
     hero.addEventListener('mouseleave',function(){mx=-999;my=-999;},{passive:true});
+  }
+  // pause particle loop when hero is not in viewport
+  if(window.IntersectionObserver){
+    new IntersectionObserver(function(e){_ptPaused=!e[0].isIntersecting;},{threshold:0}).observe(cvs);
   }
   init();
   draw();
@@ -2047,37 +2048,30 @@ function sendForm(e){
   window.addEventListener('resize',resize,{passive:true});
   resize();
 
-  // Throttle: update noise only every ~80ms (~12fps) — imperceptible, no lag
-  var last=0,FINT=80;
-  // Slow drift for depth
+  // ~12fps — schedule rAF only after 80ms gap, never spinning idle at 60fps
+  var FINT=80;
   var dx=0,dy=0,dvx=0.12,dvy=0.09;
 
-  function tick(ts){
-    requestAnimationFrame(tick);
-    if(ts-last<FINT)return;
-    last=ts;
-
-    // Drift
-    dx+=dvx;dy+=dvy;
-    if(Math.abs(dx)>10)dvx*=-1;
-    if(Math.abs(dy)>8)dvy*=-1;
-
-    // Generate sparse grain — only 22% pixels lit, very dim
-    for(var i=0,l=px.length;i<l;i++){
-      if(Math.random()>0.22){px[i]=0xFF000000;continue;}
-      var v=Math.random()*80+20|0; // dim: 20–100 range
-      var r=Math.min(255,v+8)|0;
-      var g=v*0.72|0;
-      var b=v*0.42|0;
-      px[i]=(0xFF000000)|((b&0xFF)<<16)|((g&0xFF)<<8)|(r&0xFF);
+  function tick(){
+    if(!document.hidden){
+      dx+=dvx;dy+=dvy;
+      if(Math.abs(dx)>10)dvx*=-1;
+      if(Math.abs(dy)>8)dvy*=-1;
+      for(var i=0,l=px.length;i<l;i++){
+        if(Math.random()>0.22){px[i]=0xFF000000;continue;}
+        var v=Math.random()*80+20|0;
+        var r=Math.min(255,v+8)|0;
+        var g=v*0.72|0;
+        var b=v*0.42|0;
+        px[i]=(0xFF000000)|((b&0xFF)<<16)|((g&0xFF)<<8)|(r&0xFF);
+      }
+      oc.putImageData(id,0,0);
+      var sw=W*1.1,sh=H*1.1;
+      var ox=(sw-W)/2+dx,oy=(sh-H)/2+dy;
+      ctx.clearRect(0,0,W,H);
+      ctx.drawImage(off,-ox,-oy,sw,sh);
     }
-    oc.putImageData(id,0,0);
-
-    // Draw scaled with drift offset
-    var sw=W*1.1,sh=H*1.1;
-    var ox=(sw-W)/2+dx,oy=(sh-H)/2+dy;
-    ctx.clearRect(0,0,W,H);
-    ctx.drawImage(off,-ox,-oy,sw,sh);
+    setTimeout(function(){requestAnimationFrame(tick);},FINT);
   }
 
   requestAnimationFrame(tick);
@@ -2205,10 +2199,14 @@ function sendForm(e){
   // Smooth current heights with lerp — no jitter
   var cur=[];
 
-  var t=0;
+  var t=0,_vizOn=true;
+  if(window.IntersectionObserver){
+    new IntersectionObserver(function(e){_vizOn=e[0].isIntersecting;},{threshold:0,rootMargin:'200px'}).observe(cvs);
+  }
   function draw(){
     requestAnimationFrame(draw);
-    t+=0.4; // slow tick — smooth motion
+    if(!_vizOn||document.hidden)return;
+    t+=0.4;
     ctx.clearRect(0,0,W,H);
 
     for(var i=0;i<bars.length;i++){
@@ -2409,12 +2407,15 @@ function sendForm(e){
   }
 
   function tick(ts){
-    requestAnimationFrame(tick);
     if(!t0)t0=ts;
     var el=ts-t0;
     ctx.clearRect(0,0,W,H);
     var ma=masterAlpha();
-    if(ma<=0)return;
+    if(ma<=0||document.hidden){
+      // hero not visible — check less often (saves ~50 rAF calls/sec)
+      setTimeout(function(){requestAnimationFrame(tick);},150);
+      return;
+    }
 
     for(var i=0;i<SYS.length;i++){
       var sys=SYS[i];
@@ -2448,6 +2449,7 @@ function sendForm(e){
         }
       }
     }
+    requestAnimationFrame(tick);
   }
 
   requestAnimationFrame(tick);
