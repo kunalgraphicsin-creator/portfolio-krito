@@ -240,8 +240,8 @@ body{cursor:none}
 .fc-inner{width:100%;height:100%;transform-style:preserve-3d;position:relative;will-change:transform}
 .fc-f,.fc-b{position:absolute;inset:0;border-radius:16px;backface-visibility:hidden;-webkit-backface-visibility:hidden}
 .fc-f{background:linear-gradient(160deg,#F0660A 0%,#c44d00 100%);border:1px solid rgba(255,255,255,.15);display:flex;flex-direction:column;align-items:center;justify-content:flex-end;padding:24px;overflow:hidden;box-shadow:0 40px 80px rgba(240,102,10,.35)}
-.fc-photo{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:90px;filter:drop-shadow(0 4px 18px rgba(255,255,255,0.2))}
-.fc-name-wrap{position:relative;z-index:2;text-align:center;width:100%}
+.fc-photo{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:90px;overflow:hidden}
+.fc-name-wrap{position:relative;z-index:2;text-align:center;width:100%;background:linear-gradient(to top,rgba(0,0,0,0.72) 0%,rgba(0,0,0,0.0) 100%);padding:14px 8px 4px;border-radius:0 0 14px 14px;margin:-14px -8px -4px}
 .fc-name{font-size:15px;font-weight:900;letter-spacing:.5px;color:#fff}
 .fc-role{font-size:8px;letter-spacing:3px;color:rgba(255,255,255,.75);font-weight:700;text-transform:uppercase;margin-top:3px}
 /* ===== CYBER CARD EFFECTS ===== */
@@ -364,6 +364,7 @@ body{cursor:none}
 .a4{background:linear-gradient(135deg,#1a0e00,#2e1800)}
 .a5{background:linear-gradient(135deg,#180c08,#1e0000)}
 .a6{background:linear-gradient(135deg,#001818,#001e1a)}
+.a7{background:linear-gradient(135deg,#000a18,#001430)}
 /* Hover wave overlay */
 .bc-hover-wave{position:absolute;bottom:0;left:0;right:0;height:60px;background:linear-gradient(transparent,rgba(0,0,0,.8));opacity:0;transition:opacity .3s;display:flex;align-items:flex-end;padding:8px;gap:3px}
 .bc:hover .bc-hover-wave{opacity:1}
@@ -744,11 +745,6 @@ footer{background:#180c08}
     transparent 35%,rgba(0,0,0,0.55) 100%);
 }
 </style>
-<!-- Firebase SDK (read-only for portfolio) -->
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-storage-compat.js"></script>
-<script src="firebase-config.js"></script>
 </head>
 <body>
 
@@ -823,7 +819,7 @@ footer{background:#180c08}
       <div class="fc-corners"><span></span><span></span><span></span><span></span></div>
       <div class="fc-scanline"></div>
       <div class="fc-particles"><span></span><span></span><span></span><span></span><span></span><span></span></div>
-      <div class="fc-photo"><svg viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.9)" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" style="width:55%;height:55%"><path d="M3 18v-6a9 9 0 0 1 18 0v6"/><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3z"/><path d="M3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"/></svg></div>
+      <div class="fc-photo"><img src="img/kroito.avif" alt="KRITO" style="width:100%;height:100%;object-fit:cover;object-position:65% center;display:block"></div>
       <div class="fc-name-wrap">
         <div class="fc-name" id="fcName">KRITO</div>
         <div class="fc-role">Music Producer</div>
@@ -836,13 +832,13 @@ footer{background:#180c08}
         <div class="fc-cd-shine"></div>
         <div class="fc-cd-lbl">
           <span class="fc-cd-ln" id="fcCdName">KRITO</span>
-          <span class="fc-cd-lt" id="fcCdTrack">Dark Nights</span>
+          <span class="fc-cd-lt" id="fcCdTrack">2026 Flow</span>
         </div>
         <div class="fc-cd-hole"></div>
       </div>
       <span class="fc-label">NOW PLAYING</span>
-      <span class="fc-track" id="fcTrackName">Dark Nights</span>
-      <span class="fc-meta" id="fcTrackMeta">Trap &middot; 140 BPM</span>
+      <span class="fc-track" id="fcTrackName">2026 Flow</span>
+      <span class="fc-meta" id="fcTrackMeta">Hip-Hop &middot; 92 BPM</span>
     </div>
   </div>
 </div>
@@ -926,7 +922,7 @@ footer{background:#180c08}
     <div class="s-head rv">
       <span class="s-tag">My Catalog</span>
       <h2 class="s-title">Featured <span class="red">Beats</span></h2>
-      <p class="s-sub">5 premium tracks. Each one a hit waiting to happen.</p>
+      <p class="s-sub">7 premium tracks. Each one a hit waiting to happen.</p>
     </div>
 
     <div class="filter-row rv" id="filterRow">
@@ -941,111 +937,129 @@ footer{background:#180c08}
 
     <div class="bg" id="beatsGrid">
 
-      <div class="bc rv" data-g="trap" data-beat="b1">
+      <div class="bc rv" data-g="hiphop" data-beat="b1">
         <div class="bc-cover">
-          <div class="bc-art a1"><svg viewBox="0 0 24 24" fill="none" stroke="rgba(255,120,50,0.9)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width:52px;height:52px"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 3z"/></svg></div>
+          <div class="bc-art a1"><img src="img/beats/beat-b1.avif" alt="2026 Flow" style="width:100%;height:100%;object-fit:cover;display:block"></div>
           <div class="bc-hover-wave">
             <div class="hw-bar"></div><div class="hw-bar"></div><div class="hw-bar"></div>
             <div class="hw-bar"></div><div class="hw-bar"></div><div class="hw-bar"></div>
             <div class="hw-bar"></div><div class="hw-bar"></div>
           </div>
-          <button class="bc-play" onclick="playBeat(this,'b1','Dark Nights','Trap')"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" stroke="none"><polygon points="5,3 19,12 5,21"/></svg></button>
+          <button class="bc-play" onclick="playBeat(this,'b1','2026 Flow','Hip-Hop')"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" stroke="none"><polygon points="5,3 19,12 5,21"/></svg></button>
         </div>
         <div class="wv-row"><canvas id="wv-b1"></canvas></div>
         <div class="bc-body">
-          <div class="bc-top"><h3>Dark Nights</h3><span class="g-tag">Trap</span></div>
-          <div class="bc-meta"><span><b>BPM</b> 140</span><span><b>Key</b> F Min</span><span><b>Time</b> 3:24</span></div>
-          <div class="bc-foot"><span class="b-price">₹999</span><button class="b-buy" onclick="location.href='#contact'"><span class="b-buy-shell"><span class="b-buy-inner">Buy License</span></span></button></div>
+          <div class="bc-top"><h3>2026 Flow</h3><span class="g-tag">Hip-Hop</span></div>
+          <div class="bc-meta"><span><b>BPM</b> 92</span><span><b>Key</b> F# Min</span></div>
+          <div class="bc-foot"><button class="b-buy" onclick="location.href='#contact'"><span class="b-buy-shell"><span class="b-buy-inner">Buy License</span></span></button></div>
         </div>
       </div>
 
-      <div class="bc rv" data-g="drill" data-beat="b2">
+      <div class="bc rv" data-g="hiphop" data-beat="b2">
         <div class="bc-cover">
-          <div class="bc-art a2"><svg viewBox="0 0 24 24" fill="none" stroke="rgba(180,130,255,0.9)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width:52px;height:52px"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" fill="rgba(140,90,255,0.2)"/></svg></div>
+          <div class="bc-art a2"><img src="img/beats/beat-b2.avif" alt="Famous Enough" style="width:100%;height:100%;object-fit:cover;display:block"></div>
           <div class="bc-hover-wave">
             <div class="hw-bar"></div><div class="hw-bar"></div><div class="hw-bar"></div>
             <div class="hw-bar"></div><div class="hw-bar"></div><div class="hw-bar"></div>
             <div class="hw-bar"></div><div class="hw-bar"></div>
           </div>
-          <button class="bc-play" onclick="playBeat(this,'b2','Street Code','Drill')"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" stroke="none"><polygon points="5,3 19,12 5,21"/></svg></button>
+          <button class="bc-play" onclick="playBeat(this,'b2','Famous Enough','BoomBap')"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" stroke="none"><polygon points="5,3 19,12 5,21"/></svg></button>
         </div>
         <div class="wv-row"><canvas id="wv-b2"></canvas></div>
         <div class="bc-body">
-          <div class="bc-top"><h3>Street Code</h3><span class="g-tag">Drill</span></div>
-          <div class="bc-meta"><span><b>BPM</b> 135</span><span><b>Key</b> G Min</span><span><b>Time</b> 2:58</span></div>
-          <div class="bc-foot"><span class="b-price">₹1,199</span><button class="b-buy" onclick="location.href='#contact'"><span class="b-buy-shell"><span class="b-buy-inner">Buy License</span></span></button></div>
+          <div class="bc-top"><h3>Famous Enough</h3><span class="g-tag">BoomBap</span></div>
+          <div class="bc-meta"><span><b>BPM</b> 88</span><span><b>Key</b> D Min</span></div>
+          <div class="bc-foot"><button class="b-buy" onclick="location.href='#contact'"><span class="b-buy-shell"><span class="b-buy-inner">Buy License</span></span></button></div>
         </div>
       </div>
 
-      <div class="bc rv" data-g="hiphop" data-beat="b3">
+      <div class="bc rv" data-g="afrobeats" data-beat="b3">
         <div class="bc-cover">
-          <div class="bc-art a3"><svg viewBox="0 0 24 24" fill="none" stroke="rgba(100,220,130,0.9)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width:52px;height:52px"><path d="M2 19h20l-2-9-4 3-4-7-4 7-4-3-2 9z" fill="rgba(60,180,90,0.15)"/><line x1="2" y1="19" x2="22" y2="19"/><circle cx="5" cy="10" r="1.5" fill="rgba(100,220,130,0.6)" stroke="none"/><circle cx="12" cy="3" r="1.5" fill="rgba(100,220,130,0.6)" stroke="none"/><circle cx="19" cy="10" r="1.5" fill="rgba(100,220,130,0.6)" stroke="none"/></svg></div>
+          <div class="bc-art a3"><img src="img/beats/beat-b3.avif" alt="Jogi" style="width:100%;height:100%;object-fit:cover;display:block"></div>
           <div class="bc-hover-wave">
             <div class="hw-bar"></div><div class="hw-bar"></div><div class="hw-bar"></div>
             <div class="hw-bar"></div><div class="hw-bar"></div><div class="hw-bar"></div>
             <div class="hw-bar"></div><div class="hw-bar"></div>
           </div>
-          <button class="bc-play" onclick="playBeat(this,'b3','King\'s Road','Hip-Hop')"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" stroke="none"><polygon points="5,3 19,12 5,21"/></svg></button>
+          <button class="bc-play" onclick="playBeat(this,'b3','Jogi','Afrobeats')"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" stroke="none"><polygon points="5,3 19,12 5,21"/></svg></button>
         </div>
         <div class="wv-row"><canvas id="wv-b3"></canvas></div>
         <div class="bc-body">
-          <div class="bc-top"><h3>King's Road</h3><span class="g-tag">Hip-Hop</span></div>
-          <div class="bc-meta"><span><b>BPM</b> 90</span><span><b>Key</b> C Maj</span><span><b>Time</b> 3:10</span></div>
-          <div class="bc-foot"><span class="b-price">₹899</span><button class="b-buy" onclick="location.href='#contact'"><span class="b-buy-shell"><span class="b-buy-inner">Buy License</span></span></button></div>
+          <div class="bc-top"><h3>Jogi</h3><span class="g-tag">Afrobeats</span></div>
+          <div class="bc-meta"><span><b>BPM</b> 100</span><span><b>Key</b> E Min</span></div>
+          <div class="bc-foot"><button class="b-buy" onclick="location.href='#contact'"><span class="b-buy-shell"><span class="b-buy-inner">Buy License</span></span></button></div>
         </div>
       </div>
 
-      <div class="bc rv" data-g="rnb" data-beat="b4">
+      <div class="bc rv" data-g="hiphop" data-beat="b4">
         <div class="bc-cover">
-          <div class="bc-art a4"><svg viewBox="0 0 24 24" fill="none" stroke="rgba(255,180,80,0.9)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width:52px;height:52px"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" fill="rgba(255,160,40,0.15)"/><circle cx="17" cy="5" r="1" fill="rgba(255,200,100,0.7)" stroke="none"/><circle cx="20" cy="9" r="0.7" fill="rgba(255,200,100,0.5)" stroke="none"/><circle cx="15" cy="8" r="0.5" fill="rgba(255,200,100,0.4)" stroke="none"/></svg></div>
+          <div class="bc-art a4"><img src="img/beats/beat-b4.avif" alt="Main Character" style="width:100%;height:100%;object-fit:cover;display:block"></div>
           <div class="bc-hover-wave">
             <div class="hw-bar"></div><div class="hw-bar"></div><div class="hw-bar"></div>
             <div class="hw-bar"></div><div class="hw-bar"></div><div class="hw-bar"></div>
             <div class="hw-bar"></div><div class="hw-bar"></div>
           </div>
-          <button class="bc-play" onclick="playBeat(this,'b4','Midnight Drill','Drill')"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" stroke="none"><polygon points="5,3 19,12 5,21"/></svg></button>
+          <button class="bc-play" onclick="playBeat(this,'b4','Main Character','Hip-Hop')"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" stroke="none"><polygon points="5,3 19,12 5,21"/></svg></button>
         </div>
         <div class="wv-row"><canvas id="wv-b4"></canvas></div>
         <div class="bc-body">
-          <div class="bc-top"><h3>Midnight Drill</h3><span class="g-tag">Drill</span></div>
-          <div class="bc-meta"><span><b>BPM</b> 138</span><span><b>Key</b> A Min</span><span><b>Time</b> 3:12</span></div>
-          <div class="bc-foot"><span class="b-price">₹1,099</span><button class="b-buy" onclick="location.href='#contact'"><span class="b-buy-shell"><span class="b-buy-inner">Buy License</span></span></button></div>
+          <div class="bc-top"><h3>Main Character</h3><span class="g-tag">Hip-Hop</span></div>
+          <div class="bc-meta"><span><b>BPM</b> 90</span><span><b>Key</b> C Min</span></div>
+          <div class="bc-foot"><button class="b-buy" onclick="location.href='#contact'"><span class="b-buy-shell"><span class="b-buy-inner">Buy License</span></span></button></div>
         </div>
       </div>
 
-      <div class="bc rv" data-g="trap" data-beat="b5">
+      <div class="bc rv" data-g="rnb" data-beat="b5">
         <div class="bc-cover">
-          <div class="bc-art a5"><svg viewBox="0 0 24 24" fill="none" stroke="rgba(220,80,80,0.9)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width:52px;height:52px"><path d="M12 2a7 7 0 0 1 7 7c0 2.5-1.3 4.7-3.2 6v2H8.2v-2A7 7 0 0 1 5 9a7 7 0 0 1 7-7z" fill="rgba(180,40,40,0.12)"/><line x1="8" y1="22" x2="16" y2="22"/><line x1="12" y1="17" x2="12" y2="22"/><circle cx="9" cy="9" r="1.5"/><circle cx="15" cy="9" r="1.5"/></svg></div>
+          <div class="bc-art a5"><img src="img/beats/beat-b5.avif" alt="MARS MELODY" style="width:100%;height:100%;object-fit:cover;display:block"></div>
           <div class="bc-hover-wave">
             <div class="hw-bar"></div><div class="hw-bar"></div><div class="hw-bar"></div>
             <div class="hw-bar"></div><div class="hw-bar"></div><div class="hw-bar"></div>
             <div class="hw-bar"></div><div class="hw-bar"></div>
           </div>
-          <button class="bc-play" onclick="playBeat(this,'b5','Silent Pain','Trap')"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" stroke="none"><polygon points="5,3 19,12 5,21"/></svg></button>
+          <button class="bc-play" onclick="playBeat(this,'b5','MARS MELODY','R&amp;B')"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" stroke="none"><polygon points="5,3 19,12 5,21"/></svg></button>
         </div>
         <div class="wv-row"><canvas id="wv-b5"></canvas></div>
         <div class="bc-body">
-          <div class="bc-top"><h3>Silent Pain</h3><span class="g-tag">Trap</span></div>
-          <div class="bc-meta"><span><b>BPM</b> 145</span><span><b>Key</b> D Min</span><span><b>Time</b> 2:40</span></div>
-          <div class="bc-foot"><span class="b-price">₹1,299</span><button class="b-buy" onclick="location.href='#contact'"><span class="b-buy-shell"><span class="b-buy-inner">Buy License</span></span></button></div>
+          <div class="bc-top"><h3>MARS MELODY</h3><span class="g-tag">R&amp;B</span></div>
+          <div class="bc-meta"><span><b>BPM</b> 78</span><span><b>Key</b> B Min</span></div>
+          <div class="bc-foot"><button class="b-buy" onclick="location.href='#contact'"><span class="b-buy-shell"><span class="b-buy-inner">Buy License</span></span></button></div>
         </div>
       </div>
 
-      <div class="bc rv" data-g="drill" data-beat="b6">
+      <div class="bc rv" data-g="hiphop" data-beat="b6">
         <div class="bc-cover">
-          <div class="bc-art a6"><svg viewBox="0 0 24 24" fill="none" stroke="rgba(60,200,200,0.9)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width:52px;height:52px"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2" fill="rgba(60,200,200,0.5)"/><line x1="12" y1="2" x2="12" y2="4.5"/><line x1="12" y1="19.5" x2="12" y2="22"/><line x1="2" y1="12" x2="4.5" y2="12"/><line x1="19.5" y1="12" x2="22" y2="12"/></svg></div>
+          <div class="bc-art a6"><img src="img/beats/beat-b6.jpg" alt="Ranjha" style="width:100%;height:100%;object-fit:cover;display:block"></div>
           <div class="bc-hover-wave">
             <div class="hw-bar"></div><div class="hw-bar"></div><div class="hw-bar"></div>
             <div class="hw-bar"></div><div class="hw-bar"></div><div class="hw-bar"></div>
             <div class="hw-bar"></div><div class="hw-bar"></div>
           </div>
-          <button class="bc-play" onclick="playBeat(this,'b6','Hustle Mode','Hip-Hop')"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" stroke="none"><polygon points="5,3 19,12 5,21"/></svg></button>
+          <button class="bc-play" onclick="playBeat(this,'b6','Ranjha','Lofi')"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" stroke="none"><polygon points="5,3 19,12 5,21"/></svg></button>
         </div>
         <div class="wv-row"><canvas id="wv-b6"></canvas></div>
         <div class="bc-body">
-          <div class="bc-top"><h3>Hustle Mode</h3><span class="g-tag">Hip-Hop</span></div>
-          <div class="bc-meta"><span><b>BPM</b> 92</span><span><b>Key</b> E Min</span><span><b>Time</b> 3:22</span></div>
-          <div class="bc-foot"><span class="b-price">₹999</span><button class="b-buy" onclick="location.href='#contact'"><span class="b-buy-shell"><span class="b-buy-inner">Buy License</span></span></button></div>
+          <div class="bc-top"><h3>Ranjha</h3><span class="g-tag">Lofi</span></div>
+          <div class="bc-meta"><span><b>BPM</b> 75</span><span><b>Key</b> C Min</span></div>
+          <div class="bc-foot"><button class="b-buy" onclick="location.href='#contact'"><span class="b-buy-shell"><span class="b-buy-inner">Buy License</span></span></button></div>
+        </div>
+      </div>
+
+      <div class="bc rv" data-g="hiphop" data-beat="b7">
+        <div class="bc-cover">
+          <div class="bc-art a7"><img src="img/beats/beat-b7.avif" alt="Naveezy" style="width:100%;height:100%;object-fit:cover;display:block"></div>
+          <div class="bc-hover-wave">
+            <div class="hw-bar"></div><div class="hw-bar"></div><div class="hw-bar"></div>
+            <div class="hw-bar"></div><div class="hw-bar"></div><div class="hw-bar"></div>
+            <div class="hw-bar"></div><div class="hw-bar"></div>
+          </div>
+          <button class="bc-play" onclick="playBeat(this,'b7','Naveezy','BoomBap')"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" stroke="none"><polygon points="5,3 19,12 5,21"/></svg></button>
+        </div>
+        <div class="wv-row"><canvas id="wv-b7"></canvas></div>
+        <div class="bc-body">
+          <div class="bc-top"><h3>Naveezy</h3><span class="g-tag">BoomBap</span></div>
+          <div class="bc-meta"><span><b>BPM</b> 90</span><span><b>Key</b> F Min</span></div>
+          <div class="bc-foot"><button class="b-buy" onclick="location.href='#contact'"><span class="b-buy-shell"><span class="b-buy-inner">Buy License</span></span></button></div>
         </div>
       </div>
 
@@ -1110,11 +1124,11 @@ footer{background:#180c08}
     </div>
     <!-- 3D Stage -->
     <div class="t-stage" id="tStage">
-      <div class="t-card" data-i="0" id="tc0"><div class="stars">★★★★★</div><p class="tc-quote">"Bro this beat went crazy on Instagram 🔥 Got mad engagement in the first 24 hours — pure fire."</p><div class="t-auth"><div class="t-av tc-av" id="tc0av">A</div><div><strong class="tc-name">Arjun Singh</strong><span class="tc-role">Rapper, Delhi</span></div></div></div>
-      <div class="t-card" data-i="1" id="tc1"><div class="stars">★★★★★</div><p class="tc-quote">"Mixing quality is insane, sounds so professional. My track literally sounds like a label release now."</p><div class="t-auth"><div class="t-av tc-av" id="tc1av">K</div><div><strong class="tc-name">Karan Verma</strong><span class="tc-role">Artist, Chandigarh</span></div></div></div>
-      <div class="t-card" data-i="2" id="tc2"><div class="stars">★★★★★</div><p class="tc-quote">"Custom beat exactly how I imagined. Sent references and he nailed the vibe perfectly. 100% recommended."</p><div class="t-auth"><div class="t-av tc-av" id="tc2av">P</div><div><strong class="tc-name">Priya Sharma</strong><span class="tc-role">Singer, Mumbai</span></div></div></div>
-      <div class="t-card" data-i="3" id="tc3"><div class="stars">★★★★★</div><p class="tc-quote">"Best producer I've worked with. Fast delivery, clean sound, and the revisions were no problem at all."</p><div class="t-auth"><div class="t-av tc-av" id="tc3av">R</div><div><strong class="tc-name">Rahul Mehta</strong><span class="tc-role">Rapper, Bangalore</span></div></div></div>
-      <div class="t-card" data-i="4" id="tc4"><div class="stars">★★★★★</div><p class="tc-quote">"Bought the exclusive license for Silent Pain and it became the best track on my EP. Worth every rupee."</p><div class="t-auth"><div class="t-av tc-av" id="tc4av">S</div><div><strong class="tc-name">Sahil Khan</strong><span class="tc-role">Artist, Pune</span></div></div></div>
+      <div class="t-card" data-i="0" id="tc0"><div class="stars">★★★★★</div><p class="tc-quote">"Bro this beat went crazy on Instagram 🔥 Got mad engagement in the first 24 hours — pure fire."</p><div class="t-auth"><div class="t-av tc-av" id="tc0av" style="background-image:url('img/clients/649670051_17879181042506525_2792527939847581345_n.avif');background-size:cover;background-position:center;font-size:0"></div><div><strong class="tc-name">Arjun Singh</strong><span class="tc-role">Rapper, Delhi</span></div></div></div>
+      <div class="t-card" data-i="1" id="tc1"><div class="stars">★★★★★</div><p class="tc-quote">"Mixing quality is insane, sounds so professional. My track literally sounds like a label release now."</p><div class="t-auth"><div class="t-av tc-av" id="tc1av" style="background-image:url('img/clients/659004881_18085982897599675_720107417352189088_n.avif');background-size:cover;background-position:center;font-size:0"></div><div><strong class="tc-name">Karan Verma</strong><span class="tc-role">Artist, Chandigarh</span></div></div></div>
+      <div class="t-card" data-i="2" id="tc2"><div class="stars">★★★★★</div><p class="tc-quote">"Custom beat exactly how I imagined. Sent references and he nailed the vibe perfectly. 100% recommended."</p><div class="t-auth"><div class="t-av tc-av" id="tc2av" style="background-image:url('img/clients/657442736_17910074394368087_4319658584921435284_n.avif');background-size:cover;background-position:center;font-size:0"></div><div><strong class="tc-name">Priya Sharma</strong><span class="tc-role">Singer, Mumbai</span></div></div></div>
+      <div class="t-card" data-i="3" id="tc3"><div class="stars">★★★★★</div><p class="tc-quote">"Best producer I've worked with. Fast delivery, clean sound, and the revisions were no problem at all."</p><div class="t-auth"><div class="t-av tc-av" id="tc3av" style="background-image:url('img/clients/642479395_17917410030294574_4913202846445234487_n.avif');background-size:cover;background-position:center;font-size:0"></div><div><strong class="tc-name">Rahul Mehta</strong><span class="tc-role">Rapper, Bangalore</span></div></div></div>
+      <div class="t-card" data-i="4" id="tc4"><div class="stars">★★★★★</div><p class="tc-quote">"Bought the exclusive license for Silent Pain and it became the best track on my EP. Worth every rupee."</p><div class="t-auth"><div class="t-av tc-av" id="tc4av" style="background-image:url('img/clients/669621591_18009488498847717_1095793007399383981_n.avif');background-size:cover;background-position:center;font-size:0"></div><div><strong class="tc-name">Sahil Khan</strong><span class="tc-role">Artist, Pune</span></div></div></div>
     </div>
     <!-- Controls -->
     <div class="t-controls">
@@ -1204,6 +1218,21 @@ footer{background:#180c08}
 </div><!-- /smooth-wrapper -->
 
 <script>
+// ============================================================
+//  BEATS CONFIG — add your audio URLs here when ready
+//  Set audioURL: 'https://...' for each beat
+// ============================================================
+var BEATS_DATA = [
+  { id:'b1', name:'2026 Flow',      genre:'Hip-Hop', bpm:'92',  key:'F# Min', audioURL: 'img/beats/beat-b1.mp3' },
+  { id:'b2', name:'Famous Enough',  genre:'BoomBap', bpm:'88',  key:'D Min',  audioURL: 'img/beats/beat-b2.mp3' },
+  { id:'b3', name:'Jogi',           genre:'Afrobeats',bpm:'100',key:'E Min',  audioURL: 'img/beats/beat-b3.mp3' },
+  { id:'b4', name:'Main Character', genre:'Hip-Hop', bpm:'90',  key:'C Min',  audioURL: 'img/beats/beat-b4.mp3' },
+  { id:'b5', name:'MARS MELODY',    genre:'R&B',     bpm:'78',  key:'B Min',  audioURL: 'img/beats/beat-b5.mp3' },
+  { id:'b6', name:'Ranjha',         genre:'Lofi',    bpm:'75',  key:'C Min',  audioURL: 'img/beats/beat-b6.mp3' },
+  { id:'b7', name:'Naveezy',        genre:'BoomBap', bpm:'90',  key:'F Min',  audioURL: 'img/beats/beat-b7.mp3' }
+];
+// ============================================================
+
 // ===== LOADER =====
 var pct=0;
 var ldInterval=setInterval(function(){
@@ -1218,10 +1247,6 @@ function init(){
   initNav();initParticles();initReveal();
   initWaveforms();initTestimonials();
   initFlip();
-  // Try to load live data from Firebase first
-  _fbPortInit();
-  // Pre-load hero beat immediately so audio is ready by the time user scrolls
-  _preloadHeroAudio();
 }
 function initFlip(){
   var card=document.getElementById('hFlyCard');
@@ -1238,9 +1263,6 @@ function initFlip(){
   var curX=0,curY=0,curR=0,curS=1;
   var tgtX=0,tgtY=0,tgtR=0,tgtS=1;
 
-  // Scroll-trigger state: fires playHeroBeat() once when card fully lands in about
-  var _scrollTriggered=false;
-
   function calcProg(){
     var scrollY=window.scrollY;
     var aboutEl=document.getElementById('about');
@@ -1253,25 +1275,11 @@ function initFlip(){
   }
 
   function raf(){
-    _hpEase+=(_hpTarget-_hpEase)*0.038;
-
     var scrollProg=calcProg();
-
-    // ── Scroll-triggered auto-play ──────────────────────────────────────
-    // When card fully lands (scrollProg ≥ 0.97) and music isn't playing → start
-    if(!_heroBeatActive && !_scrollTriggered && scrollProg>=0.97){
-      _scrollTriggered=true;
-      playHeroBeat(); // scroll = user interaction → browser allows audio.play() immediately
-    }
-    // Reset trigger when user scrolls back to hero (allows re-trigger next visit)
-    if(!_heroBeatActive && scrollProg<0.3){
-      _scrollTriggered=false;
-    }
-    // ────────────────────────────────────────────────────────────────────
 
     var phR=getRect(ph);
     var slotR=getRect(slot);
-    var ease=Math.max(scrollProg,_hpEase);
+    var ease=scrollProg;
 
     tgtX=phR.x+(slotR.x-phR.x)*ease;
     tgtY=phR.y+(slotR.y-phR.y)*ease;
@@ -1615,133 +1623,6 @@ function animNP(){
   tick();
 }
 
-// ===== FIREBASE READ (portfolio side — read-only) =====
-var _fbPortDB=null;
-
-function _fbPortInit(){
-  if(_fbPortDB)return; // already initialised — prevents double listener
-  if(typeof firebase==='undefined'||!isFirebaseConfigured())return;
-  try{
-    if(!firebase.apps.length)firebase.initializeApp(FIREBASE_CONFIG);
-    _fbPortDB=firebase.database();
-    // Load data and listen for real-time changes
-    _fbPortDB.ref('krito_portfolio/data').on('value',function(snap){
-      var d=snap.val();
-      if(!d){
-        // Firebase is empty — still try to apply any cached localStorage data
-        try{var _cached=localStorage.getItem('krito_admin_data');if(_cached&&typeof _kApplyData==='function')_kApplyData(JSON.parse(_cached));}catch(x){}
-        return;
-      }
-      try{
-        localStorage.setItem('krito_admin_data',JSON.stringify(d));
-        if(typeof _kApplyData==='function')_kApplyData(d);
-        // Re-run hero audio preload with new data (fixes timing issue)
-        // Only reset URL if it actually changed AND audio is NOT currently playing
-        var _newHeroURL=d.heroBeat&&d.heroBeat.audioURL?d.heroBeat.audioURL:null;
-        if(_newHeroURL&&_newHeroURL!==_heroURL&&!_heroBeatActive){
-          _heroReady=false;_heroURL=null;
-        }
-        _preloadHeroAudio();
-        // If hero beat already active, update now-playing bar with real name
-        if(_heroBeatActive&&d.heroBeat){
-          var nb=document.getElementById('npName');
-          var ng=document.getElementById('npGenre');
-          var tn=document.getElementById('fcTrackName');
-          var ct=document.getElementById('fcCdTrack');
-          var tm=document.getElementById('fcTrackMeta');
-          if(d.heroBeat.name){
-            if(nb)nb.textContent=d.heroBeat.name;
-            if(tn)tn.textContent=d.heroBeat.name;
-            if(ct)ct.textContent=d.heroBeat.name;
-          }
-          var _gRaw=d.heroBeat.genre||'';
-          var genre=_gRaw==='hiphop'?'Hip-Hop':_gRaw==='rnb'?'R&B':(_gRaw?_gRaw.charAt(0).toUpperCase()+_gRaw.slice(1):'');
-          var bpm=d.heroBeat.bpm||'';
-          if(ng)ng.textContent=genre;
-          var metaStr=genre+(genre&&bpm?' · ':'')+( bpm?bpm+' BPM':'');
-          if(tm)tm.textContent=metaStr;
-        }
-        // Retry pending regular beat if user clicked BEFORE Firebase data arrived
-        if(nowP&&(!_audioEl||_audioEl.paused||_audioEl.src===''||_audioEl.src===window.location.href)){
-          var _pendingIdx=parseInt(nowP.replace('b',''),10)-1;
-          if(!isNaN(_pendingIdx))_tryPlayAudio(_pendingIdx);
-        }
-      }catch(e){}
-    });
-  }catch(e){}
-}
-// Fire immediately so Firebase data is ready before user touches any beat button
-_fbPortInit();
-
-// ===== HERO PLAY EASE (module-level, read by initFlip's raf) =====
-var _hpEase=0, _hpTarget=0, _heroBeatActive=false;
-
-// ── Hero audio — SEPARATE from _audioURL (regular beats) ────────────────────
-var _heroURL=null;    // blob URL for hero beat only — never revoked by regular beats
-var _heroReady=false; // true once hero audio is decoded & blob created
-var _heroPreloadUID=null;
-
-function _b64ToBlob(b64){
-  var parts=b64.split(',');
-  if(parts.length<2)throw new Error('Invalid base64');
-  var mime=(parts[0].match(/:(.*?);/)||['','audio/mpeg'])[1];
-  var bs=atob(parts[1]);var arr=new Uint8Array(bs.length);
-  for(var i=0;i<bs.length;i++)arr[i]=bs.charCodeAt(i);
-  return new Blob([arr],{type:mime});
-}
-
-function _preloadHeroAudio(){
-  var bUid=null,bAudioURL=null;
-  try{
-    var raw=localStorage.getItem('krito_admin_data');
-    if(raw){var dd=JSON.parse(raw);if(dd.heroBeat){bUid=dd.heroBeat.uid||null;bAudioURL=dd.heroBeat.audioURL||null;}}
-  }catch(e){}
-  if(!bUid&&!bAudioURL)return;
-  // If Firebase Storage URL available, use it directly
-  if(bAudioURL){
-    _heroPreloadUID=bUid||'hero';
-    _heroReady=false;
-    if(_heroURL){try{URL.revokeObjectURL(_heroURL);}catch(x){}}
-    _heroURL=bAudioURL; // HTTPS URL — no blob needed
-    _heroReady=true;
-    if(_heroBeatActive){
-      var el=_getAudio();
-      if(el.src===_heroURL){
-        // Same URL already loaded — only resume if paused (don't restart from beginning)
-        if(el.paused)_startAudioPlayback(el);
-      } else {
-        el.src=_heroURL;el.currentTime=0;
-        _startAudioPlayback(el);
-      }
-    }
-    return;
-  }
-  if(!bUid)return;
-  _heroPreloadUID=bUid;
-  _heroReady=false;
-  _openADB(function(db){
-    if(!db)return;
-    try{
-      var req=db.transaction('beats').objectStore('beats').get(bUid);
-      req.onsuccess=function(e){
-        if(!e.target.result||!e.target.result.data||_heroPreloadUID!==bUid)return;
-        try{
-          if(_heroURL){try{URL.revokeObjectURL(_heroURL);}catch(x){}}
-          _heroURL=URL.createObjectURL(_b64ToBlob(e.target.result.data));
-          _heroReady=true;
-          // If scroll already triggered while loading, play now
-          if(_heroBeatActive){
-            var el=_getAudio();
-            if(el.src===_heroURL){if(el.paused)_startAudioPlayback(el);}
-            else{el.src=_heroURL;el.currentTime=0;_startAudioPlayback(el);}
-          }
-        }catch(x){}
-      };
-    }catch(e){}
-  });
-}
-// ────────────────────────────────────────────────────────────────────────────
-
 // Autoplay helper — tries play(), falls back to next user interaction if blocked
 var _playbackListenerActive=false;
 var _pendingPlayEvts=null;
@@ -1772,87 +1653,6 @@ function _startAudioPlayback(el){
   }
 }
 
-function playHeroBeat(){
-  if(_heroBeatActive){stopAll();return;}
-
-  // Read hero beat info from localStorage
-  var bName='Featured Beat',bGenre='Trap',bBpm='',bUid=null;
-  try{
-    var raw=localStorage.getItem('krito_admin_data');
-    if(raw){var dd=JSON.parse(raw);if(dd.heroBeat){
-      bUid=dd.heroBeat.uid||null;
-      if(dd.heroBeat.name)bName=dd.heroBeat.name;
-      if(dd.heroBeat.genre){var _gr=dd.heroBeat.genre;bGenre=_gr==='hiphop'?'Hip-Hop':_gr==='rnb'?'R&B':(_gr.charAt(0).toUpperCase()+_gr.slice(1));}
-      if(dd.heroBeat.bpm)bBpm=dd.heroBeat.bpm;
-    }}
-  }catch(e){}
-
-  // Stop any regular beat that's currently playing
-  if(nowP){
-    if(nowBtn){nowBtn.innerHTML=SVG_PLAY;nowBtn.classList.remove('on');}
-    stopWave(nowP);
-    if(_audioEl){_audioEl.pause();_audioEl.currentTime=0;}
-    _updateNPProgress(0,0);
-    nowP=null;nowBtn=null;
-  }
-
-  _heroBeatActive=true;
-  _hpTarget=1;
-
-  // Update card back-face labels
-  var tn=document.getElementById('fcTrackName');if(tn)tn.textContent=bName;
-  var ct=document.getElementById('fcCdTrack');if(ct)ct.textContent=bName;
-  var tm=document.getElementById('fcTrackMeta');if(tm)tm.textContent=bGenre+(bGenre&&bBpm?' · ':'')+( bBpm?bBpm+' BPM':'');
-
-  // Show now-playing bar + waveform
-  document.getElementById('npName').textContent=bName;
-  document.getElementById('npGenre').textContent=bGenre;
-  document.getElementById('now-playing').classList.add('show');
-  if(npAnim)cancelAnimationFrame(npAnim);
-  animNP();
-
-  // ── Play audio ──────────────────────────────────────────────────────────
-  if(_heroReady&&_heroURL){
-    // Pre-loaded: set src and play immediately
-    var el=_getAudio();
-    el.src=_heroURL;
-    el.currentTime=0;
-    _startAudioPlayback(el);
-  } else {
-    // Not pre-loaded: try direct Cloudinary URL from localStorage first (fastest path)
-    var _directHeroURL=null;
-    try{var _rr=localStorage.getItem('krito_admin_data');if(_rr){var _dd2=JSON.parse(_rr);_directHeroURL=_dd2.heroBeat&&_dd2.heroBeat.audioURL?_dd2.heroBeat.audioURL:null;}}catch(x){}
-    if(_directHeroURL){
-      _heroURL=_directHeroURL;_heroReady=true;
-      var el2=_getAudio();el2.src=_heroURL;el2.currentTime=0;
-      _startAudioPlayback(el2);
-    } else if(bUid){
-      // Last resort: load from IndexedDB (local-only fallback)
-      _openADB(function(db){
-        if(!db)return;
-        try{
-          var req=db.transaction('beats').objectStore('beats').get(bUid);
-          req.onsuccess=function(e){
-            if(!e.target.result||!e.target.result.data||!_heroBeatActive)return;
-            // Guard: preload may have already completed and started playback
-            if(_heroReady&&_heroURL)return;
-            try{
-              if(_heroURL){try{URL.revokeObjectURL(_heroURL);}catch(x){}}
-              _heroURL=URL.createObjectURL(_b64ToBlob(e.target.result.data));
-              _heroReady=true;
-              var el3=_getAudio();
-              el3.src=_heroURL;el3.currentTime=0;
-              _startAudioPlayback(el3);
-            }catch(x){}
-          };
-        }catch(e){}
-      });
-    }
-    // If neither URL nor UID: Firebase will arrive soon → _fbPortInit will call
-    // _preloadHeroAudio() which checks _heroBeatActive=true and plays automatically
-  }
-}
-
 // ===== BEAT PLAYER =====
 var nowP=null,wAnims={},nowBtn=null;
 var SVG_PLAY='<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" stroke="none"><polygon points="5,3 19,12 5,21"/></svg>';
@@ -1861,18 +1661,7 @@ var SVG_PAUSE='<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColo
 // ===== AUDIO ENGINE =====
 var _audioEl=null;
 var _audioURL=null;
-var _audioDB2=null;
 var _npProgAnim=null;
-
-function _openADB(cb){
-  if(_audioDB2){cb(_audioDB2);return;}
-  try{
-    var r=indexedDB.open('krito_audio',1);
-    r.onupgradeneeded=function(e){e.target.result.createObjectStore('beats',{keyPath:'id'});};
-    r.onsuccess=function(e){_audioDB2=e.target.result;cb(_audioDB2);};
-    r.onerror=function(){cb(null);};
-  }catch(e){cb(null);}
-}
 
 function _getAudio(){
   if(!_audioEl){
@@ -1890,8 +1679,6 @@ function _getAudio(){
       document.getElementById('now-playing').classList.remove('show');
       nowP=null;nowBtn=null;
       _cancelPendingPlayback();
-      // Card flies back to hero
-      _heroBeatActive=false;_hpTarget=0;
     });
     // Progress updates
     _audioEl.addEventListener('timeupdate',function(){
@@ -1944,64 +1731,15 @@ function _updateNPProgress(cur,dur){
 
 function _tryPlayAudio(beatIdx){
   try{
-    var raw=localStorage.getItem('krito_admin_data');if(!raw)return;
-    var d=JSON.parse(raw);
-    var beats=d.beats;if(!beats||!beats[beatIdx])return;
-    // Use Firebase Storage URL if available
-    var audioURL=beats[beatIdx].audioURL||null;
-    if(audioURL){
-      var expected='b'+(beatIdx+1);if(nowP!==expected)return;
-      var el=_getAudio();
-      if(_audioURL){try{URL.revokeObjectURL(_audioURL);}catch(x){}}
-      _audioURL=null;
-      el.src=audioURL;
-      el.currentTime=0;
-      _startAudioPlayback(el);
-      return;
-    }
-    var uid=beats[beatIdx].uid;if(!uid)return;
-    _openADB(function(db){
-      if(!db)return;
-      var req=db.transaction('beats').objectStore('beats').get(uid);
-      req.onsuccess=function(e){
-        if(!e.target.result||!e.target.result.data)return;
-        // Check we're still playing the same beat
-        var expected='b'+(beatIdx+1);if(nowP!==expected)return;
-        var b64=e.target.result.data;
-        // Convert base64 to blob URL
-        try{
-          if(_audioURL){try{URL.revokeObjectURL(_audioURL);}catch(x){}}
-          var parts=b64.split(',');
-          if(parts.length<2)return;
-          var mime=(parts[0].match(/:(.*?);/)||['','audio/mpeg'])[1];
-          var bs=atob(parts[1]);
-          var arr=new Uint8Array(bs.length);
-          for(var i=0;i<bs.length;i++)arr[i]=bs.charCodeAt(i);
-          var blob=new Blob([arr],{type:mime});
-          _audioURL=URL.createObjectURL(blob);
-          var el=_getAudio();
-          el.src=_audioURL;
-          el.currentTime=0;
-          _startAudioPlayback(el);
-        }catch(x){}
-      };
-      req.onerror=function(){
-        // IndexedDB failed — try Cloudinary URL as last resort
-        try{
-          var _r2=localStorage.getItem('krito_admin_data');
-          if(!_r2)return;
-          var _d2=JSON.parse(_r2);
-          var _bts=_d2.beats;if(!_bts||!_bts[beatIdx])return;
-          var _fb=_bts[beatIdx].audioURL;if(!_fb)return;
-          var _ex='b'+(beatIdx+1);if(nowP!==_ex)return;
-          var _elFb=_getAudio();
-          if(_audioURL){try{URL.revokeObjectURL(_audioURL);}catch(x){}}
-          _audioURL=null;
-          _elFb.src=_fb;_elFb.currentTime=0;
-          _startAudioPlayback(_elFb);
-        }catch(x){}
-      };
-    });
+    var beat=BEATS_DATA[beatIdx];
+    if(!beat||!beat.audioURL)return;
+    var expected='b'+(beatIdx+1);if(nowP!==expected)return;
+    var el=_getAudio();
+    if(_audioURL){try{URL.revokeObjectURL(_audioURL);}catch(x){}}
+    _audioURL=null;
+    el.src=beat.audioURL;
+    el.currentTime=0;
+    _startAudioPlayback(el);
   }catch(e){}
 }
 
@@ -2042,8 +1780,6 @@ function playBeat(btn,id,name,genre){
   document.getElementById('now-playing').classList.add('show');
   if(npAnim)cancelAnimationFrame(npAnim);
   animNP();
-  // If hero beat was active, reset card fly (card returns to scroll-driven position)
-  if(_heroBeatActive){_heroBeatActive=false;_hpTarget=0;}
   // Try to play actual audio (b1 → index 0, b2 → index 1, etc.)
   var beatIdx=parseInt(id.replace('b',''),10)-1;
   _tryPlayAudio(beatIdx);
@@ -2059,8 +1795,6 @@ function stopAll(){
   document.getElementById('now-playing').classList.remove('show');
   nowP=null;nowBtn=null;
   _cancelPendingPlayback();
-  _heroBeatActive=false;
-  _hpTarget=0;
 }
 function startWave(id){(function a(){drawWave(id,true);wAnims[id]=requestAnimationFrame(a)})()}
 function stopWave(id){if(wAnims[id])cancelAnimationFrame(wAnims[id]);delete wAnims[id];drawWave(id,false)}
@@ -2179,34 +1913,9 @@ function sendForm(e){
   // JS-level guard (browser `required` attr also prevents submit, but just in case)
   if(!name||!email||!service){return;}
 
-  // ── Save submission to localStorage + Firebase ──
-  try{
-    var sub={
-      id:Date.now(),
-      name:name,email:email,service:service,
-      budget:budget,vision:vision,
-      time:new Date().toISOString(),
-      read:false
-    };
-    var subs=[];
-    try{subs=JSON.parse(localStorage.getItem('krito_submissions')||'[]');}catch(x){}
-    subs.unshift(sub);
-    localStorage.setItem('krito_submissions',JSON.stringify(subs));
-    // Also save to Firebase so admin sees it from any browser
-    try{
-      if(typeof firebase!=='undefined'&&_fbPortDB){
-        firebase.database().ref('krito_portfolio/submissions').push(sub).catch(function(){});
-      }
-    }catch(fx){}
-  }catch(x){}
-
-  // ── Read admin contact settings ──
-  var phone='',adminEmail='';
-  try{
-    var ad=JSON.parse(localStorage.getItem('krito_admin_data')||'{}');
-    phone=(ad.contactPhone||'').replace(/\D/g,'');
-    adminEmail=ad.contactEmail||'';
-  }catch(x){}
+  // ── Contact details (hardcoded) ──
+  var phone='919592260862';
+  var adminEmail='kritoxd499@gmail.com';
 
   // ── Show success state ──
   var f=document.getElementById('cForm'),s=document.getElementById('fSuc');
@@ -2739,169 +2448,6 @@ function sendForm(e){
   requestAnimationFrame(tick);
 })();
 
-// ===== ADMIN PANEL LIVE SYNC =====
-var _kApplyData=null; // exposed so _fbPortInit Firebase callback can call it
-(function(){
-  var STORE_KEY='krito_admin_data';
-
-  _kApplyData=function(d){
-    if(!d)return;
-    // Hero
-    if(d.heroBadge){var b=document.getElementById('hBadgeTxt');if(b)b.textContent=d.heroBadge;}
-    if(d.heroSubtext){var hs=document.getElementById('heroSubtext');if(hs)hs.textContent=d.heroSubtext;}
-    if(d.heroPhoto){
-      var fc=document.querySelector('.fc-photo img');
-      if(fc){fc.src=d.heroPhoto;fc.style.display='block';}
-      else{
-        var ph=document.querySelector('.fc-photo');
-        if(ph&&!ph.querySelector('img')){
-          var img=document.createElement('img');
-          img.src=d.heroPhoto;
-          img.style.cssText='width:100%;height:100%;object-fit:cover;border-radius:inherit;position:absolute;inset:0';
-          ph.appendChild(img);
-        } else if(ph&&ph.querySelector('img')){
-          ph.querySelector('img').src=d.heroPhoto;ph.querySelector('img').style.display='block';
-        }
-      }
-    }
-    // Beats — supports both new d.beats[] array and legacy d.beat1...d.beat6
-    var _beats=null;
-    if(d.beats&&Array.isArray(d.beats)&&d.beats.length){
-      _beats=d.beats;
-    }else{
-      _beats=[];
-      for(var _li=1;_li<=6;_li++){if(d['beat'+_li])_beats.push(d['beat'+_li]);}
-    }
-    var _allBc=document.querySelectorAll('.bc[data-beat]');
-    for(var _bi=0;_bi<_allBc.length;_bi++){
-      var bc=_allBc[_bi];
-      if(_bi<_beats.length){
-        var b2=_beats[_bi];
-        bc.style.display='';
-        var _bcWrap=bc.parentNode&&bc.parentNode.classList.contains('bc-glow-wrap')?bc.parentNode:null;
-        if(_bcWrap){_bcWrap.style.display='';_bcWrap.classList.remove('data-hidden');}
-        if(b2.name){
-          var h3=bc.querySelector('.bc-top h3');if(h3)h3.textContent=b2.name;
-          var playBtn=bc.querySelector('.bc-play');
-          if(playBtn){
-            var _gl=b2.genre==='hiphop'?'Hip-Hop':b2.genre==='rnb'?'R&B':(b2.genre?(b2.genre.charAt(0).toUpperCase()+b2.genre.slice(1)):'');
-            var _bid='b'+(_bi+1);
-            playBtn.setAttribute('onclick','playBeat(this,\''+_bid+'\','+JSON.stringify(b2.name)+','+JSON.stringify(_gl)+')');
-          }
-        }
-        if(b2.genre){
-          var _tag=bc.querySelector('.g-tag');
-          if(_tag){var _gl2=b2.genre==='hiphop'?'Hip-Hop':b2.genre==='rnb'?'R&B':(b2.genre.charAt(0).toUpperCase()+b2.genre.slice(1));_tag.textContent=_gl2;}
-          bc.setAttribute('data-g',b2.genre);
-        }
-        if(b2.bpm||b2.key){
-          var _meta=bc.querySelectorAll('.bc-meta span');
-          if(_meta[0]&&b2.bpm)_meta[0].innerHTML='<b>BPM</b> '+b2.bpm;
-          if(_meta[1]&&b2.key)_meta[1].innerHTML='<b>Key</b> '+b2.key;
-        }
-        var _pr=bc.querySelector('.b-price');
-        if(_pr){
-          if(b2.noPrice)_pr.textContent='On Request';
-          else if(b2.price)_pr.textContent='₹'+b2.price;
-        }
-        if(b2.art){
-          var _art=bc.querySelector('.bc-art');
-          if(_art){_art.innerHTML='<img src="'+b2.art+'" style="width:100%;height:100%;object-fit:cover;border-radius:6px" alt="">';}
-        }
-      }else{
-        bc.style.display='none';
-        var _bcWrap2=bc.parentNode&&bc.parentNode.classList.contains('bc-glow-wrap')?bc.parentNode:null;
-        if(_bcWrap2){_bcWrap2.style.display='none';_bcWrap2.classList.add('data-hidden');}
-      }
-    }
-    // Update beats count in section header
-    if(_beats){var _bsub=document.querySelector('#beats .s-sub');if(_bsub)_bsub.textContent=_beats.length+' premium track'+(_beats.length===1?'':'s')+'. Each one a hit waiting to happen.';}
-    // Services
-    if(d.srvSubtext){var ss=document.getElementById('srvSubtext');if(ss)ss.textContent=d.srvSubtext;}
-    for(var j=1;j<=3;j++){
-      var sv=d['srv'+j];if(!sv)continue;
-      if(sv.title){var st=document.getElementById('srv'+j+'Title');if(st)st.textContent=sv.title;}
-      if(sv.desc){var sd=document.getElementById('srv'+j+'Desc');if(sd)sd.textContent=sv.desc;}
-      if(sv.f1||sv.f2||sv.f3){
-        var sl=document.getElementById('srv'+j+'List');
-        if(sl){
-          var items=sl.querySelectorAll('li');
-          if(items[0]&&sv.f1)items[0].innerHTML='<span class="chk">✓</span>'+sv.f1;
-          if(items[1]&&sv.f2)items[1].innerHTML='<span class="chk">✓</span>'+sv.f2;
-          if(items[2]&&sv.f3)items[2].innerHTML='<span class="chk">✓</span>'+sv.f3;
-        }
-      }
-    }
-    // Testi
-    if(d.testiSubtext){var ts=document.getElementById('testiSubtext');if(ts)ts.textContent=d.testiSubtext;}
-    for(var k=0;k<5;k++){
-      var tc=d['tc'+k];if(!tc)continue;
-      if(tc.quote){var tq=document.querySelector('#tc'+k+' .tc-quote');if(tq)tq.textContent='"'+tc.quote+'"';}
-      if(tc.name){var tn=document.querySelector('#tc'+k+' .tc-name');if(tn)tn.textContent=tc.name;}
-      if(tc.role){var tr=document.querySelector('#tc'+k+' .tc-role');if(tr)tr.textContent=tc.role;}
-      if(tc.photo){
-        var av=document.getElementById('tc'+k+'av');
-        if(av){av.style.backgroundImage='url('+tc.photo+')';av.style.backgroundSize='cover';av.style.backgroundPosition='center';av.style.fontSize='0';}
-      }
-      // Update first letter in avatar if name changed
-      if(tc.name&&!tc.photo){
-        var av2=document.getElementById('tc'+k+'av');
-        if(av2&&!av2.style.backgroundImage)av2.textContent=tc.name[0].toUpperCase();
-      }
-    }
-    // Contact
-    if(d.contactSubtext){var cs=document.getElementById('contactSubtext');if(cs)cs.textContent=d.contactSubtext;}
-    if(d.contactEmail){
-      var ce=document.getElementById('contactEmail');
-      if(ce){ce.textContent=d.contactEmail;ce.href='mailto:'+d.contactEmail;}
-    }
-    if(d.contactPhone){
-      var cp=document.getElementById('contactPhone');
-      if(cp){cp.textContent=d.contactPhone;cp.href='https://wa.me/'+d.contactPhone.replace(/\D/g,'');}
-    }
-    if(d.contactLocation){var cl=document.getElementById('contactLocation');if(cl)cl.textContent=d.contactLocation;}
-    if(d.socInsta){var si=document.getElementById('socInsta');if(si)si.href=d.socInsta;}
-    if(d.socYT){var sy=document.getElementById('socYT');if(sy)sy.href=d.socYT;}
-    if(d.socSC){var sc=document.getElementById('socSC');if(sc)sc.href=d.socSC;}
-    if(d.socSpotify){var sp=document.getElementById('socSpotify');if(sp)sp.href=d.socSpotify;}
-    // Hero Beat card info (update flying card labels)
-    if(d.heroBeat&&d.heroBeat.name){
-      var hbn=d.heroBeat.name;
-      var hbg=d.heroBeat.genre||'';var hbb=d.heroBeat.bpm||'';
-      var fcn=document.getElementById('fcName');if(fcn)fcn.textContent='KRITO';
-      var fccn=document.getElementById('fcCdName');if(fccn)fccn.textContent='KRITO';
-      // Only update if hero beat is NOT currently playing (don't overwrite active now-playing state)
-      if(!_heroBeatActive){
-        var tn2=document.getElementById('fcTrackName');if(tn2)tn2.textContent=hbn;
-        var ct2=document.getElementById('fcCdTrack');if(ct2)ct2.textContent=hbn;
-        var tm2=document.getElementById('fcTrackMeta');if(tm2)tm2.textContent=hbg+(hbb?' · '+hbb+' BPM':'');
-      }
-    }
-    // Footer
-    if(d.footerTagline){var ft=document.getElementById('footerTagline');if(ft)ft.textContent=d.footerTagline;}
-    if(d.footerCopy||d.footerCity){
-      var fb=document.querySelector('.ft-bot');
-      if(fb){
-        var copy=d.footerCopy||'KRITO';
-        var city=d.footerCity||'Mohali';
-        fb.innerHTML='<p>© 2025 '+copy+'. All Rights Reserved.</p><p>Made with <span class="red">♥</span> in '+city+'</p>';
-      }
-    }
-  }; // end _kApplyData
-
-  // Apply saved data on page load
-  try{
-    var raw=localStorage.getItem(STORE_KEY);
-    if(raw)_kApplyData(JSON.parse(raw));
-  }catch(e){}
-
-  // Listen for live updates from admin panel
-  window.addEventListener('message',function(e){
-    if(e.data&&e.data.type==='KRITO_UPDATE'){
-      try{if(_kApplyData)_kApplyData(e.data.data);}catch(e2){}
-    }
-  });
-})();
 
 // ===== SUBTLE SOUND INTERACTION =====
 (function(){
@@ -2965,12 +2511,6 @@ function subscribeNewsletter(e){
   if(!inp)return;
   var email=(inp.value||'').trim();
   if(!email||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){inp.style.borderColor='#f06';setTimeout(function(){inp.style.borderColor='';},1200);return;}
-  // Save subscriber to Firebase
-  try{
-    if(typeof firebase!=='undefined'&&_fbPortDB){
-      firebase.database().ref('krito_portfolio/subscribers').push({email:email,time:new Date().toISOString()}).catch(function(){});
-    }
-  }catch(x){}
   inp.value='';inp.placeholder='Subscribed! ✓';inp.style.borderColor='#F0660A';
   setTimeout(function(){inp.placeholder='your@email.com';inp.style.borderColor='';},3000);
 }
