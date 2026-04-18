@@ -701,6 +701,15 @@ footer{background:#180c08}
   .t-stage{height:240px}
   .t-card{width:82vw;max-width:300px}
   .about-bottom{grid-template-columns:1fr;gap:36px}
+  /* Mobile layout polish */
+  .container{padding:0 20px}
+  #about,#beats,#services,#testi,#contact{padding:70px 0}
+  .about-card-center{margin-bottom:28px}
+  .s-head{margin-bottom:28px}
+  .bc-glow-wrap::before{animation:none}
+  .srv-card{padding:26px 20px}
+  .c-items{gap:14px}
+  .nl-f input{font-size:14px}
 }
 
 /* Small mobile (≤480px) */
@@ -719,6 +728,10 @@ footer{background:#180c08}
   .s-title{font-size:clamp(22px,7vw,36px)}
   .h-badge{font-size:7px;letter-spacing:3px;padding:5px 10px}
   .hero-p{font-size:12px}
+  .container{padding:0 14px}
+  #about,#beats,#services,#testi,#contact{padding:50px 0}
+  .about-card-center{margin-bottom:12px}
+  .s-head{margin-bottom:18px}
 }
 
 /* ===== CINEMATIC BG NOISE ===== */
@@ -1236,6 +1249,7 @@ function initFlip(){
   var ph=document.getElementById('hCardPh');
   var slot=document.getElementById('aImgSlot');
   if(!card||!inner||!ph||!slot)return;
+  var isTouch='ontouchstart' in window||navigator.maxTouchPoints>0;
 
   function getRect(el){
     var r=el.getBoundingClientRect();
@@ -1265,7 +1279,7 @@ function initFlip(){
 
     tgtX=phR.x+(slotR.x-phR.x)*ease;
     tgtY=phR.y+(slotR.y-phR.y)*ease;
-    tgtR=ease*180;
+    tgtR=isTouch?0:ease*180;
     tgtS=1+(slotR.w/phR.w-1)*ease;
 
     var lp=ease>=0.99?1:0.07;
