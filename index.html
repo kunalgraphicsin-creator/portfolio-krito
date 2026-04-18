@@ -2515,9 +2515,18 @@ function subscribeNewsletter(e){
   var inp=document.getElementById('nl_email');
   if(!inp)return;
   var email=(inp.value||'').trim();
-  if(!email||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){inp.style.borderColor='#f06';setTimeout(function(){inp.style.borderColor='';},1200);return;}
-  inp.value='';inp.placeholder='Subscribed! ✓';inp.style.borderColor='#F0660A';
-  setTimeout(function(){inp.placeholder='your@email.com';inp.style.borderColor='';},3000);
+  if(!email||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){
+    inp.style.borderColor='#f06';
+    setTimeout(function(){inp.style.borderColor='';},1200);
+    return;
+  }
+  inp.value='';inp.placeholder='Opening WhatsApp...';inp.style.borderColor='#F0660A';
+  var msg='Hey KRITO! I want the free 5-beat pack \uD83D\uDD25\nPlease send it to: '+email;
+  setTimeout(function(){
+    window.open('https://wa.me/919592260862?text='+encodeURIComponent(msg),'_blank');
+    inp.placeholder='Sent! \u2713 Check WhatsApp';
+    setTimeout(function(){inp.placeholder='your@email.com';inp.style.borderColor='';},3500);
+  },300);
 }
 
 </script>
