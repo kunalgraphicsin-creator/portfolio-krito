@@ -1973,21 +1973,24 @@ function sendForm(e){
   function lerp(a,b,t){return a+(b-a)*t;}
 
   function tick(){
-    cur=lerp(cur,tar,0.085);
-    if(Math.abs(tar-cur)<0.5)cur=tar;
+    cur=lerp(cur,tar,0.075);
+    if(Math.abs(tar-cur)<0.3)cur=tar;
     wrap.style.transform='translate3d(0,'+-cur+'px,0)';
     // keep window.scrollY in sync for all existing JS
     _vy=cur;
-    if(Math.abs(tar-cur)>0.1)requestAnimationFrame(tick);
+    if(Math.abs(tar-cur)>0.04)requestAnimationFrame(tick);
     else running=false;
   }
 
   function start(){if(!running){running=true;requestAnimationFrame(tick);}}
 
-  // Wheel
+  // Wheel — normalize delta across all mouse/trackpad types
   window.addEventListener('wheel',function(e){
     e.preventDefault();
-    tar=Math.min(Math.max(tar+e.deltaY*1.0,0),max);
+    var d=e.deltaY;
+    if(e.deltaMode===1)d*=40;           // line-mode mice
+    if(e.deltaMode===2)d*=window.innerHeight; // page-mode
+    tar=Math.min(Math.max(tar+d*0.88,0),max);
     start();
   },{passive:false});
 
