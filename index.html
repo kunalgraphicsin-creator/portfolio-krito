@@ -2571,100 +2571,120 @@ function subscribeNewsletter(e){
   },300);
 }
 
-/* ===== ANIMATED FAVICON — spinning vinyl disc ===== */
+/* ===== ANIMATED FAVICON — exact portfolio disc replica ===== */
 (function(){
   var cvs=document.createElement('canvas');
-  cvs.width=64;cvs.height=64;          /* 64px = crisp on retina, fast to encode */
+  cvs.width=64;cvs.height=64;
   var ctx=cvs.getContext('2d');
   var angle=0,prev=0;
   var lnk=document.querySelector("link[rel='icon']");
   if(!lnk){lnk=document.createElement('link');lnk.rel='icon';lnk.type='image/png';document.head.appendChild(lnk);}
 
+  /* conic stops — mirrors .fc-cd-surf exactly */
+  var conicStops=[
+    [0,      '#1a0803'],
+    [0.069,  '#3d1a08'],
+    [0.153,  '#5a2a0d'],
+    [0.217,  '#F0660A'],
+    [0.272,  '#c44d00'],
+    [0.356,  '#7a2d00'],
+    [0.439,  '#2a0f04'],
+    [0.542,  '#160602'],
+    [0.633,  '#3d1a08'],
+    [0.717,  '#6b3010'],
+    [0.772,  '#F0660A'],
+    [0.828,  '#c44d00'],
+    [0.911,  '#5a2a0d'],
+    [1.0,    '#1a0803']
+  ];
+
+  /* shine stops — mirrors .fc-cd-shine */
+  var shineStops=[
+    [0,     'rgba(0,0,0,0)'],
+    [0.153, 'rgba(0,0,0,0)'],
+    [0.200, 'rgba(255,200,130,0.12)'],
+    [0.239, 'rgba(255,255,255,0.28)'],
+    [0.278, 'rgba(255,210,140,0.14)'],
+    [0.328, 'rgba(0,0,0,0)'],
+    [1.0,   'rgba(0,0,0,0)']
+  ];
+
+  function applyStops(g,stops){stops.forEach(function(s){g.addColorStop(s[0],s[1]);});}
+
   function draw(a){
-    var cx=32,cy=32,R=30;
+    var cx=32,cy=32,R=30,LR=12.6; /* LR = label radius (42% of R) */
     ctx.clearRect(0,0,64,64);
 
-    /* ── clip to perfect circle — no square corners ── */
+    /* ── clip to circle ── */
     ctx.save();
     ctx.beginPath();
     ctx.arc(cx,cy,R,0,Math.PI*2);
     ctx.clip();
 
-    /* ── spin ── */
+    /* ── rotate ── */
     ctx.translate(cx,cy);
     ctx.rotate(a);
     ctx.translate(-cx,-cy);
 
-    /* disc — portfolio orange, off-centre focal point = 3-D sweep */
-    var g=ctx.createRadialGradient(20,17,2,cx,cy,R);
-    g.addColorStop(0,  '#FF9030');
-    g.addColorStop(0.28,'#F0660A');
-    g.addColorStop(0.65,'#C04400');
-    g.addColorStop(1,  '#4a0e00');
+    /* LAYER 1 — disc surface: conic gradient (same metallic shimmer as card) */
+    var surf;
+    try{
+      surf=ctx.createConicGradient(0,cx,cy);
+      applyStops(surf,conicStops);
+    }catch(e){
+      /* fallback: radial for old browsers */
+      surf=ctx.createRadialGradient(18,16,2,cx,cy,R);
+      surf.addColorStop(0,'#F0660A');surf.addColorStop(0.5,'#7a2d00');surf.addColorStop(1,'#1a0803');
+    }
     ctx.beginPath();
     ctx.arc(cx,cy,R,0,Math.PI*2);
-    ctx.fillStyle=g;
+    ctx.fillStyle=surf;
     ctx.fill();
 
-    /* groove rings — dark, bold, portfolio-dark tone */
-    [27,23,19,15].forEach(function(r){
-      ctx.beginPath();
-      ctx.arc(cx,cy,r,0,Math.PI*2);
-      ctx.strokeStyle='rgba(15,7,5,0.78)';
-      ctx.lineWidth=1.5;
-      ctx.stroke();
-    });
+    /* LAYER 2 — groove rings (repeating radial approximation) */
+    for(var r=R-2;r>LR+2;r-=3.5){
+      ctx.beginPath();ctx.arc(cx,cy,r,0,Math.PI*2);
+      ctx.strokeStyle='rgba(0,0,0,0.14)';ctx.lineWidth=0.6;ctx.stroke();
+      ctx.beginPath();ctx.arc(cx,cy,r-0.5,0,Math.PI*2);
+      ctx.strokeStyle='rgba(255,130,50,0.05)';ctx.lineWidth=0.4;ctx.stroke();
+    }
 
-    /* ★ bright wedge — clear rotation indicator, sweeps every frame ★ */
-    ctx.beginPath();
-    ctx.moveTo(cx,cy);
-    ctx.arc(cx,cy,R-1,-0.58,0.58);
-    ctx.closePath();
-    ctx.fillStyle='rgba(255,195,90,0.34)';
-    ctx.fill();
+    /* LAYER 3 — iridescent shine sweep */
+    var shine;
+    try{
+      shine=ctx.createConicGradient(0,cx,cy);
+      applyStops(shine,shineStops);
+      ctx.beginPath();ctx.arc(cx,cy,R,0,Math.PI*2);
+      ctx.fillStyle=shine;ctx.fill();
+    }catch(e){}
 
-    /* inner glow on wedge */
-    ctx.beginPath();
-    ctx.moveTo(cx,cy);
-    ctx.arc(cx,cy,14,-0.42,0.42);
-    ctx.closePath();
-    ctx.fillStyle='rgba(255,220,130,0.16)';
-    ctx.fill();
+    /* LAYER 4 — centre label */
+    var lbl=ctx.createRadialGradient(cx-2,cy-2,0,cx,cy,LR);
+    lbl.addColorStop(0,'#2e1108');
+    lbl.addColorStop(0.65,'#180704');
+    lbl.addColorStop(1,'#0f0402');
+    ctx.beginPath();ctx.arc(cx,cy,LR,0,Math.PI*2);
+    ctx.fillStyle=lbl;ctx.fill();
+    ctx.beginPath();ctx.arc(cx,cy,LR,0,Math.PI*2);
+    ctx.strokeStyle='rgba(240,102,10,0.22)';ctx.lineWidth=0.8;ctx.stroke();
 
-    /* centre label — exact portfolio dark */
-    ctx.beginPath();
-    ctx.arc(cx,cy,10,0,Math.PI*2);
-    ctx.fillStyle='#0f0705';
-    ctx.fill();
+    ctx.restore(); /* ── end clip + rotate ── */
 
-    /* orange arc on label — rotates, clearly visible */
-    ctx.beginPath();
-    ctx.arc(cx,cy,6.8,-0.7,0.7);
-    ctx.strokeStyle='#F0660A';
-    ctx.lineWidth=2.5;
-    ctx.stroke();
-
-    ctx.restore();           /* ── end clip + rotate ── */
-
-    /* outer rim — not rotating, defines disc edge */
-    ctx.beginPath();
-    ctx.arc(cx,cy,R,0,Math.PI*2);
-    ctx.strokeStyle='rgba(240,102,10,0.6)';
-    ctx.lineWidth=1.5;
-    ctx.stroke();
-
-    /* centre hole — fixed (looks realistic) */
-    ctx.beginPath();
-    ctx.arc(cx,cy,3.5,0,Math.PI*2);
-    ctx.fillStyle='#f2f2f2';
-    ctx.fill();
+    /* LAYER 5 — spindle hole (NOT rotating — stays fixed, looks real) */
+    var hole=ctx.createRadialGradient(cx,cy,0,cx,cy,4);
+    hole.addColorStop(0,'#ffffff');
+    hole.addColorStop(0.7,'rgba(225,225,235,0.9)');
+    hole.addColorStop(1,'rgba(200,200,220,0.8)');
+    ctx.beginPath();ctx.arc(cx,cy,4,0,Math.PI*2);
+    ctx.fillStyle=hole;ctx.fill();
+    ctx.beginPath();ctx.arc(cx,cy,4,0,Math.PI*2);
+    ctx.strokeStyle='rgba(0,0,0,0.25)';ctx.lineWidth=0.6;ctx.stroke();
   }
 
   function loop(ts){
-    /* delta-time: rotation speed is always consistent — NO stutter */
-    var dt=prev ? Math.min(ts-prev,50) : 16;
+    var dt=prev?Math.min(ts-prev,50):16; /* delta-time = zero stutter */
     prev=ts;
-    angle+=dt*0.00088;       /* ~1 full rotation per 7 s — smooth vinyl speed */
+    angle+=dt*0.00088;  /* ~1 rotation / 7 s — vinyl speed */
     draw(angle);
     lnk.href=cvs.toDataURL('image/png');
     requestAnimationFrame(loop);
