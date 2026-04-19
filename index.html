@@ -2574,78 +2574,103 @@ function subscribeNewsletter(e){
 /* ===== ANIMATED FAVICON — spinning vinyl disc ===== */
 (function(){
   var cvs=document.createElement('canvas');
-  cvs.width=64;cvs.height=64;
+  cvs.width=128;cvs.height=128;
   var ctx=cvs.getContext('2d');
   var angle=0,lastT=0;
   var lnk=document.querySelector("link[rel='icon']");
   if(!lnk){lnk=document.createElement('link');lnk.rel='icon';lnk.type='image/png';document.head.appendChild(lnk);}
 
   function draw(a){
-    var cx=32,cy=32;
-    ctx.clearRect(0,0,64,64);
+    var cx=64,cy=64,R=62;
+    ctx.clearRect(0,0,128,128);
+
+    /* ── clip everything inside disc circle for clean edges ── */
     ctx.save();
+    ctx.beginPath();
+    ctx.arc(cx,cy,R,0,Math.PI*2);
+    ctx.clip();
+
+    /* ── rotate from centre for all spinning elements ── */
     ctx.translate(cx,cy);
     ctx.rotate(a);
     ctx.translate(-cx,-cy);
 
-    /* disc body — off-centre radial gradient gives 3-D spin illusion */
-    var g=ctx.createRadialGradient(21,18,2,cx,cy,31);
-    g.addColorStop(0,'#FFB060');
-    g.addColorStop(0.35,'#F06010');
-    g.addColorStop(0.70,'#CC4500');
-    g.addColorStop(1,'#7a1800');
+    /* disc base — off-centre focal point: bright spot sweeps as it spins (3-D illusion) */
+    var g=ctx.createRadialGradient(40,36,4,cx,cy,R);
+    g.addColorStop(0,'#FFC070');
+    g.addColorStop(0.22,'#F0660A');
+    g.addColorStop(0.68,'#B83500');
+    g.addColorStop(1,'#5c1000');
     ctx.beginPath();
-    ctx.arc(cx,cy,31,0,Math.PI*2);
+    ctx.arc(cx,cy,R,0,Math.PI*2);
     ctx.fillStyle=g;
     ctx.fill();
 
-    /* groove rings */
-    [28.5,26,23.5,21,18.5,16.5].forEach(function(r){
+    /* groove rings — bold so visible at small sizes */
+    [55,48,41,34,27].forEach(function(r){
       ctx.beginPath();
       ctx.arc(cx,cy,r,0,Math.PI*2);
-      ctx.strokeStyle='rgba(55,8,0,0.6)';
-      ctx.lineWidth=0.9;
+      ctx.strokeStyle='rgba(22,2,0,0.72)';
+      ctx.lineWidth=2.2;
       ctx.stroke();
     });
 
-    /* shine streak — asymmetric so rotation is visible */
+    /* ★ bright wedge sector — the main rotation indicator ★
+       60° pie-slice that is noticeably lighter; sweeps clearly at any size */
     ctx.save();
-    ctx.globalAlpha=0.14;
-    var sg=ctx.createLinearGradient(4,18,60,26);
-    sg.addColorStop(0,'rgba(255,220,150,0)');
-    sg.addColorStop(0.5,'rgba(255,220,150,1)');
-    sg.addColorStop(1,'rgba(255,220,150,0)');
-    ctx.fillStyle=sg;
     ctx.beginPath();
-    ctx.ellipse(cx,cy-5,27,6,0,0,Math.PI*2);
+    ctx.moveTo(cx,cy);
+    ctx.arc(cx,cy,R-3,-0.52,0.52);
+    ctx.closePath();
+    ctx.fillStyle='rgba(255,210,110,0.30)';
+    ctx.fill();
+    /* soft inner glow on the wedge */
+    ctx.beginPath();
+    ctx.moveTo(cx,cy);
+    ctx.arc(cx,cy,R-14,-0.38,0.38);
+    ctx.closePath();
+    ctx.fillStyle='rgba(255,230,150,0.18)';
     ctx.fill();
     ctx.restore();
 
-    /* centre label */
+    /* centre label — dark circle */
     ctx.beginPath();
-    ctx.arc(cx,cy,13,0,Math.PI*2);
-    ctx.fillStyle='#0d0502';
+    ctx.arc(cx,cy,22,0,Math.PI*2);
+    ctx.fillStyle='#0d0402';
     ctx.fill();
 
-    /* orange dot on label — rotation tracker */
+    /* orange arc on label — rotates with disc, clearly visible */
     ctx.beginPath();
-    ctx.arc(cx,cy-8,2.4,0,Math.PI*2);
-    ctx.fillStyle='#F0660A';
-    ctx.fill();
+    ctx.arc(cx,cy,15,-0.65,0.65);
+    ctx.strokeStyle='rgba(240,102,10,0.95)';
+    ctx.lineWidth=4.5;
+    ctx.stroke();
 
-    /* centre hole */
+    ctx.restore(); /* ── end clip + rotate ── */
+
+    /* outer rim stroke — drawn after restore so NOT rotated */
     ctx.beginPath();
-    ctx.arc(cx,cy,3.8,0,Math.PI*2);
-    ctx.fillStyle='#ffffff';
-    ctx.fill();
+    ctx.arc(cx,cy,R,0,Math.PI*2);
+    ctx.strokeStyle='rgba(240,102,10,0.55)';
+    ctx.lineWidth=2.5;
+    ctx.stroke();
 
-    ctx.restore();
+    /* centre hole — fixed, does not rotate (looks realistic) */
+    ctx.beginPath();
+    ctx.arc(cx,cy,7.5,0,Math.PI*2);
+    ctx.fillStyle='#f5f5f5';
+    ctx.fill();
+    ctx.beginPath();
+    ctx.arc(cx,cy,7.5,0,Math.PI*2);
+    ctx.strokeStyle='rgba(0,0,0,0.35)';
+    ctx.lineWidth=1.2;
+    ctx.stroke();
   }
 
   function loop(ts){
-    if(ts-lastT>42){          /* ~24 fps */
+    if(ts-lastT>33){        /* 30 fps */
       lastT=ts;
-      angle+=0.028;           /* ~1 rotation every 9 s — smooth vinyl speed */
+      angle+=0.025;         /* ~1 full rotation per 8.4 s — smooth vinyl speed */
       draw(angle);
       lnk.href=cvs.toDataURL('image/png');
     }
