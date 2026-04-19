@@ -757,6 +757,12 @@ footer{background:#180c08}
   background:radial-gradient(ellipse 90% 88% at 50% 50%,
     transparent 35%,rgba(0,0,0,0.55) 100%);
 }
+/* ===== REDUCED MOTION — respect OS accessibility setting ===== */
+@media(prefers-reduced-motion:reduce){
+  .bc-glow-wrap::before,.n-disc,.np-disc,.fc-scanline,.fc-cyber-lines span,.f-box,.bdot{animation:none!important}
+  .mq-inner{animation-play-state:paused!important}
+  *{transition-duration:.01ms!important}
+}
 </style>
 </head>
 <body>
@@ -1454,8 +1460,8 @@ function initParticles(){
   if(!cvs)return;
   var ctx=cvs.getContext('2d');
   var W,H,pts=[],mx=-999,my=-999;
-  var COUNT=45,LINK=130,LINK2=LINK*LINK,ATTRACT=160,ATTRACT2=ATTRACT*ATTRACT,ATT_FORCE=0.012;
   var isTouch='ontouchstart' in window||navigator.maxTouchPoints>0;
+  var COUNT=isTouch?18:45,LINK=130,LINK2=LINK*LINK,ATTRACT=160,ATTRACT2=ATTRACT*ATTRACT,ATT_FORCE=0.012;
   var _ptPaused=false;
 
   function resize(){
@@ -1503,18 +1509,20 @@ function initParticles(){
         if(p.x<0)p.x=W;if(p.x>W)p.x=0;
         if(p.y<0)p.y=H;if(p.y>H)p.y=0;
       }
-      // draw links — 3 batched stroke() calls instead of ~1000 individual GPU flushes
-      var b1=[],b2=[],b3=[];
-      for(var i=0;i<pts.length;i++){
-        for(var j=i+1;j<pts.length;j++){
-          var dx=pts[i].x-pts[j].x,dy=pts[i].y-pts[j].y,d2=dx*dx+dy*dy;
-          if(d2<LINK2){
-            var d=Math.sqrt(d2),a=(1-d/LINK)*0.28;
-            (a>0.18?b1:a>0.1?b2:b3).push(pts[i].x,pts[i].y,pts[j].x,pts[j].y);
+      // draw links — skip on touch (no cursor, saves O(n²) distance checks every frame)
+      if(!isTouch){
+        var b1=[],b2=[],b3=[];
+        for(var i=0;i<pts.length;i++){
+          for(var j=i+1;j<pts.length;j++){
+            var dx=pts[i].x-pts[j].x,dy=pts[i].y-pts[j].y,d2=dx*dx+dy*dy;
+            if(d2<LINK2){
+              var d=Math.sqrt(d2),a=(1-d/LINK)*0.28;
+              (a>0.18?b1:a>0.1?b2:b3).push(pts[i].x,pts[i].y,pts[j].x,pts[j].y);
+            }
           }
         }
+        _strokeBatch(b1,0.25);_strokeBatch(b2,0.14);_strokeBatch(b3,0.06);
       }
-      _strokeBatch(b1,0.25);_strokeBatch(b2,0.14);_strokeBatch(b3,0.06);
       // draw nodes
       for(var i=0;i<pts.length;i++){
         var p=pts[i];
@@ -2070,8 +2078,9 @@ function sendForm(e){
   window.addEventListener('resize',resize,{passive:true});
   resize();
 
-  // ~12fps — schedule rAF only after 80ms gap, never spinning idle at 60fps
-  var FINT=80;
+  // ~12fps desktop / ~6fps mobile — schedule rAF only after gap, never spinning idle at 60fps
+  var _nTouch='ontouchstart' in window||navigator.maxTouchPoints>0;
+  var FINT=_nTouch?160:80;
   var dx=0,dy=0,dvx=0.12,dvy=0.09;
 
   function tick(){
@@ -2127,11 +2136,18 @@ function sendForm(e){
     spot.style.opacity='0';
   },{passive:true});
 
+  /* pause rAF when hero is not in viewport — saves full 60fps loop */
+  var _spotVisible=true;
+  if(window.IntersectionObserver){
+    new IntersectionObserver(function(e){_spotVisible=e[0].isIntersecting;},{threshold:0}).observe(hero);
+  }
   (function loop(){
-    cx+=(sx-cx)*.09;cy+=(sy-cy)*.09;
-    if(inside||Math.abs(sx-cx)>0.5||Math.abs(sy-cy)>0.5){
-      spot.style.background='radial-gradient(circle 380px at '+cx+'px '+cy+'px,'
-        +'rgba(240,102,10,0.04) 0%,rgba(0,0,0,0) 40%,rgba(0,0,0,0.6) 100%)';
+    if(_spotVisible){
+      cx+=(sx-cx)*.09;cy+=(sy-cy)*.09;
+      if(inside||Math.abs(sx-cx)>0.5||Math.abs(sy-cy)>0.5){
+        spot.style.background='radial-gradient(circle 380px at '+cx+'px '+cy+'px,'
+          +'rgba(240,102,10,0.04) 0%,rgba(0,0,0,0) 40%,rgba(0,0,0,0.6) 100%)';
+      }
     }
     requestAnimationFrame(loop);
   })();
@@ -2406,7 +2422,7 @@ function sendForm(e){
     ]}
   ];
 
-  var t0=null;
+  var t0=null,_orbitLast=0;
 
   function masterAlpha(){
     var vy=window._vy!==undefined?window._vy:window.scrollY;
@@ -2415,21 +2431,35 @@ function sendForm(e){
     return Math.min(Math.max((vy-hh*0.35)/(hh*0.4),0),1);
   }
 
-  function drawDot(x,y,sz,a){
-    // Glow halo
-    var g=ctx.createRadialGradient(x,y,0,x,y,sz*4);
-    g.addColorStop(0,'rgba(240,102,10,'+(a*0.38)+')');
-    g.addColorStop(0.4,'rgba(240,102,10,'+(a*0.12)+')');
+  /* pre-render each dot size to offscreen canvas once — eliminates createRadialGradient per frame */
+  var _dotCache={};
+  function _getDotImg(sz){
+    var k=Math.round(sz*10);
+    if(_dotCache[k])return _dotCache[k];
+    var r=sz*4,s=Math.ceil(r*2)+6;
+    var c=document.createElement('canvas');c.width=c.height=s;
+    var cx2=c.getContext('2d'),h=s/2;
+    var g=cx2.createRadialGradient(h,h,0,h,h,r);
+    g.addColorStop(0,'rgba(240,102,10,0.38)');
+    g.addColorStop(0.4,'rgba(240,102,10,0.12)');
     g.addColorStop(1,'rgba(240,102,10,0)');
-    ctx.fillStyle=g;
-    ctx.beginPath();ctx.arc(x,y,sz*4,0,Math.PI*2);ctx.fill();
-    // Core
-    ctx.fillStyle='rgba(255,145,55,'+(a*0.7)+')';
-    ctx.beginPath();ctx.arc(x,y,sz*0.8,0,Math.PI*2);ctx.fill();
+    cx2.fillStyle=g;cx2.beginPath();cx2.arc(h,h,r,0,Math.PI*2);cx2.fill();
+    cx2.fillStyle='rgba(255,145,55,0.7)';
+    cx2.beginPath();cx2.arc(h,h,sz*0.8,0,Math.PI*2);cx2.fill();
+    return(_dotCache[k]=c);
+  }
+  function drawDot(x,y,sz,a){
+    var img=_getDotImg(sz),h=img.width/2;
+    ctx.globalAlpha=a;
+    ctx.drawImage(img,x-h,y-h);
+    ctx.globalAlpha=1;
   }
 
   function tick(ts){
     if(!t0)t0=ts;
+    /* throttle to ~30fps — floating dots need no more than 30fps */
+    if(ts-_orbitLast<33){requestAnimationFrame(tick);return;}
+    _orbitLast=ts;
     var el=ts-t0;
     ctx.clearRect(0,0,W,H);
     var ma=masterAlpha();
@@ -2611,37 +2641,39 @@ function subscribeNewsletter(e){
 
   function applyStops(g,stops){stops.forEach(function(s){g.addColorStop(s[0],s[1]);});}
 
-  function draw(a){
-    var cx=32,cy=32,R=30,LR=12.6; /* LR = label radius (42% of R) */
-    ctx.clearRect(0,0,64,64);
-
-    /* ── clip to circle ── */
-    ctx.save();
-    ctx.beginPath();
-    ctx.arc(cx,cy,R,0,Math.PI*2);
-    ctx.clip();
-
-    /* ── rotate ── */
-    ctx.translate(cx,cy);
-    ctx.rotate(a);
-    ctx.translate(-cx,-cy);
-
-    /* LAYER 1 — disc surface: conic gradient (same metallic shimmer as card) */
-    var surf;
-    try{
-      surf=ctx.createConicGradient(0,cx,cy);
-      applyStops(surf,conicStops);
-    }catch(e){
-      /* fallback: radial for old browsers */
+  /* ── build ALL gradients ONCE — conic/radial don't depend on angle
+     (rotation is applied via ctx.rotate, not by changing the gradient) ── */
+  var _G=null;
+  var cx=32,cy=32,R=30,LR=12.6;
+  function buildGrads(){
+    if(_G)return;
+    var surf=null;
+    try{surf=ctx.createConicGradient(0,cx,cy);applyStops(surf,conicStops);}catch(e){}
+    if(!surf){
       surf=ctx.createRadialGradient(18,16,2,cx,cy,R);
       surf.addColorStop(0,'#F0660A');surf.addColorStop(0.5,'#7a2d00');surf.addColorStop(1,'#1a0803');
     }
-    ctx.beginPath();
-    ctx.arc(cx,cy,R,0,Math.PI*2);
-    ctx.fillStyle=surf;
-    ctx.fill();
+    var shine=null;
+    try{shine=ctx.createConicGradient(0,cx,cy);applyStops(shine,shineStops);}catch(e){}
+    var lbl=ctx.createRadialGradient(cx-2,cy-2,0,cx,cy,LR);
+    lbl.addColorStop(0,'#2e1108');lbl.addColorStop(0.65,'#180704');lbl.addColorStop(1,'#0f0402');
+    var hole=ctx.createRadialGradient(cx,cy,0,cx,cy,4);
+    hole.addColorStop(0,'#ffffff');hole.addColorStop(0.7,'rgba(225,225,235,0.9)');hole.addColorStop(1,'rgba(200,200,220,0.8)');
+    _G={surf:surf,shine:shine,lbl:lbl,hole:hole};
+  }
 
-    /* LAYER 2 — groove rings (repeating radial approximation) */
+  function draw(a){
+    buildGrads();
+    ctx.clearRect(0,0,64,64);
+    ctx.save();
+    ctx.beginPath();ctx.arc(cx,cy,R,0,Math.PI*2);ctx.clip();
+    ctx.translate(cx,cy);ctx.rotate(a);ctx.translate(-cx,-cy);
+
+    /* LAYER 1 — disc surface */
+    ctx.beginPath();ctx.arc(cx,cy,R,0,Math.PI*2);
+    ctx.fillStyle=_G.surf;ctx.fill();
+
+    /* LAYER 2 — groove rings */
     for(var r=R-2;r>LR+2;r-=3.5){
       ctx.beginPath();ctx.arc(cx,cy,r,0,Math.PI*2);
       ctx.strokeStyle='rgba(0,0,0,0.14)';ctx.lineWidth=0.6;ctx.stroke();
@@ -2649,44 +2681,38 @@ function subscribeNewsletter(e){
       ctx.strokeStyle='rgba(255,130,50,0.05)';ctx.lineWidth=0.4;ctx.stroke();
     }
 
-    /* LAYER 3 — iridescent shine sweep */
-    var shine;
-    try{
-      shine=ctx.createConicGradient(0,cx,cy);
-      applyStops(shine,shineStops);
+    /* LAYER 3 — iridescent shine */
+    if(_G.shine){
       ctx.beginPath();ctx.arc(cx,cy,R,0,Math.PI*2);
-      ctx.fillStyle=shine;ctx.fill();
-    }catch(e){}
+      ctx.fillStyle=_G.shine;ctx.fill();
+    }
 
     /* LAYER 4 — centre label */
-    var lbl=ctx.createRadialGradient(cx-2,cy-2,0,cx,cy,LR);
-    lbl.addColorStop(0,'#2e1108');
-    lbl.addColorStop(0.65,'#180704');
-    lbl.addColorStop(1,'#0f0402');
     ctx.beginPath();ctx.arc(cx,cy,LR,0,Math.PI*2);
-    ctx.fillStyle=lbl;ctx.fill();
+    ctx.fillStyle=_G.lbl;ctx.fill();
     ctx.beginPath();ctx.arc(cx,cy,LR,0,Math.PI*2);
     ctx.strokeStyle='rgba(240,102,10,0.22)';ctx.lineWidth=0.8;ctx.stroke();
 
-    ctx.restore(); /* ── end clip + rotate ── */
+    ctx.restore();
 
-    /* LAYER 5 — spindle hole (NOT rotating — stays fixed, looks real) */
-    var hole=ctx.createRadialGradient(cx,cy,0,cx,cy,4);
-    hole.addColorStop(0,'#ffffff');
-    hole.addColorStop(0.7,'rgba(225,225,235,0.9)');
-    hole.addColorStop(1,'rgba(200,200,220,0.8)');
+    /* LAYER 5 — spindle hole (fixed, not rotating) */
     ctx.beginPath();ctx.arc(cx,cy,4,0,Math.PI*2);
-    ctx.fillStyle=hole;ctx.fill();
+    ctx.fillStyle=_G.hole;ctx.fill();
     ctx.beginPath();ctx.arc(cx,cy,4,0,Math.PI*2);
     ctx.strokeStyle='rgba(0,0,0,0.25)';ctx.lineWidth=0.6;ctx.stroke();
   }
 
+  var _favLast=0;
   function loop(ts){
-    var dt=prev?Math.min(ts-prev,50):16; /* delta-time = zero stutter */
+    var dt=prev?Math.min(ts-prev,50):16;
     prev=ts;
-    angle+=dt*0.00088;  /* ~1 rotation / 7 s — vinyl speed */
-    draw(angle);
-    lnk.href=cvs.toDataURL('image/png');
+    angle+=dt*0.00088;
+    /* throttle favicon update to ~15fps — saves toDataURL() call 45×/sec */
+    if(ts-_favLast>=66&&!document.hidden){
+      _favLast=ts;
+      draw(angle);
+      lnk.href=cvs.toDataURL('image/png');
+    }
     requestAnimationFrame(loop);
   }
   requestAnimationFrame(loop);
