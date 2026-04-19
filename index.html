@@ -13,8 +13,10 @@
 html{scroll-behavior:auto}
 html.smooth-active,html.smooth-active body{overflow:hidden;height:100%}
 #smooth-wrapper{will-change:transform}
-body{background:#0f0705;color:#fff;font-family:'Segoe UI',system-ui,sans-serif;overflow-x:hidden;cursor:none}
+body{background:#0f0705;color:#fff;font-family:'Segoe UI',system-ui,sans-serif;overflow-x:hidden;cursor:none;-webkit-user-select:none;-moz-user-select:none;user-select:none}
 a{text-decoration:none;color:inherit}
+/* Allow selection in form fields only */
+input,textarea,select{-webkit-user-select:text;-moz-user-select:text;user-select:text}
 ul{list-style:none}
 ::-webkit-scrollbar{width:3px}
 ::-webkit-scrollbar-track{background:#0f0705}
@@ -2525,6 +2527,24 @@ function sendForm(e){
     var sy=window.scrollY;
     if(Math.abs(sy-lastTick)>300){lastTick=sy;beep(660,0.018,0.05,'sine');}
   },{passive:true});
+})();
+
+// ===== SITE PROTECTION =====
+(function(){
+  // Disable right-click
+  document.addEventListener('contextmenu',function(e){e.preventDefault();});
+  // Disable image/text drag
+  document.addEventListener('dragstart',function(e){e.preventDefault();});
+  // Disable keyboard shortcuts
+  document.addEventListener('keydown',function(e){
+    var k=e.key.toLowerCase();
+    // Ctrl+U (view-source), Ctrl+S (save), Ctrl+A (select all)
+    if(e.ctrlKey&&(k==='u'||k==='s'||k==='a')){e.preventDefault();return;}
+    // Ctrl+Shift+I / J / C (DevTools)
+    if(e.ctrlKey&&e.shiftKey&&(k==='i'||k==='j'||k==='c')){e.preventDefault();return;}
+    // F12
+    if(e.key==='F12'){e.preventDefault();return;}
+  });
 })();
 
 function subscribeNewsletter(e){
