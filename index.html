@@ -2574,106 +2574,99 @@ function subscribeNewsletter(e){
 /* ===== ANIMATED FAVICON — spinning vinyl disc ===== */
 (function(){
   var cvs=document.createElement('canvas');
-  cvs.width=128;cvs.height=128;
+  cvs.width=64;cvs.height=64;          /* 64px = crisp on retina, fast to encode */
   var ctx=cvs.getContext('2d');
-  var angle=0,lastT=0;
+  var angle=0,prev=0;
   var lnk=document.querySelector("link[rel='icon']");
   if(!lnk){lnk=document.createElement('link');lnk.rel='icon';lnk.type='image/png';document.head.appendChild(lnk);}
 
   function draw(a){
-    var cx=64,cy=64,R=62;
-    ctx.clearRect(0,0,128,128);
+    var cx=32,cy=32,R=30;
+    ctx.clearRect(0,0,64,64);
 
-    /* ── clip everything inside disc circle for clean edges ── */
+    /* ── clip to perfect circle — no square corners ── */
     ctx.save();
     ctx.beginPath();
     ctx.arc(cx,cy,R,0,Math.PI*2);
     ctx.clip();
 
-    /* ── rotate from centre for all spinning elements ── */
+    /* ── spin ── */
     ctx.translate(cx,cy);
     ctx.rotate(a);
     ctx.translate(-cx,-cy);
 
-    /* disc base — off-centre focal point: bright spot sweeps as it spins (3-D illusion) */
-    var g=ctx.createRadialGradient(40,36,4,cx,cy,R);
-    g.addColorStop(0,'#FFC070');
-    g.addColorStop(0.22,'#F0660A');
-    g.addColorStop(0.68,'#B83500');
-    g.addColorStop(1,'#5c1000');
+    /* disc — portfolio orange, off-centre focal point = 3-D sweep */
+    var g=ctx.createRadialGradient(20,17,2,cx,cy,R);
+    g.addColorStop(0,  '#FF9030');
+    g.addColorStop(0.28,'#F0660A');
+    g.addColorStop(0.65,'#C04400');
+    g.addColorStop(1,  '#4a0e00');
     ctx.beginPath();
     ctx.arc(cx,cy,R,0,Math.PI*2);
     ctx.fillStyle=g;
     ctx.fill();
 
-    /* groove rings — bold so visible at small sizes */
-    [55,48,41,34,27].forEach(function(r){
+    /* groove rings — dark, bold, portfolio-dark tone */
+    [27,23,19,15].forEach(function(r){
       ctx.beginPath();
       ctx.arc(cx,cy,r,0,Math.PI*2);
-      ctx.strokeStyle='rgba(22,2,0,0.72)';
-      ctx.lineWidth=2.2;
+      ctx.strokeStyle='rgba(15,7,5,0.78)';
+      ctx.lineWidth=1.5;
       ctx.stroke();
     });
 
-    /* ★ bright wedge sector — the main rotation indicator ★
-       60° pie-slice that is noticeably lighter; sweeps clearly at any size */
-    ctx.save();
+    /* ★ bright wedge — clear rotation indicator, sweeps every frame ★ */
     ctx.beginPath();
     ctx.moveTo(cx,cy);
-    ctx.arc(cx,cy,R-3,-0.52,0.52);
+    ctx.arc(cx,cy,R-1,-0.58,0.58);
     ctx.closePath();
-    ctx.fillStyle='rgba(255,210,110,0.30)';
+    ctx.fillStyle='rgba(255,195,90,0.34)';
     ctx.fill();
-    /* soft inner glow on the wedge */
+
+    /* inner glow on wedge */
     ctx.beginPath();
     ctx.moveTo(cx,cy);
-    ctx.arc(cx,cy,R-14,-0.38,0.38);
+    ctx.arc(cx,cy,14,-0.42,0.42);
     ctx.closePath();
-    ctx.fillStyle='rgba(255,230,150,0.18)';
-    ctx.fill();
-    ctx.restore();
-
-    /* centre label — dark circle */
-    ctx.beginPath();
-    ctx.arc(cx,cy,22,0,Math.PI*2);
-    ctx.fillStyle='#0d0402';
+    ctx.fillStyle='rgba(255,220,130,0.16)';
     ctx.fill();
 
-    /* orange arc on label — rotates with disc, clearly visible */
+    /* centre label — exact portfolio dark */
     ctx.beginPath();
-    ctx.arc(cx,cy,15,-0.65,0.65);
-    ctx.strokeStyle='rgba(240,102,10,0.95)';
-    ctx.lineWidth=4.5;
-    ctx.stroke();
+    ctx.arc(cx,cy,10,0,Math.PI*2);
+    ctx.fillStyle='#0f0705';
+    ctx.fill();
 
-    ctx.restore(); /* ── end clip + rotate ── */
-
-    /* outer rim stroke — drawn after restore so NOT rotated */
+    /* orange arc on label — rotates, clearly visible */
     ctx.beginPath();
-    ctx.arc(cx,cy,R,0,Math.PI*2);
-    ctx.strokeStyle='rgba(240,102,10,0.55)';
+    ctx.arc(cx,cy,6.8,-0.7,0.7);
+    ctx.strokeStyle='#F0660A';
     ctx.lineWidth=2.5;
     ctx.stroke();
 
-    /* centre hole — fixed, does not rotate (looks realistic) */
+    ctx.restore();           /* ── end clip + rotate ── */
+
+    /* outer rim — not rotating, defines disc edge */
     ctx.beginPath();
-    ctx.arc(cx,cy,7.5,0,Math.PI*2);
-    ctx.fillStyle='#f5f5f5';
-    ctx.fill();
-    ctx.beginPath();
-    ctx.arc(cx,cy,7.5,0,Math.PI*2);
-    ctx.strokeStyle='rgba(0,0,0,0.35)';
-    ctx.lineWidth=1.2;
+    ctx.arc(cx,cy,R,0,Math.PI*2);
+    ctx.strokeStyle='rgba(240,102,10,0.6)';
+    ctx.lineWidth=1.5;
     ctx.stroke();
+
+    /* centre hole — fixed (looks realistic) */
+    ctx.beginPath();
+    ctx.arc(cx,cy,3.5,0,Math.PI*2);
+    ctx.fillStyle='#f2f2f2';
+    ctx.fill();
   }
 
   function loop(ts){
-    if(ts-lastT>33){        /* 30 fps */
-      lastT=ts;
-      angle+=0.025;         /* ~1 full rotation per 8.4 s — smooth vinyl speed */
-      draw(angle);
-      lnk.href=cvs.toDataURL('image/png');
-    }
+    /* delta-time: rotation speed is always consistent — NO stutter */
+    var dt=prev ? Math.min(ts-prev,50) : 16;
+    prev=ts;
+    angle+=dt*0.00088;       /* ~1 full rotation per 7 s — smooth vinyl speed */
+    draw(angle);
+    lnk.href=cvs.toDataURL('image/png');
     requestAnimationFrame(loop);
   }
   requestAnimationFrame(loop);
