@@ -2571,6 +2571,89 @@ function subscribeNewsletter(e){
   },300);
 }
 
+/* ===== ANIMATED FAVICON — spinning vinyl disc ===== */
+(function(){
+  var cvs=document.createElement('canvas');
+  cvs.width=64;cvs.height=64;
+  var ctx=cvs.getContext('2d');
+  var angle=0,lastT=0;
+  var lnk=document.querySelector("link[rel='icon']");
+  if(!lnk){lnk=document.createElement('link');lnk.rel='icon';lnk.type='image/png';document.head.appendChild(lnk);}
+
+  function draw(a){
+    var cx=32,cy=32;
+    ctx.clearRect(0,0,64,64);
+    ctx.save();
+    ctx.translate(cx,cy);
+    ctx.rotate(a);
+    ctx.translate(-cx,-cy);
+
+    /* disc body — off-centre radial gradient gives 3-D spin illusion */
+    var g=ctx.createRadialGradient(21,18,2,cx,cy,31);
+    g.addColorStop(0,'#FFB060');
+    g.addColorStop(0.35,'#F06010');
+    g.addColorStop(0.70,'#CC4500');
+    g.addColorStop(1,'#7a1800');
+    ctx.beginPath();
+    ctx.arc(cx,cy,31,0,Math.PI*2);
+    ctx.fillStyle=g;
+    ctx.fill();
+
+    /* groove rings */
+    [28.5,26,23.5,21,18.5,16.5].forEach(function(r){
+      ctx.beginPath();
+      ctx.arc(cx,cy,r,0,Math.PI*2);
+      ctx.strokeStyle='rgba(55,8,0,0.6)';
+      ctx.lineWidth=0.9;
+      ctx.stroke();
+    });
+
+    /* shine streak — asymmetric so rotation is visible */
+    ctx.save();
+    ctx.globalAlpha=0.14;
+    var sg=ctx.createLinearGradient(4,18,60,26);
+    sg.addColorStop(0,'rgba(255,220,150,0)');
+    sg.addColorStop(0.5,'rgba(255,220,150,1)');
+    sg.addColorStop(1,'rgba(255,220,150,0)');
+    ctx.fillStyle=sg;
+    ctx.beginPath();
+    ctx.ellipse(cx,cy-5,27,6,0,0,Math.PI*2);
+    ctx.fill();
+    ctx.restore();
+
+    /* centre label */
+    ctx.beginPath();
+    ctx.arc(cx,cy,13,0,Math.PI*2);
+    ctx.fillStyle='#0d0502';
+    ctx.fill();
+
+    /* orange dot on label — rotation tracker */
+    ctx.beginPath();
+    ctx.arc(cx,cy-8,2.4,0,Math.PI*2);
+    ctx.fillStyle='#F0660A';
+    ctx.fill();
+
+    /* centre hole */
+    ctx.beginPath();
+    ctx.arc(cx,cy,3.8,0,Math.PI*2);
+    ctx.fillStyle='#ffffff';
+    ctx.fill();
+
+    ctx.restore();
+  }
+
+  function loop(ts){
+    if(ts-lastT>42){          /* ~24 fps */
+      lastT=ts;
+      angle+=0.028;           /* ~1 rotation every 9 s — smooth vinyl speed */
+      draw(angle);
+      lnk.href=cvs.toDataURL('image/png');
+    }
+    requestAnimationFrame(loop);
+  }
+  requestAnimationFrame(loop);
+})();
+
 </script>
 </body>
 </html>
