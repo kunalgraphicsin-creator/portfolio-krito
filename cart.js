@@ -27,7 +27,21 @@ function getCart() {
     var stored = localStorage.getItem('krito_cart');
     if (stored !== null) {
       var parsed = JSON.parse(stored);
-      if (Array.isArray(parsed)) return parsed;
+      if (Array.isArray(parsed)) {
+        // Normalize legacy IDs
+        parsed.forEach(function(item) {
+          var strId = String(item.id || '1');
+          item.id = strId.startsWith('p') ? strId : 'p' + strId;
+        });
+        
+        // Merge duplicates
+        var merged = [];
+        parsed.forEach(function(item) {
+          var exist = merged.find(function(m) { return m.id === item.id; });
+          if (exist) { exist.qty += item.qty; } else { merged.push(item); }
+        });
+        return merged;
+      }
     }
   } catch (e) {}
   // Default cart with Product 1 on initial visit
@@ -43,7 +57,8 @@ function saveCart(cart) {
 
 function addToCart(pid, autoOpenDrawer) {
   if (typeof autoOpenDrawer === 'undefined') autoOpenDrawer = true;
-  var pidToUse = pid || 'p1';
+  var rawPid = String(pid || '1');
+  var pidToUse = rawPid.startsWith('p') ? rawPid : 'p' + rawPid;
   var cart = getCart();
   
   var existing = cart.find(function(item) { return item.id === pidToUse; });
@@ -91,7 +106,8 @@ function getTotalCount() {
 function getTotalSubtotal() {
   var cart = getCart();
   return cart.reduce(function(sum, i) {
-    var p = PRODUCTS_DB[i.id];
+    var pId = String(i.id).startsWith('p') ? i.id : 'p' + i.id;
+    var p = PRODUCTS_DB[pId] || PRODUCTS_DB['p1'];
     return sum + (p ? p.price * i.qty : 0);
   }, 0);
 }
