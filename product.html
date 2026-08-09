@@ -3,17 +3,275 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>KRITO — Official Beat & Sample Pack Store</title>
-<meta name="description" content="Official KRITO Beat Store. Premium beat bundles, Punjabi trap melody packs, Dholki percussion kits, and drill loops. Instant email delivery.">
-<meta name="keywords" content="KRITO, beat store, beat pack, Punjabi trap pack, Dholki kit, drill loops, buy beats online">
-
-<!-- Fonts: Playfair Display + Inter -->
+<title id="pageTitle">THE ARCHIVE Beat Pack (50+ Beats) — Official KRITO Store</title>
+<meta name="description" id="pageMetaDesc" content="Buy THE ARCHIVE Beat Pack (50+ Beats). Royalty free Punjabi Trap, Drill beats and sample packs. Instant email delivery via Razorpay.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@700;800;900&display=swap" rel="stylesheet">
-
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='16' fill='%234D0909'/%3E%3Ctext x='16' y='22' text-anchor='middle' font-family='serif' font-size='18' font-weight='bold' fill='%23FFFCF6'%3EK%3C/text%3E%3C/svg%3E">
 <link rel="stylesheet" href="styles.css?v=prodpage1">
+<style>
+/* Dedicated Product Details Page Styles */
+.product-page-section {
+  padding: 40px 0 80px;
+  background: var(--cream);
+}
+
+.breadcrumb-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: var(--text-sub);
+  margin-bottom: 32px;
+}
+
+.breadcrumb-bar a {
+  color: var(--cherry);
+  font-weight: 600;
+}
+
+.breadcrumb-bar a:hover {
+  text-decoration: underline;
+}
+
+.product-detail-layout {
+  display: grid;
+  grid-template-columns: 1fr 1.1fr;
+  gap: 56px;
+  align-items: start;
+}
+
+.product-gallery-wrap {
+  position: sticky;
+  top: 100px;
+}
+
+.product-main-cover {
+  position: relative;
+  aspect-ratio: 1 / 1;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  box-shadow: var(--shadow-md);
+  border: 1px solid var(--border);
+  background: var(--cream-dark);
+}
+
+.product-main-cover img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.product-badge-float {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  background: var(--cherry);
+  color: var(--cream);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  padding: 6px 14px;
+  border-radius: var(--radius-sm);
+  z-index: 2;
+  box-shadow: var(--shadow-sm);
+}
+
+.product-meta-header {
+  margin-bottom: 20px;
+}
+
+.product-category-tag {
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  color: var(--cherry);
+  margin-bottom: 8px;
+  display: inline-block;
+}
+
+.product-heading-title {
+  font-family: var(--font-heading);
+  font-size: clamp(2.2rem, 4vw, 3.2rem);
+  font-weight: 900;
+  color: var(--cherry);
+  line-height: 1.15;
+  margin-bottom: 14px;
+}
+
+.product-pricing-box {
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+  margin-bottom: 16px;
+}
+
+.p-price-now {
+  font-family: var(--font-heading);
+  font-size: 2.2rem;
+  font-weight: 900;
+  color: var(--cherry);
+}
+
+.p-price-old {
+  font-size: 16px;
+  color: var(--text-muted);
+  text-decoration: line-through;
+}
+
+.p-save-badge {
+  background: rgba(45, 106, 79, 0.1);
+  color: var(--success);
+  font-size: 12px;
+  font-weight: 800;
+  padding: 4px 10px;
+  border-radius: 100px;
+  border: 1px solid rgba(45, 106, 79, 0.2);
+}
+
+.product-ratings-summary {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 28px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--border);
+}
+
+.stars-gold {
+  color: var(--gold);
+  letter-spacing: 2px;
+  font-size: 16px;
+}
+
+.review-count-text {
+  font-size: 13px;
+  color: var(--text-sub);
+  font-weight: 700;
+}
+
+.product-actions-area {
+  margin-bottom: 36px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.btn-add-to-cart-large {
+  width: 100%;
+  padding: 18px;
+  background: var(--gold);
+  color: #1A0404;
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  border-radius: 100px;
+  transition: all var(--transition);
+  box-shadow: var(--shadow-sm);
+  text-align: center;
+  border: none;
+}
+
+.btn-add-to-cart-large:hover {
+  background: #E5B860;
+  transform: translateY(-2px);
+}
+
+.btn-buy-razorpay-large {
+  width: 100%;
+  padding: 18px;
+  background: var(--cherry);
+  color: var(--cream);
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  border-radius: 100px;
+  transition: all var(--transition);
+  box-shadow: var(--shadow-md);
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.btn-buy-razorpay-large:hover {
+  background: var(--cherry-dark);
+  transform: translateY(-2px);
+}
+
+.p-features-list {
+  background: var(--cream-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 24px;
+  margin-bottom: 32px;
+  box-shadow: var(--shadow-sm);
+}
+
+.p-features-list h4 {
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--cherry);
+  margin-bottom: 14px;
+}
+
+.p-features-list ul {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.p-features-list li {
+  font-size: 14px;
+  color: var(--text-body);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.p-features-list li svg {
+  color: var(--success);
+  flex-shrink: 0;
+}
+
+.product-desc-block {
+  font-size: 15px;
+  color: var(--text-body);
+  line-height: 1.8;
+}
+
+.related-section {
+  padding: 80px 0;
+  background: var(--cream-dark);
+  border-top: 1px solid var(--border);
+}
+
+.related-section h2 {
+  font-family: var(--font-heading);
+  font-size: clamp(1.8rem, 3.5vw, 2.6rem);
+  color: var(--cherry);
+  margin-bottom: 36px;
+  text-align: center;
+}
+
+@media (max-width: 900px) {
+  .product-detail-layout {
+    grid-template-columns: 1fr;
+    gap: 36px;
+  }
+  .product-gallery-wrap {
+    position: static;
+  }
+}
+</style>
 </head>
 <body>
 
@@ -34,7 +292,7 @@
       </a>
 
       <nav class="store-nav">
-        <a href="index.html" class="active">Store</a>
+        <a href="index.html">Store</a>
         <a href="reviews.html">Reviews</a>
         <a href="faq.html">FAQ</a>
         <a href="privacy-policy.html">Legal</a>
@@ -51,7 +309,7 @@
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
           <span class="cart-count">1</span>
         </a>
-        <a href="checkout.html" class="btn-checkout">Checkout</a>
+        <a href="index.html#BUY_LINK" class="btn-checkout">Checkout</a>
       </div>
 
       <div class="hamburger" id="hamburgerBtn">
@@ -71,97 +329,88 @@
   <a href="index.html#BUY_LINK" class="btn-checkout" style="display:inline-block;margin-top:20px;text-align:center;">Checkout</a>
 </div>
 
-<!-- STORE HERO BANNER -->
-<section class="store-hero">
+<!-- MAIN PRODUCT SECTION -->
+<main class="product-page-section">
   <div class="container">
-    <span class="hero-tag">Official Sound Library</span>
 
-    <!-- Category Filter Pills -->
-    <div class="filter-pills">
-      <button class="pill-btn active" onclick="filterCategory('all')">All Kits</button>
-      <button class="pill-btn" onclick="filterCategory('bundles')">Beat Pack</button>
-      <button class="pill-btn" onclick="filterCategory('trap')">Looppack</button>
+    <!-- BREADCRUMB -->
+    <div class="breadcrumb-bar">
+      <a href="index.html">Home</a>
+      <span>/</span>
+      <a href="index.html">Sound Kits</a>
+      <span>/</span>
+      <span id="breadcrumbCurrent">THE ARCHIVE Beat Pack (50+ Beats)</span>
     </div>
-  </div>
-</section>
 
-<!-- PRODUCT STORE GRID -->
-<section class="store-section">
-  <div class="container">
-    <div class="product-grid" id="productGrid" style="display:flex; justify-content:center;">
+    <!-- PRODUCT DETAIL LAYOUT -->
+    <div class="product-detail-layout">
 
-      <!-- PRODUCT 1 (THE ARCHIVE BEAT PACK ONLY) -->
-      <div class="product-card" data-cat="bundles" onclick="window.location.href='product.html?id=p1'" style="max-width: 360px; width: 100%;">
-        <div class="card-image-wrap">
-          <img src="img/beats/beat-b1.png?v=archive1" alt="THE ARCHIVE Beat Pack (50+ Beats)" width="360" height="360">
-          <span class="card-badge">BESTSELLER</span>
-          <div class="card-overlay">
-            <a href="product.html?id=p1" class="btn-quick-buy">View Pack — ₹4,999</a>
-          </div>
+      <!-- LEFT: SQUARE COVER ARTWORK GALLERY -->
+      <div class="product-gallery-wrap">
+        <div class="product-main-cover">
+          <span class="product-badge-float" id="pBadge">BESTSELLER</span>
+          <img src="img/beats/beat-b1.png?v=archive1" id="pMainImg" alt="THE ARCHIVE Beat Pack (50+ Beats)">
         </div>
-        <div class="card-content">
-          <span class="card-genre">Full Beat Pack</span>
-          <h3 class="card-title" style="font-size: 1.25rem;">THE ARCHIVE Beat Pack (50+ Beats)</h3>
-          <div class="card-meta">50+ Premium Beats · WAV + MP3 + Stems · Royalty Free</div>
-          <div class="card-footer">
-            <div class="card-price">
-              <span class="price-now" style="font-size: 1.5rem;">₹4,999</span>
-              <span class="price-old">₹15,999</span>
-            </div>
-          </div>
+      </div>
+
+      <!-- RIGHT: DETAILS, PRICING, SPECS & ACTIONS -->
+      <div class="product-info-column">
+        <div class="product-meta-header">
+          <span class="product-category-tag" id="pGenre">Full Beat Pack</span>
+          <h1 class="product-heading-title" id="pTitle">THE ARCHIVE Beat Pack (50+ Beats)</h1>
         </div>
+
+        <div class="product-pricing-box">
+          <span class="p-price-now" id="pPriceNow">₹4,999</span>
+          <span class="p-price-old" id="pPriceOld">₹15,999</span>
+          <span class="p-save-badge">SAVE 68%</span>
+        </div>
+
+        <div class="product-ratings-summary">
+          <span class="stars-gold">★★★★★</span>
+          <span class="review-count-text" id="pReviews">(48 Verified Artist Reviews)</span>
+        </div>
+
+        <!-- ACTION BUTTONS -->
+        <div class="product-actions-area">
+          <button type="button" class="btn-add-to-cart-large" id="addToCartBtn">Add to Cart</button>
+          <a href="checkout.html?id=p1" class="btn-buy-razorpay-large" id="buyBtnLink">
+            <span>Buy with Razorpay — Instant Email Delivery</span>
+          </a>
+        </div>
+
+        <!-- INCLUDED SPECS BULLETS -->
+        <div class="p-features-list">
+          <h4>WHAT'S INCLUDED IN THIS PACK</h4>
+          <ul>
+            <li>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+              <span>100% Key &amp; BPM Labeled for Seamless Editing</span>
+            </li>
+            <li>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+              <span>100% Royalty Free Commercial License Rights</span>
+            </li>
+            <li>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+              <span>Instant Download Link Delivered Directly to Email Post Payment</span>
+            </li>
+          </ul>
+        </div>
+
+        <!-- PRODUCT DESCRIPTION -->
+        <div class="product-desc-block">
+          <h3 style="font-family: var(--font-heading); color: var(--cherry); margin-bottom: 12px;">Product Overview</h3>
+          <p id="pDescText">THE ARCHIVE Beat Pack gives you everything you need to create dark, hard-hitting Trap and Drill productions. Includes 50+ full industry-standard beats, drum one-shots, and melodic stems in high-quality 24-bit WAV & MP3 formats. All key and BPM labeled, 100% royalty free.</p>
+        </div>
+
       </div>
 
     </div>
+
   </div>
-</section>
-
-<!-- TRUST SIGNALS BAR -->
-<section class="trust-bar">
-  <div class="container">
-    <div class="trust-grid">
-      <div class="trust-card">
-        <div class="trust-icon-box">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
-        </div>
-        <div class="trust-info">
-          <h4>Delivered Instantly</h4>
-          <p>All products are digital &amp; sent directly to your email instantly.</p>
-        </div>
-      </div>
-
-      <div class="trust-card">
-        <div class="trust-icon-box">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
-        </div>
-        <div class="trust-info">
-          <h4>Customer Service</h4>
-          <p>We offer customer support via email &amp; WhatsApp 24/7.</p>
-        </div>
-      </div>
-
-      <div class="trust-card">
-        <div class="trust-icon-box">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-        </div>
-        <div class="trust-info">
-          <h4>Royalty Free</h4>
-          <p>100% royalty free samples to create &amp; release your music.</p>
-        </div>
-      </div>
-
-      <div class="trust-card">
-        <div class="trust-icon-box">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-        </div>
-        <div class="trust-info">
-          <h4>Secure Payment</h4>
-          <p>We accept UPI, Cards, Net Banking via Razorpay.</p>
-        </div>
-      </div>
-    </div>
   </div>
-</section>
+</main>
 
 <!-- STORE FOOTER -->
 <footer class="store-footer">
@@ -224,23 +473,46 @@
 </footer>
 
 <script>
+// Product Catalog Database (THE ARCHIVE BEAT PACK Only)
+var products = {
+  'p1': {
+    title: 'THE ARCHIVE Beat Pack (50+ Beats)',
+    genre: 'Full Beat Pack',
+    price: '₹4,999',
+    oldPrice: '₹15,999',
+    badge: 'BESTSELLER',
+    img: 'img/beats/beat-b1.png?v=archive1',
+    reviews: '(48 Verified Artist Reviews)',
+    desc: 'THE ARCHIVE Beat Pack gives you everything you need to create dark, hard-hitting Trap and Drill productions. Includes 50+ full industry-standard beats, drum one-shots, and melodic stems in high-quality 24-bit WAV & MP3 formats. All key and BPM labeled, 100% royalty free.'
+  }
+};
 
+// URL Query Param Loader
+function loadProductDetails() {
+  var urlParams = new URLSearchParams(window.location.search);
+  var pid = urlParams.get('id') || 'p1';
+  var p = products[pid] || products['p1'];
 
-// Category Filtering
-function filterCategory(cat) {
-  var btns = document.querySelectorAll('.pill-btn');
-  btns.forEach(function(b) { b.classList.remove('active'); });
-  event.target.classList.add('active');
-
-  var cards = document.querySelectorAll('.product-card');
-  cards.forEach(function(card) {
-    if (cat === 'all' || card.getAttribute('data-cat') === cat) {
-      card.style.display = 'flex';
-    } else {
-      card.style.display = 'none';
-    }
-  });
+  document.title = p.title + ' — KRITO Store';
+  document.getElementById('breadcrumbCurrent').innerText = p.title;
+  document.getElementById('pBadge').innerText = p.badge;
+  document.getElementById('pMainImg').src = p.img;
+  document.getElementById('pGenre').innerText = p.genre;
+  document.getElementById('pTitle').innerText = p.title;
+  document.getElementById('pPriceNow').innerText = p.price;
+  document.getElementById('pPriceOld').innerText = p.oldPrice;
+  document.getElementById('pReviews').innerText = p.reviews;
+  document.getElementById('pDescText').innerText = p.desc;
+  
+  var buyLink = document.getElementById('buyBtnLink');
+  if (buyLink) buyLink.href = 'checkout.html?id=' + pid;
+  
+  var cartBtn = document.getElementById('addToCartBtn');
+  if (cartBtn) cartBtn.onclick = function() { addToCart(pid, true); };
 }
+loadProductDetails();
+
+
 
 // Mobile menu
 <script>

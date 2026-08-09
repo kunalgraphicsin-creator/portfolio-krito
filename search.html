@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Search Sound Kits &amp; Beat Bundles — KRITO Store</title>
+<meta name="description" content="Search official KRITO beat bundles, melody loops, trap kits, drill loops, and percussion samples.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css?v=searchpage1">
+</head>
+<body>
+
+
+
+<!-- TOP ANNOUNCEMENT BAR -->
+<div class="announcement-bar">
+  <div class="container announcement-inner">
+    <span>🔥 <strong>FLASH SALE:</strong> Get 40% OFF KRITO Ultimate Beat Bundle 2026 — Instant Email Download</span>
+    <a href="product.html?id=p1" class="announcement-link">Claim Offer &rarr;</a>
+  </div>
+</div>
+
+<!-- NAVBAR -->
+<header class="store-header" id="navbar">
+  <div class="container">
+    <div class="header-inner">
+      <a href="index.html" class="brand-logo">
+        <span class="logo-text">KRITO</span>
+        <span class="logo-dot"></span>
+      </a>
+
+      <nav class="store-nav">
+        <a href="index.html">Store</a>
+        <a href="reviews.html">Reviews</a>
+        <a href="faq.html">FAQ</a>
+        <a href="privacy-policy.html">Legal</a>
+      </nav>
+
+      <div class="header-actions">
+        <a href="search.html" class="header-action-btn active" title="Search Store">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        </a>
+        <a href="reviews.html" class="header-action-btn" title="Account / Reviews">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        </a>
+        <a href="javascript:void(0)" onclick="openCartDrawer()" class="header-action-btn" title="Cart">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+          <span class="cart-count">1</span>
+        </a>
+        <a href="checkout.html" class="btn-checkout">Checkout</a>
+      </div>
+
+      <div class="hamburger" id="hamburgerBtn">
+        <span></span><span></span><span></span>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- MOBILE MENU -->
+<div class="mobile-overlay" id="mobileOverlay"></div>
+<div class="mobile-menu" id="mobileMenu">
+  <a href="index.html">Store Front</a>
+  <a href="search.html" class="active">Search Kits</a>
+  <a href="product.html?id=p1">Ultimate Beat Bundle 2026</a>
+  <a href="reviews.html">Client Reviews</a>
+  <a href="faq.html">Frequently Asked Questions</a>
+  <a href="checkout.html">Checkout Now</a>
+</div>
+
+<!-- MAIN SEARCH PAGE CONTENT -->
+<main class="main-content" style="padding-top: 32px; padding-bottom: 80px;">
+
+  <!-- BREADCRUMBS -->
+  <div class="container">
+    <nav class="breadcrumb-trail">
+      <a href="index.html">Home</a>
+      <span class="sep">/</span>
+      <span class="current">Search Library</span>
+    </nav>
+  </div>
+
+  <!-- SEARCH HERO BANNER -->
+  <section class="search-page-hero">
+    <div class="container">
+      <div class="search-hero-box" style="padding-top: 10px;">
+
+        <!-- LARGE SEARCH INPUT FORM -->
+        <form class="search-page-form" onsubmit="handleSearchSubmit(event)">
+          <div class="search-input-group">
+            <svg class="search-bar-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+            <input type="text" id="pageSearchInput" class="search-page-input" placeholder="Type beat name, genre (e.g. Trap, Drill, Dholki, Bundle)..." autocomplete="off" oninput="liveSearchPage(this.value)">
+            <button type="submit" class="btn-search-submit">Search</button>
+          </div>
+        </form>
+
+        <!-- TRENDING QUICK SEARCH TAGS -->
+        <div class="search-quick-tags">
+          <span class="quick-tags-label">Popular Searches:</span>
+          <div class="quick-tags-list">
+            <button type="button" class="quick-tag-pill" onclick="executeQuickSearch('Bundle')">🔥 Ultimate Bundle</button>
+            <button type="button" class="quick-tag-pill" onclick="executeQuickSearch('Trap')">Punjabi Trap</button>
+            <button type="button" class="quick-tag-pill" onclick="executeQuickSearch('Dholki')">Desi Dholki</button>
+            <button type="button" class="quick-tag-pill" onclick="executeQuickSearch('Drill')">Dark Drill</button>
+            <button type="button" class="quick-tag-pill" onclick="executeQuickSearch('Vocal')">R&amp;B Vocals</button>
+            <button type="button" class="quick-tag-pill" onclick="executeQuickSearch('Lofi')">Lofi Chill</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- SEARCH RESULTS TOOLBAR & GRID -->
+  <section class="search-results-section">
+    <div class="container">
+      
+      <!-- TOOLBAR (RESULTS COUNTER & SORT DROPDOWN) -->
+      <div class="search-results-toolbar">
+        <div class="results-info">
+          <span id="resultsCountText">Showing 7 result packs</span>
+          <span class="query-badge" id="activeQueryBadge" style="display:none;">Query: <strong id="activeQueryTerm">""</strong> <button class="btn-clear-query" onclick="clearSearchQuery()">&times;</button></span>
+        </div>
+
+        <div class="sort-wrapper">
+          <label for="sortSelect">Sort By:</label>
+          <select id="sortSelect" class="sort-select" onchange="sortSearchResults(this.value)">
+            <option value="popular">Bestselling &amp; Popular</option>
+            <option value="price-low">Price: Low to High</option>
+            <option value="price-high">Price: High to Low</option>
+            <option value="name">Product Name (A-Z)</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- PRODUCT CARDS GRID -->
+      <div class="search-page-grid" id="searchPageGrid">
+        <!-- RENDERED BY JAVASCRIPT -->
+      </div>
+
+    </div>
+  </section>
+
+</main>
+
+<!-- FOOTER -->
+<footer class="store-footer">
+  <div class="container">
+    <div class="footer-columns">
+      <div class="footer-col brand-col">
+        <a href="index.html" class="brand-logo">
+          <span class="logo-text">KRITO</span>
+          <span class="logo-dot"></span>
+        </a>
+        <p>Premium beat bundles, melody loops, and drum kits designed for music producers and recording artists worldwide.</p>
+        <p class="copyright">&copy; 2026 KRITO Store. All rights reserved.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Store Menu</h4>
+        <ul>
+          <li><a href="index.html">Main Storefront</a></li>
+          <li><a href="product.html?id=p1">Ultimate Beat Bundle 2026</a></li>
+          <li><a href="reviews.html">Verified Client Reviews</a></li>
+          <li><a href="faq.html">Frequently Asked Questions</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Customer Support</h4>
+        <ul>
+          <li><a href="checkout.html">Instant Checkout</a></li>
+          <li><a href="refund-policy.html">Refund Policy</a></li>
+          <li><a href="privacy-policy.html">Privacy Policy</a></li>
+          <li><a href="terms.html">Terms of Service</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<!-- GLOBAL SLIDE-OVER CART DRAWER -->
+<div class="cart-drawer-backdrop" id="cartDrawerBackdrop" onclick="closeCartDrawer(event)">
+  <div class="cart-drawer-panel" onclick="event.stopPropagation()">
+    <div class="cart-drawer-header">
+      <div class="cart-drawer-title">
+        <span>Your Shopping Cart</span>
+        <span class="cart-drawer-count-badge" id="cartDrawerBadge">1 item</span>
+      </div>
+      <button class="cart-drawer-close-btn" onclick="closeCartDrawer()">&times;</button>
+    </div>
+    <div class="cart-free-shipping-bar">
+      <span class="shipping-icon">⚡</span>
+      <span>You qualify for <strong>FREE Instant Email Delivery</strong>!</span>
+    </div>
+    <div class="cart-drawer-body" id="cartDrawerItems"></div>
+    <div class="cart-drawer-footer">
+      <div class="cart-subtotal-row">
+        <span>Subtotal</span>
+        <span class="cart-subtotal-price" id="cartDrawerSubtotal">₹1,999</span>
+      </div>
+      <p class="cart-tax-note">Taxes &amp; instant email download included at checkout.</p>
+      <a href="checkout.html" class="btn-cart-drawer-checkout">
+        <span>Proceed to Checkout</span>
+        <span id="cartDrawerCheckoutTotal">₹1,999</span>
+      </a>
+      <button class="btn-cart-drawer-continue" onclick="closeCartDrawer()">Continue Shopping</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST NOTIFICATION -->
+<div class="cart-toast" id="cartToast">
+  <div class="toast-content">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+    <div class="toast-text">
+      <strong id="toastTitle">Added to Cart!</strong>
+      <span id="toastSub">KRITO Ultimate Beat Bundle 2026</span>
+    </div>
+  </div>
+</div>
+
+<script src="cart.js?v=drawer1"></script>
+<script>
+// Standalone Search Page Logic
+var SEARCH_CATALOG = [
+  {
+    id: 'p1',
+    title: 'THE ARCHIVE Beat Pack (50+ Beats)',
+    genre: 'Full Beat Pack',
+    priceNum: 4999,
+    priceStr: '₹4,999',
+    oldPrice: '₹15,999',
+    badge: 'BESTSELLER',
+    badgeClass: 'badge-bestseller',
+    img: 'img/beats/beat-b1.png?v=archive1',
+    meta: '50+ Premium Beats · WAV + MP3 + Stems · Royalty Free',
+    tags: 'the archive beat pack 50+ beats bundle 2026 ultimate all kits trap drill dholki melody wav mp3 stems royalty free'
+  }
+];
+
+var currentQuery = '';
+var currentSort = 'popular';
+
+function getUrlQuery() {
+  var params = new URLSearchParams(window.location.search);
+  return params.get('q') || '';
+}
+
+function initSearchPage() {
+  currentQuery = getUrlQuery();
+  var input = document.getElementById('pageSearchInput');
+  if (input) input.value = currentQuery;
+  
+  renderSearchResults();
+}
+
+function handleSearchSubmit(e) {
+  if (e) e.preventDefault();
+  var input = document.getElementById('pageSearchInput');
+  currentQuery = (input ? input.value : '').trim();
+  
+  var newUrl = window.location.pathname + (currentQuery ? '?q=' + encodeURIComponent(currentQuery) : '');
+  window.history.pushState({ path: newUrl }, '', newUrl);
+  
+  renderSearchResults();
+}
+
+function liveSearchPage(val) {
+  currentQuery = (val || '').trim();
+  renderSearchResults();
+}
+
+function executeQuickSearch(term) {
+  var input = document.getElementById('pageSearchInput');
+  if (input) input.value = term;
+  currentQuery = term;
+  
+  var newUrl = window.location.pathname + '?q=' + encodeURIComponent(term);
+  window.history.pushState({ path: newUrl }, '', newUrl);
+  
+  renderSearchResults();
+}
+
+function clearSearchQuery() {
+  var input = document.getElementById('pageSearchInput');
+  if (input) input.value = '';
+  currentQuery = '';
+  
+  window.history.pushState({ path: window.location.pathname }, '', window.location.pathname);
+  renderSearchResults();
+}
+
+function sortSearchResults(sortVal) {
+  currentSort = sortVal;
+  renderSearchResults();
+}
+
+function renderSearchResults() {
+  var grid = document.getElementById('searchPageGrid');
+  var countText = document.getElementById('resultsCountText');
+  var activeBadge = document.getElementById('activeQueryBadge');
+  var activeTerm = document.getElementById('activeQueryTerm');
+  if (!grid) return;
+
+  var q = currentQuery.toLowerCase();
+  
+  // Filter
+  var items = SEARCH_CATALOG.filter(function(item) {
+    if (!q) return true;
+    return (
+      item.title.toLowerCase().indexOf(q) !== -1 ||
+      item.genre.toLowerCase().indexOf(q) !== -1 ||
+      item.tags.toLowerCase().indexOf(q) !== -1
+    );
+  });
+
+  // Sort
+  if (currentSort === 'price-low') {
+    items.sort(function(a, b) { return a.priceNum - b.priceNum; });
+  } else if (currentSort === 'price-high') {
+    items.sort(function(a, b) { return b.priceNum - a.priceNum; });
+  } else if (currentSort === 'name') {
+    items.sort(function(a, b) { return a.title.localeCompare(b.title); });
+  }
+
+  // Update Toolbar Badges
+  if (countText) {
+    countText.innerText = 'Showing ' + items.length + (items.length === 1 ? ' result pack' : ' result packs');
+  }
+
+  if (q) {
+    if (activeBadge) activeBadge.style.display = 'inline-flex';
+    if (activeTerm) activeTerm.innerText = '"' + currentQuery + '"';
+  } else {
+    if (activeBadge) activeBadge.style.display = 'none';
+  }
+
+  // Render Grid
+  if (items.length === 0) {
+    grid.innerHTML = '<div class="search-no-results"><svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg><h2>No beat packs found for "' + escapeHtml(currentQuery) + '"</h2><p>Try searching with broader terms or click one of our popular search pills above.</p><button class="btn-clear-search-large" onclick="clearSearchQuery()">View All Beat Kits</button></div>';
+    return;
+  }
+
+  var html = '';
+  items.forEach(function(item) {
+    html += 
+      '<div class="product-card search-card-item" onclick="window.location.href=\'product.html?id=' + item.id + '\'">' +
+        '<div class="card-image-wrap">' +
+          '<img src="' + item.img + '" alt="' + item.title + '" width="300" height="300">' +
+          '<span class="card-badge ' + item.badgeClass + '">' + item.badge + '</span>' +
+          '<div class="card-overlay">' +
+            '<a href="product.html?id=' + item.id + '" class="btn-quick-buy">View Pack — ' + item.priceStr + '</a>' +
+          '</div>' +
+        '</div>' +
+        '<div class="card-content">' +
+          '<span class="card-genre">' + item.genre + '</span>' +
+          '<h3 class="card-title">' + item.title + '</h3>' +
+          '<div class="card-meta">' + item.meta + '</div>' +
+          '<div class="card-footer">' +
+            '<div class="card-price">' +
+              '<span class="price-now">' + item.priceStr + '</span>' +
+              '<span class="price-old">' + item.oldPrice + '</span>' +
+            '</div>' +
+            '<button type="button" class="btn-card-add" onclick="event.stopPropagation(); addToCart(\'' + item.id + '\', true)">Add to Cart</button>' +
+          '</div>' +
+        '</div>' +
+      '</div>';
+  });
+
+  grid.innerHTML = html;
+}
+
+function escapeHtml(text) {
+  return (text || '').replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+}
+
+document.addEventListener('DOMContentLoaded', initSearchPage);
+
+// Mobile menu
+<script>
+var hbg = document.getElementById('hamburgerBtn');
+var menu = document.getElementById('mobileMenu');
+var overlay = document.getElementById('mobileOverlay');
+function closeMenu() {
+  if (hbg) hbg.classList.remove('open');
+  if (menu) menu.classList.remove('show');
+  if (overlay) overlay.classList.remove('show');
+}
+if (hbg) hbg.addEventListener('click', function() {
+  hbg.classList.toggle('open');
+  if (menu) menu.classList.toggle('show');
+  if (overlay) overlay.classList.toggle('show');
+});
+if (overlay) overlay.addEventListener('click', closeMenu);
+</script>
+</body>
+</html>

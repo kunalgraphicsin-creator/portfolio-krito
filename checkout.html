@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Checkout — KRITO Store</title>
+<meta name="description" content="Secure Checkout for KRITO Beat Store. Complete your purchase via Razorpay, UPI, or Credit/Debit Cards. Instant email delivery.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@700;800;900&display=swap" rel="stylesheet">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='16' fill='%234D0909'/%3E%3Ctext x='16' y='22' text-anchor='middle' font-family='serif' font-size='18' font-weight='bold' fill='%23FFFCF6'%3EK%3C/text%3E%3C/svg%3E">
+<link rel="stylesheet" href="styles.css?v=checkout1">
+
+<style>
+/* SHOPIFY STYLE DEDICATED CHECKOUT PAGE */
+.checkout-wrapper {
+  min-height: 100vh;
+  background: #FAFAFA;
+  color: var(--text-body);
+}
+
+.checkout-header {
+  padding: 24px 0;
+  background: var(--cream);
+  border-bottom: 1px solid var(--border-light);
+}
+
+.checkout-grid-container {
+  display: grid;
+  grid-template-columns: 1.15fr 0.85fr;
+  min-height: calc(100vh - 80px);
+}
+
+/* Left Column: Form & Payment */
+.checkout-main-col {
+  padding: 40px 60px 80px;
+  background: #FFFFFF;
+  border-right: 1px solid #E6E6E6;
+}
+
+.express-checkout-wrap {
+  margin-bottom: 24px;
+}
+
+.express-tag {
+  font-size: 11px;
+  color: #707070;
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 12px;
+  font-weight: 700;
+}
+
+.express-btns-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.btn-express-shoppay {
+  background: #5A31F4;
+  color: #FFF;
+  padding: 14px;
+  border-radius: 8px;
+  font-weight: 800;
+  font-size: 14px;
+  text-align: center;
+  border: none;
+}
+
+.btn-express-gpay {
+  background: #000000;
+  color: #FFF;
+  padding: 14px;
+  border-radius: 8px;
+  font-weight: 800;
+  font-size: 14px;
+  text-align: center;
+  border: none;
+}
+
+.divider-or {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  color: #8E8E8E;
+  font-size: 12px;
+  font-weight: 600;
+  margin: 24px 0;
+}
+
+.divider-or::before,
+.divider-or::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: #E6E6E6;
+}
+
+.form-section-title {
+  font-family: var(--font-heading);
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: var(--cherry);
+  margin-bottom: 14px;
+}
+
+.form-group {
+  margin-bottom: 16px;
+}
+
+.form-input {
+  width: 100%;
+  padding: 14px 16px;
+  border: 1px solid #D9D9D9;
+  border-radius: 8px;
+  font-size: 14px;
+  font-family: var(--font-body);
+  outline: none;
+  background: #FFF;
+  transition: border-color 0.2s;
+}
+
+.form-input:focus {
+  border-color: var(--cherry);
+  box-shadow: 0 0 0 2px rgba(77, 9, 9, 0.1);
+}
+
+.form-row-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.form-row-3 {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 12px;
+}
+
+.checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+  color: #545454;
+  margin-top: 8px;
+  cursor: pointer;
+}
+
+/* Payment Box Accordion */
+.payment-methods-box {
+  border: 1px solid #D9D9D9;
+  border-radius: 8px;
+  overflow: hidden;
+  margin-bottom: 24px;
+}
+
+.payment-option-header {
+  padding: 16px;
+  background: #FFF8F6;
+  border-bottom: 1px solid #D9D9D9;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.payment-radio-label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 700;
+  font-size: 14px;
+  color: var(--cherry);
+}
+
+.payment-card-inputs {
+  padding: 16px;
+  background: #FFF;
+}
+
+.btn-pay-now-primary {
+  width: 100%;
+  padding: 18px;
+  background: var(--cherry);
+  color: var(--cream);
+  font-family: var(--font-heading);
+  font-size: 16px;
+  font-weight: 800;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  transition: background 0.2s;
+  box-shadow: var(--shadow-md);
+  margin-top: 24px;
+}
+
+.btn-pay-now-primary:hover {
+  background: var(--cherry-dark);
+}
+
+/* Right Column: Order Summary */
+.checkout-summary-col {
+  padding: 40px 60px 80px;
+  background: var(--cream);
+  border-left: 1px solid var(--border);
+}
+
+.summary-item-card {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.summary-thumb-wrap {
+  position: relative;
+  width: 64px;
+  height: 64px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  overflow: hidden;
+  background: var(--cream-dark);
+  flex-shrink: 0;
+}
+
+.summary-thumb-wrap img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.summary-thumb-count {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  background: var(--cherry);
+  color: var(--cream);
+  font-size: 10px;
+  font-weight: 800;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.summary-item-info {
+  flex: 1;
+}
+
+.summary-item-title {
+  font-family: var(--font-heading);
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--cherry);
+  line-height: 1.3;
+}
+
+.summary-item-desc {
+  font-size: 12px;
+  color: var(--text-sub);
+}
+
+.summary-item-price {
+  font-weight: 800;
+  font-size: 15px;
+  color: var(--cherry);
+}
+
+.discount-form-row {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 24px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid var(--border);
+}
+
+.discount-input {
+  flex: 1;
+  padding: 12px 14px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-size: 13px;
+  outline: none;
+  background: #FFF;
+}
+
+.btn-apply-discount {
+  padding: 12px 20px;
+  background: var(--cherry);
+  color: var(--cream);
+  font-size: 12px;
+  font-weight: 800;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+}
+
+.total-summary-lines {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  font-size: 14px;
+  margin-bottom: 24px;
+}
+
+.summary-line {
+  display: flex;
+  justify-content: space-between;
+  color: var(--text-sub);
+}
+
+.summary-line.total {
+  font-size: 1.3rem;
+  font-weight: 900;
+  color: var(--cherry);
+  padding-top: 16px;
+  border-top: 1px solid var(--border);
+}
+
+.checkout-footer-links {
+  margin-top: 32px;
+  display: flex;
+  gap: 16px;
+  font-size: 12px;
+  color: var(--text-sub);
+}
+
+.checkout-footer-links a {
+  color: var(--cherry);
+  text-decoration: underline;
+}
+
+@media (max-width: 960px) {
+  .checkout-grid-container {
+    grid-template-columns: 1fr;
+  }
+  .checkout-main-col, .checkout-summary-col {
+    padding: 30px 24px;
+  }
+}
+</style>
+</head>
+<body>
+
+<div class="checkout-wrapper">
+  
+  <!-- HEADER -->
+  <header class="checkout-header">
+    <div class="container" style="display:flex; align-items:center; justify-content:space-between;">
+      <a href="index.html" class="store-logo">
+        <span class="dot"></span>
+        KRITO
+      </a>
+      <span style="font-size: 12px; font-weight: 700; color: var(--cherry); letter-spacing: 1px; text-transform: uppercase;">🔒 256-Bit SSL Encrypted Checkout</span>
+    </div>
+  </header>
+
+  <!-- TWO COLUMN CHECKOUT GRID -->
+  <div class="checkout-grid-container">
+
+    <!-- LEFT COLUMN: FORM & PAYMENT -->
+    <div class="checkout-main-col">
+      
+      <!-- EXPRESS CHECKOUT -->
+      <div class="express-checkout-wrap">
+        <div class="express-tag">Express checkout</div>
+        <div class="express-btns-row">
+          <button class="btn-express-shoppay" onclick="alert('Proceeding via Shop Pay...');">shop pay</button>
+          <button class="btn-express-gpay" onclick="alert('Proceeding via Google Pay...');">G Pay</button>
+        </div>
+      </div>
+
+      <div class="divider-or">OR</div>
+
+      <!-- CONTACT -->
+      <div class="form-group">
+        <div class="form-section-title">Contact</div>
+        <input type="email" class="form-input" id="cEmail" placeholder="Email address" required>
+        <label class="checkbox-label">
+          <input type="checkbox" checked> Email me with news, free beat packs, and discount offers
+        </label>
+      </div>
+
+      <!-- PAYMENT METHOD -->
+      <div class="form-group" style="margin-top: 32px;">
+        <div class="form-section-title">Payment</div>
+        <p style="font-size: 12px; color: #707070; margin-bottom: 12px;">All transactions are secure and encrypted via Razorpay.</p>
+        
+        <div class="payment-methods-box">
+          <div class="payment-option-header">
+            <label class="payment-radio-label">
+              <input type="radio" name="paymethod" checked> Credit / Debit Card or UPI
+            </label>
+            <div style="display:flex; gap:4px;">
+              <span class="payment-badge">VISA</span>
+              <span class="payment-badge">MC</span>
+              <span class="payment-badge">UPI</span>
+            </div>
+          </div>
+          
+          <div class="payment-card-inputs">
+            <div class="form-group">
+              <input type="text" class="form-input" placeholder="Card number or UPI ID">
+            </div>
+            <div class="form-row-2 form-group">
+              <input type="text" class="form-input" placeholder="Expiration date (MM / YY)">
+              <input type="text" class="form-input" placeholder="Security code (CVV)">
+            </div>
+            <div class="form-group">
+              <input type="text" class="form-input" placeholder="Name on card">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- BILLING ADDRESS -->
+      <div class="form-group" style="margin-top: 32px;">
+        <div class="form-section-title">Billing address</div>
+        
+        <div class="form-group">
+          <select class="form-input" style="color: #333;">
+            <option value="IN">India</option>
+          </select>
+        </div>
+
+        <div class="form-row-2 form-group">
+          <input type="text" class="form-input" placeholder="First name">
+          <input type="text" class="form-input" placeholder="Last name">
+        </div>
+
+        <div class="form-group">
+          <input type="text" class="form-input" placeholder="Address">
+        </div>
+
+        <div class="form-group">
+          <input type="text" class="form-input" placeholder="Apartment, suite, etc. (optional)">
+        </div>
+
+        <div class="form-row-3 form-group">
+          <input type="text" class="form-input" placeholder="City">
+          <select class="form-input" style="color: #333;">
+            <option value="PB">Punjab</option>
+            <option value="DL">Delhi</option>
+            <option value="MH">Maharashtra</option>
+            <option value="KA">Karnataka</option>
+            <option value="HR">Haryana</option>
+          </select>
+          <input type="text" class="form-input" placeholder="PIN code">
+        </div>
+
+        <label class="checkbox-label">
+          <input type="checkbox" checked> Save my information for a faster checkout next time
+        </label>
+      </div>
+
+      <!-- PAY NOW BUTTON -->
+      <button class="btn-pay-now-primary" onclick="handlePayNow();">Pay Now — <span id="cPayBtnTotal">₹4,999</span></button>
+
+      <div class="checkout-footer-links">
+        <a href="refund-policy.html" target="_blank">Refund policy</a>
+        <a href="privacy-policy.html" target="_blank">Privacy policy</a>
+        <a href="terms.html" target="_blank">Terms of service</a>
+      </div>
+
+    </div>
+
+    <!-- RIGHT COLUMN: ORDER SUMMARY -->
+    <div class="checkout-summary-col">
+      
+      <!-- ITEM CARD -->
+      <div class="summary-item-card">
+        <div class="summary-thumb-wrap">
+          <img src="img/beats/beat-b1.png?v=archive1" id="cImg" alt="Thumbnail">
+          <span class="summary-thumb-count">1</span>
+        </div>
+        <div class="summary-item-info">
+          <div class="summary-item-title" id="cTitle">THE ARCHIVE Beat Pack (50+ Beats)</div>
+          <div class="summary-item-desc" id="cGenre">Full Beat Pack · WAV + MP3 + Stems · Instant Email Delivery</div>
+        </div>
+        <div class="summary-item-price" id="cPrice">₹4,999</div>
+      </div>
+
+      <!-- DISCOUNT CODE INPUT -->
+      <div class="discount-form-row">
+        <input type="text" class="discount-input" id="discountCodeInput" placeholder="Discount code or gift card">
+        <button class="btn-apply-discount" onclick="applyDiscount();">Apply</button>
+      </div>
+
+      <!-- TOTAL SUMMARY LINES -->
+      <div class="total-summary-lines">
+        <div class="summary-line">
+          <span>Subtotal</span>
+          <span id="subtotalAmount">₹4,999</span>
+        </div>
+        <div class="summary-line">
+          <span>Shipping / Digital Delivery</span>
+          <span style="color: var(--success); font-weight: 700;">FREE (Instant Email)</span>
+        </div>
+        <div class="summary-line" id="discountRow" style="display:none; color: var(--success); font-weight: 700;">
+          <span>Discount (KRITO20)</span>
+          <span id="discountAmount">-₹1,000</span>
+        </div>
+        <div class="summary-line total">
+          <span>Total</span>
+          <span id="finalTotal">₹4,999</span>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+<script>
+// Catalog (THE ARCHIVE BEAT PACK Only)
+var products = {
+  'p1': { title: 'THE ARCHIVE Beat Pack (50+ Beats)', genre: 'Full Beat Pack', price: 4999, img: 'img/beats/beat-b1.png?v=archive1' }
+};
+
+var currentPrice = 4999;
+
+function initCheckout() {
+  var urlParams = new URLSearchParams(window.location.search);
+  var pid = urlParams.get('id') || 'p1';
+  var p = products[pid] || products['p1'];
+
+  currentPrice = p.price;
+  document.getElementById('cTitle').innerText = p.title;
+  document.getElementById('cGenre').innerText = p.genre + ' · WAV + MP3 + Stems';
+  document.getElementById('cImg').src = p.img;
+  document.getElementById('cPrice').innerText = '₹' + p.price;
+  document.getElementById('subtotalAmount').innerText = '₹' + p.price;
+  document.getElementById('finalTotal').innerText = '₹' + p.price;
+  document.getElementById('cPayBtnTotal').innerText = '₹' + p.price;
+}
+initCheckout();
+
+function applyDiscount() {
+  var code = document.getElementById('discountCodeInput').value.trim().toUpperCase();
+  if (code === 'KRITO20') {
+    var discount = Math.round(currentPrice * 0.20);
+    var newTotal = currentPrice - discount;
+
+    document.getElementById('discountRow').style.display = 'flex';
+    document.getElementById('discountAmount').innerText = '-₹' + discount;
+    document.getElementById('finalTotal').innerText = '₹' + newTotal;
+    document.getElementById('cPayBtnTotal').innerText = '₹' + newTotal;
+    alert('Coupon KRITO20 applied! You saved ₹' + discount);
+  } else {
+    alert('Invalid coupon code. Try KRITO20 for 20% off!');
+  }
+}
+
+function handlePayNow() {
+  var email = document.getElementById('cEmail').value.trim();
+  if (!email) {
+    alert('Please enter your email address for digital instant delivery.');
+    document.getElementById('cEmail').focus();
+    return;
+  }
+  
+  // Razorpay Link Integration
+  window.location.href = 'index.html#BUY_LINK';
+}
+</script>
+</body>
+</html>
