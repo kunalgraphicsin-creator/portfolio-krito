@@ -354,18 +354,22 @@ ul { list-style: none; }
 /* Category Filter Pills */
 .payment-badges {
   display: flex;
-  gap: 8px;
+  gap: 12px;
   justify-content: center;
   flex-wrap: wrap;
-  margin-bottom: 20px;
+  margin-bottom: 24px;
 }
 .pay-icon {
-  height: 24px;
-  width: 38px;
-  background: var(--white);
-  padding: 3px 5px;
-  border-radius: 4px;
-  object-fit: contain;
+  height: 30px !important;
+  width: 48px !important;
+  max-width: 48px !important;
+  max-height: 30px !important;
+  background: var(--white) !important;
+  padding: 4px 6px !important;
+  border-radius: 5px !important;
+  object-fit: contain !important;
+  box-sizing: border-box !important;
+  display: block !important;
 }
 
 .filter-pills {
