@@ -352,6 +352,22 @@ ul { list-style: none; }
 }
 
 /* Category Filter Pills */
+.payment-badges {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+}
+.pay-icon {
+  height: 24px;
+  width: 38px;
+  background: var(--white);
+  padding: 3px 5px;
+  border-radius: 4px;
+  object-fit: contain;
+}
+
 .filter-pills {
   display: flex;
   align-items: center;
