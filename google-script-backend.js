@@ -51,7 +51,10 @@ var CONFIG = {
   PACK_SPECS: "50+ Beats · 24-Bit WAV + 320 kbps MP3 + Full Stems · 100% Royalty-Free",
 
   // Discord Webhook for Instant Real-Time Push Alerts
-  DISCORD_WEBHOOK_URL: "https://discord.com/api/webhooks/1544144412638969876/wmFbmNvGp40XRJIK7s2JudfDCblukV239goMfZK1NbbDxad0cbqgg5S5uer_KCMEcP6D"
+  DISCORD_WEBHOOK_URL: "https://discord.com/api/webhooks/1544144412638969876/wmFbmNvGp40XRJIK7s2JudfDCblukV239goMfZK1NbbDxad0cbqgg5S5uer_KCMEcP6D",
+
+  // Live Website URL for the 1-Click Approval Gateway
+  WEBSITE_URL: "https://portfolio-krito.pages.dev"
 };
 
 
@@ -89,12 +92,12 @@ function doPost(e) {
       ""
     ]);
     
-    // 2. Generate 1-Click Approval URL
+    // 2. Generate 1-Click Approval URL (Points to Cloudflare Pages Gateway)
     var webAppUrl = ScriptApp.getService().getUrl();
-    var approveUrl = webAppUrl + 
-      "?action=approve" +
-      "&orderId=" + encodeURIComponent(orderId) +
-      "&token=" + encodeURIComponent(CONFIG.SECRET_APPROVAL_TOKEN);
+    var approveUrl = CONFIG.WEBSITE_URL + 
+      "/approve.html?orderId=" + encodeURIComponent(orderId) +
+      "&email=" + encodeURIComponent(email) +
+      "&name=" + encodeURIComponent(name);
       
     var buyerWhatsAppClean = phone.replace(/[^0-9]/g, '');
     if (buyerWhatsAppClean.length === 10) buyerWhatsAppClean = "91" + buyerWhatsAppClean;
@@ -326,22 +329,48 @@ function sendDiscordWebhookAlert(orderId, name, email, phone, packName, amount, 
   try {
     if (!CONFIG.DISCORD_WEBHOOK_URL) return;
     
+    var cleanPhone = (phone || "").replace(/[^0-9]/g, '');
+    var customerWaLink = buyerWaLink || ("https://wa.me/" + (cleanPhone.length === 10 ? ("91" + cleanPhone) : cleanPhone));
+    var driveFolderLink = CONFIG.BEAT_PACK_DRIVE_LINK;
+    
+    var desc = 
+      "**Customer ne form submit kar diya hai.** Niche diye gaye simple steps follow karein:\n\n" +
+      "━━━━━━━━━━━━━━━━━━━━━━━━━━━\n" +
+      "📋 **ORDER KI DETAILS (Customer Info)**\n" +
+      "━━━━━━━━━━━━━━━━━━━━━━━━━━━\n" +
+      "👤 **Buyer Name:** " + name + "\n" +
+      "💰 **Amount Paid:** **" + amount + "** (UPI Payment)\n" +
+      "📦 **Beat Pack:** " + packName + "\n" +
+      "📧 **Delivery Email:** `" + email + "`\n" +
+      "📱 **WhatsApp:** `+91 " + cleanPhone + "` • [💬 Chat on WhatsApp](" + customerWaLink + ")\n\n" +
+      "━━━━━━━━━━━━━━━━━━━━━━━━━━━\n" +
+      "🔢 **UPI REFERENCE NUMBER (Bank UTR)**\n" +
+      "━━━━━━━━━━━━━━━━━━━━━━━━━━━\n" +
+      "```\n" + utr + "\n```\n" +
+      "*👉 Apne HDFC Bank SMS ya UPI App me check karein ki ye 12-digit UTR match ho raha hai aur paise aa gaye hain.*\n\n" +
+      "━━━━━━━━━━━━━━━━━━━━━━━━━━━\n" +
+      "⚡ **1-CLICK APPROVAL (Aapka Step)**\n" +
+      "━━━━━━━━━━━━━━━━━━━━━━━━━━━\n" +
+      "Paise check karne ke baad bas is button par click karein:\n\n" +
+      "👉 **[ ✅ CLICK HERE TO APPROVE & SEND DOWNLOAD LINK ](" + approveUrl + ")**\n\n" +
+      "*✨ Tap karte hi customer ke email (`" + email + "`) par Google Drive folder link aur Commercial License apne aap chala jayega!*\n\n" +
+      "━━━━━━━━━━━━━━━━━━━━━━━━━━━\n" +
+      "🛠️ **DIRECT SHORTCUTS (Agar Zaroorat Pade)**\n" +
+      "━━━━━━━━━━━━━━━━━━━━━━━━━━━\n" +
+      "• 💬 **[Buyer Ke WhatsApp Par Link Bhejein](" + customerWaLink + ")**\n" +
+      "• 📁 **[Google Drive Beat Pack Folder Kholein](" + driveFolderLink + ")**";
+
     var payload = {
       username: "KRITO Beat Store Alert",
       embeds: [{
-        title: "🚨 NEW BEAT PACK ORDER #" + orderId,
-        description: "**Product:** " + packName + "\n**Amount:** **" + amount + "**\n**Status:** ⏳ Pending Bank UTR Verification",
-        color: 5048585, // #4D0909 Cherry
-        fields: [
-          { name: "👤 Customer Name", value: name, inline: true },
-          { name: "💰 Amount", value: amount, inline: true },
-          { name: "📱 WhatsApp Phone", value: phone + " ([Chat with Customer](" + buyerWaLink + "))", inline: false },
-          { name: "📧 Delivery Email", value: email, inline: false },
-          { name: "💳 UPI UTR NUMBER", value: "```" + utr + "```", inline: false },
-          { name: "⚡ 1-Click Verification Link", value: "[✅ CLICK HERE TO APPROVE & DISPATCH](" + approveUrl + ")", inline: false }
-        ],
+        author: {
+          name: "KRITO OFFICIAL BEAT STORE — PRODUCER DESK"
+        },
+        title: "🚨 NAYA BEAT ORDER AAYA HAI — #" + orderId + " (" + amount + ")",
+        description: desc,
+        color: 13938487, // Luxe Gold
         footer: {
-          text: "KRITO Beat Store Engine · Instant Push Notification"
+          text: "Order #" + orderId + " • KRITO Automated Cloud Engine • Zero Manual Work"
         },
         timestamp: new Date().toISOString()
       }]
