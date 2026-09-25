@@ -828,17 +828,19 @@ function handlePayNow() {
     }]
   };
 
-  // 1. Direct Discord Webhook Notification
-  try {
-    fetch(DISCORD_WEBHOOK_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(discordPayload)
-    }).catch(function(err) {
-      console.log('Discord webhook log:', err);
-    });
-  } catch(e) {
-    console.log('Discord send error:', e);
+  // 1. Direct Discord Webhook Notification (Fallback only if Google Script is not active)
+  if (!GOOGLE_SCRIPT_WEBAPP_URL || !GOOGLE_SCRIPT_WEBAPP_URL.startsWith('http')) {
+    try {
+      fetch(DISCORD_WEBHOOK_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(discordPayload)
+      }).catch(function(err) {
+        console.log('Discord webhook log:', err);
+      });
+    } catch(e) {
+      console.log('Discord send error:', e);
+    }
   }
 
   // 2. Backup Email Alert
