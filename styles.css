@@ -309,10 +309,15 @@ ul { list-style: none; }
   z-index: 998;
   opacity: 0;
   visibility: hidden;
+  pointer-events: none;
   transition: all var(--transition);
 }
 
-.mobile-overlay.show { opacity: 1; visibility: visible; }
+.mobile-overlay.show {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
 
 /* ============================================================
    STORE HERO BANNER
@@ -935,15 +940,17 @@ ul { list-style: none; }
 }
 
 .footer-col a {
+  display: inline-block;
   font-size: 13px;
-  color: rgba(255, 252, 246, 0.65);
+  color: rgba(255, 252, 246, 0.75);
+  cursor: pointer;
+  padding: 3px 0;
   transition: all var(--transition);
 }
 
 .footer-col a:hover {
-  color: var(--cream);
+  color: #FFFFFF;
   transform: translateX(4px);
-  display: inline-block;
 }
 
 .footer-newsletter-box {
@@ -1061,12 +1068,14 @@ ul { list-style: none; }
   z-index: 10000;
   opacity: 0;
   visibility: hidden;
+  pointer-events: none;
   transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .cart-drawer-backdrop.show {
   opacity: 1;
   visibility: visible;
+  pointer-events: auto;
 }
 
 .cart-drawer-panel {
@@ -1359,6 +1368,7 @@ ul { list-style: none; }
   transform: translateY(100px);
   opacity: 0;
   visibility: hidden;
+  pointer-events: none;
   transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
   border: 1px solid rgba(255, 252, 246, 0.2);
 }
@@ -1367,6 +1377,7 @@ ul { list-style: none; }
   transform: translateY(0);
   opacity: 1;
   visibility: visible;
+  pointer-events: auto;
 }
 
 .toast-content {
@@ -1412,6 +1423,7 @@ ul { list-style: none; }
   z-index: 10002;
   opacity: 0;
   visibility: hidden;
+  pointer-events: none;
   display: flex;
   justify-content: center;
   align-items: flex-start;
@@ -1422,6 +1434,7 @@ ul { list-style: none; }
 .search-overlay-backdrop.show {
   opacity: 1;
   visibility: visible;
+  pointer-events: auto;
 }
 
 .search-modal-container {
@@ -1951,3 +1964,177 @@ ul { list-style: none; }
 .btn-clear-search-large:hover {
   background: var(--cherry-dark);
 }
+
+/* ============================================================
+   CONTACT US & COMPLIANCE STYLES (Cashfree & RBI Approved)
+   ============================================================ */
+.contact-layout-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 40px;
+  margin-top: 36px;
+}
+
+.contact-info-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.compliance-card {
+  background: #FFFFFF;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 24px;
+  box-shadow: var(--shadow-sm);
+  transition: all var(--transition);
+}
+
+.compliance-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+  border-color: var(--cherry-border);
+}
+
+.compliance-card-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 12px;
+}
+
+.compliance-icon-box {
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  background: var(--cherry-soft);
+  color: var(--cherry);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.compliance-card-header h3 {
+  font-family: var(--font-heading);
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: var(--cherry);
+  margin: 0;
+}
+
+.compliance-card p {
+  font-size: 14px;
+  color: var(--text-body);
+  margin-bottom: 8px;
+  line-height: 1.6;
+}
+
+.compliance-card a {
+  color: var(--cherry);
+  font-weight: 700;
+  text-decoration: underline;
+}
+
+.grievance-highlight-box {
+  background: rgba(77, 9, 9, 0.04);
+  border: 1.5px dashed var(--cherry-border);
+  border-radius: var(--radius-md);
+  padding: 24px;
+  margin-top: 32px;
+}
+
+.grievance-highlight-box h3 {
+  font-family: var(--font-heading);
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: var(--cherry);
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.contact-form-box {
+  background: #FFFFFF;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 32px;
+  box-shadow: var(--shadow-sm);
+}
+
+.contact-form-box h2 {
+  font-family: var(--font-heading);
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: var(--cherry);
+  margin-bottom: 8px;
+}
+
+.contact-form-box p {
+  font-size: 14px;
+  color: var(--text-sub);
+  margin-bottom: 24px;
+}
+
+.form-field-group {
+  margin-bottom: 18px;
+}
+
+.form-field-group label {
+  display: block;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  color: var(--cherry);
+  margin-bottom: 8px;
+}
+
+.form-field-control {
+  width: 100%;
+  padding: 13px 16px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  font-family: var(--font-body);
+  font-size: 14px;
+  color: var(--text-body);
+  background: #FFF;
+  outline: none;
+  transition: all var(--transition);
+}
+
+.form-field-control:focus {
+  border-color: var(--cherry);
+  box-shadow: 0 0 0 3px rgba(77, 9, 9, 0.1);
+}
+
+.btn-submit-contact {
+  width: 100%;
+  padding: 16px;
+  background: var(--cherry);
+  color: var(--cream);
+  font-family: var(--font-heading);
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  border-radius: 100px;
+  border: none;
+  cursor: pointer;
+  box-shadow: var(--shadow-md);
+  transition: all var(--transition);
+}
+
+.btn-submit-contact:hover {
+  background: var(--cherry-dark);
+  transform: translateY(-2px);
+}
+
+@media (max-width: 860px) {
+  .contact-layout-grid {
+    grid-template-columns: 1fr;
+    gap: 32px;
+  }
+}
+

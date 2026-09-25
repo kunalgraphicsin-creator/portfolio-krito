@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Order Verification Status — KRITO Beat Store</title>
+<meta name="description" content="Track your KRITO beat pack order verification status. Real-time bank reconciliation and digital cloud delivery.">
+
+<!-- Fonts: Plus Jakarta Sans + Inter -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+<link rel="icon" type="image/png" href="img/favicon.png">
+<link rel="stylesheet" href="styles.css?v=status1">
+
+<style>
+.status-page-wrapper {
+  min-height: calc(100vh - 200px);
+  padding: 60px 20px 100px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.status-card {
+  background: #FFFFFF;
+  border: 1px solid rgba(77, 9, 9, 0.15);
+  border-radius: var(--radius-lg);
+  max-width: 680px;
+  width: 100%;
+  padding: 44px 40px;
+  box-shadow: var(--shadow-lg);
+  text-align: center;
+}
+
+.status-header-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(212, 168, 83, 0.15);
+  border: 1px solid rgba(212, 168, 83, 0.4);
+  color: #8C6615;
+  padding: 6px 18px;
+  border-radius: 100px;
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  margin-bottom: 20px;
+}
+
+.pulse-dot {
+  width: 10px;
+  height: 10px;
+  background: #D4A853;
+  border-radius: 50%;
+  box-shadow: 0 0 0 0 rgba(212, 168, 83, 0.7);
+  animation: pulseGold 1.8s infinite;
+}
+
+@keyframes pulseGold {
+  0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(212, 168, 83, 0.7); }
+  70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(212, 168, 83, 0); }
+  100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(212, 168, 83, 0); }
+}
+
+.status-main-title {
+  font-family: var(--font-heading);
+  font-size: 26px;
+  font-weight: 800;
+  color: var(--cherry);
+  margin-bottom: 8px;
+}
+
+.status-order-id {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-muted);
+  letter-spacing: 1px;
+  margin-bottom: 32px;
+}
+
+/* 3-Step Visual Progress Tracker */
+.tracking-steps-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+  margin-bottom: 40px;
+  padding: 0 10px;
+}
+
+.tracking-steps-container::before {
+  content: '';
+  position: absolute;
+  top: 22px;
+  left: 40px;
+  right: 40px;
+  height: 3px;
+  background: rgba(77, 9, 9, 0.1);
+  z-index: 1;
+}
+
+.tracking-step {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  width: 110px;
+}
+
+.step-circle {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: #FFF;
+  border: 3px solid rgba(77, 9, 9, 0.15);
+  color: rgba(77, 9, 9, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  font-weight: 800;
+  transition: all var(--transition);
+}
+
+.tracking-step.done .step-circle {
+  background: var(--success);
+  border-color: var(--success);
+  color: #FFF;
+}
+
+.tracking-step.active .step-circle {
+  background: var(--cherry);
+  border-color: var(--cherry);
+  color: var(--cream);
+  box-shadow: 0 0 0 6px rgba(77, 9, 9, 0.12);
+}
+
+.step-label {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-align: center;
+  line-height: 1.3;
+}
+
+.tracking-step.active .step-label {
+  color: var(--cherry);
+  font-weight: 800;
+}
+
+.tracking-step.done .step-label {
+  color: var(--success);
+}
+
+/* Receipt Details Box */
+.order-summary-box {
+  background: var(--cream);
+  border: 1px solid rgba(77, 9, 9, 0.12);
+  border-radius: var(--radius-md);
+  padding: 24px;
+  text-align: left;
+  margin-bottom: 28px;
+  font-size: 14px;
+  line-height: 1.8;
+}
+
+.order-summary-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 6px 0;
+  border-bottom: 1px dashed rgba(77, 9, 9, 0.08);
+}
+
+.order-summary-row:last-child {
+  border-bottom: none;
+}
+
+.order-summary-row span:first-child {
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+.order-summary-row span:last-child {
+  color: var(--cherry);
+  font-weight: 700;
+}
+
+.utr-highlight {
+  background: rgba(185, 28, 28, 0.08);
+  color: #B91C1C !important;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-family: monospace;
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.info-alert-box {
+  background: #FFF8E7;
+  border-left: 4px solid var(--gold);
+  border-radius: 4px;
+  padding: 16px;
+  text-align: left;
+  font-size: 13px;
+  color: #6B4E00;
+  line-height: 1.6;
+  margin-bottom: 28px;
+}
+
+.btn-whatsapp-priority {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  background: #25D366;
+  color: #FFFFFF;
+  padding: 16px 28px;
+  font-size: 15px;
+  font-weight: 800;
+  border-radius: var(--radius-md);
+  text-decoration: none;
+  box-shadow: 0 4px 14px rgba(37, 211, 102, 0.3);
+  transition: all var(--transition);
+  width: 100%;
+  margin-bottom: 14px;
+}
+
+.btn-whatsapp-priority:hover {
+  background: #1DA851;
+  transform: translateY(-2px);
+}
+
+.btn-return-store {
+  display: inline-block;
+  color: var(--cherry);
+  font-size: 14px;
+  font-weight: 700;
+  text-decoration: underline;
+  padding: 8px 16px;
+}
+</style>
+</head>
+<body>
+
+<!-- STORE HEADER / NAVBAR -->
+<header class="store-header">
+  <div class="container">
+    <div class="header-inner">
+      <a href="index.html" class="store-logo"><img src="img/logo.png" alt="KRITO Logo" style="height: 55px; width: auto; display: block;"></a>
+      <span style="font-size: 12px; font-weight: 700; color: var(--cherry); letter-spacing: 1px; text-transform: uppercase;">
+        🔒 Direct Producer Verification Portal
+      </span>
+    </div>
+  </div>
+</header>
+
+<!-- MAIN STATUS CONTENT -->
+<main class="status-page-wrapper">
+  <div class="status-card">
+    
+    <!-- BADGE -->
+    <div class="status-header-badge">
+      <span class="pulse-dot"></span>
+      <span>HDFC Bank Reconciliation in Progress</span>
+    </div>
+
+    <h1 class="status-main-title">Payment Submitted Successfully</h1>
+    <div class="status-order-id" id="displayOrderId">Order #KB-2026-....</div>
+
+    <!-- 3-STEP PROGRESS TRACKER -->
+    <div class="tracking-steps-container">
+      <div class="tracking-step done">
+        <div class="step-circle">✓</div>
+        <div class="step-label">Payment<br>Submitted</div>
+      </div>
+      <div class="tracking-step active">
+        <div class="step-circle">⏳</div>
+        <div class="step-label">Bank UTR<br>Verification</div>
+      </div>
+      <div class="tracking-step">
+        <div class="step-circle">🔒</div>
+        <div class="step-label">Google Drive<br>Link Dispatched</div>
+      </div>
+    </div>
+
+    <!-- REASSURANCE NOTE -->
+    <div class="info-alert-box" style="background:#EBF7EE; border-left:4px solid #2D6A4F; color:#1B4D36;">
+      <strong>✓ Order Automatically Transmitted to KRITO Desk:</strong><br>
+      Your order details have been securely sent to our merchant desk. <strong>You do not need to send any manual message.</strong> We are verifying your 12-digit UTR with our HDFC statement. Once approved (usually 2–5 minutes), your Google Drive Beat Pack Link and Commercial License will be delivered to <strong id="alertEmailTarget">your email</strong>.
+    </div>
+
+    <!-- ORDER DETAILS SUMMARY -->
+    <div class="order-summary-box">
+      <div class="order-summary-row">
+        <span>Product:</span>
+        <span id="displayPack">THE ARCHIVE Beat Pack (50+ Beats)</span>
+      </div>
+      <div class="order-summary-row">
+        <span>Amount Paid:</span>
+        <span id="displayAmount">₹4,999</span>
+      </div>
+      <div class="order-summary-row">
+        <span>Customer Name:</span>
+        <span id="displayName">Artist</span>
+      </div>
+      <div class="order-summary-row">
+        <span>Delivery Email:</span>
+        <span id="displayEmail">artist@email.com</span>
+      </div>
+      <div class="order-summary-row">
+        <span>WhatsApp Phone:</span>
+        <span id="displayPhone">+91 ....</span>
+      </div>
+      <div class="order-summary-row">
+        <span>Submitted UPI UTR:</span>
+        <span class="utr-highlight" id="displayUtr">4281........</span>
+      </div>
+    </div>
+
+    <!-- OPTIONAL DIRECT SUPPORT BUTTON -->
+    <a href="#" id="waSupportBtn" target="_blank" class="btn-whatsapp-priority" style="background:#4D0909;box-shadow:0 4px 14px rgba(77,9,9,0.2);">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766.001-3.187-2.575-5.77-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.299.045-.677.063-1.092-.069-.252-.08-.575-.187-.988-.365-1.739-.751-2.874-2.502-2.961-2.617-.087-.116-.708-.94-.708-1.793s.448-1.273.607-1.446c.159-.173.346-.217.462-.217l.332.007c.106.005.249-.04.39.298.144.347.491 1.2.534 1.287.043.087.072.188.014.304-.058.116-.087.188-.173.289l-.26.304c-.087.086-.177.18-.076.354.101.174.449.741.964 1.201.662.591 1.221.774 1.394.86.173.086.275.072.376-.043.101-.116.433-.506.549-.68.116-.173.231-.145.39-.086s1.011.477 1.184.564.289.13.332.202c.045.072.045.419-.099.824zm-3.423-14.416c-6.627 0-12 5.373-12 12 0 2.159.57 4.184 1.564 5.941l-1.633 5.969 6.136-1.61c1.704.931 3.663 1.462 5.748 1.462 6.627 0 12-5.373 12-12s-5.373-12-12-12z"/></svg>
+      <span>Contact KRITO Desk on WhatsApp (Optional) &rarr;</span>
+    </a>
+
+    <a href="index.html" class="btn-return-store">&larr; Return to KRITO Storefront</a>
+
+  </div>
+</main>
+
+<!-- FOOTER -->
+<footer class="store-footer" style="padding: 40px 0 20px;">
+  <div class="container" style="text-align: center;">
+    <p class="footer-copyright">&copy; 2026 KRITO Beat Store · Direct Artist Licensing &amp; Cloud Fulfillment.</p>
+  </div>
+</footer>
+
+<script>
+// Retrieve Order Data from URL or LocalStorage
+(function() {
+  var urlParams = new URLSearchParams(window.location.search);
+  var orderId = urlParams.get('id');
+  
+  var orderData = null;
+  try {
+    var raw = sessionStorage.getItem('krito_last_order');
+    if (raw) orderData = JSON.parse(raw);
+  } catch(e) {}
+
+  if (!orderId && orderData && orderData.orderId) {
+    orderId = orderData.orderId;
+  }
+  if (!orderId) {
+    orderId = 'KB-' + Math.floor(1000 + Math.random() * 9000);
+  }
+
+  document.getElementById('displayOrderId').innerText = 'Order #' + orderId;
+  
+  if (orderData) {
+    if (orderData.name) document.getElementById('displayName').innerText = orderData.name;
+    if (orderData.email) document.getElementById('displayEmail').innerText = orderData.email;
+    if (orderData.phone) document.getElementById('displayPhone').innerText = orderData.phone;
+    if (orderData.utr) document.getElementById('displayUtr').innerText = orderData.utr;
+    if (orderData.packName) document.getElementById('displayPack').innerText = orderData.packName;
+    if (orderData.amount) document.getElementById('displayAmount').innerText = orderData.amount;
+  }
+
+  // Pre-fill WhatsApp Priority Message Link
+  var customerName = (orderData && orderData.name) ? orderData.name : 'Artist';
+  var customerUtr = (orderData && orderData.utr) ? orderData.utr : 'Submitted';
+  var customerEmail = (orderData && orderData.email) ? orderData.email : '';
+  
+  var waMessage = 
+    "Hi KRITO! I just completed UPI payment for THE ARCHIVE Beat Pack.\n\n" +
+    "📄 Order ID: #" + orderId + "\n" +
+    "👤 Name: " + customerName + "\n" +
+    "📧 Email: " + customerEmail + "\n" +
+    "🔢 UPI UTR: " + customerUtr + "\n\n" +
+    "Please verify and send my Google Drive download link!";
+    
+  var waUrl = "https://wa.me/919319448422?text=" + encodeURIComponent(waMessage);
+  document.getElementById('waSupportBtn').href = waUrl;
+})();
+</script>
+
+</body>
+</html>

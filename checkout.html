@@ -1,15 +1,15 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Checkout — KRITO Store</title>
-<meta name="description" content="Secure Checkout for KRITO Beat Store. Complete your purchase via Razorpay, UPI, or Credit/Debit Cards. Instant email delivery.">
+<title>Secure UPI Checkout — KRITO Beat Store</title>
+<meta name="description" content="Secure UPI Direct Checkout for KRITO Beat Store. Complete your purchase via UPI QR, GPay, PhonePe, Paytm with instant email and cloud delivery.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="icon" type="image/png" href="img/favicon.png">
-<link rel="stylesheet" href="styles.css?v=checkout1">
+<link rel="stylesheet" href="styles.css?v=checkout_upi2">
 
 <style>
 /* SHOPIFY STYLE DEDICATED CHECKOUT PAGE */
@@ -20,14 +20,14 @@
 }
 
 .checkout-header {
-  padding: 24px 0;
+  padding: 20px 0;
   background: var(--cream);
   border-bottom: 1px solid var(--border-light);
 }
 
 .checkout-grid-container {
   display: grid;
-  grid-template-columns: 1.15fr 0.85fr;
+  grid-template-columns: 1.2fr 0.8fr;
   min-height: calc(100vh - 80px);
 }
 
@@ -38,77 +38,45 @@
   border-right: 1px solid #E6E6E6;
 }
 
-.express-checkout-wrap {
-  margin-bottom: 24px;
-}
-
-.express-tag {
-  font-size: 11px;
-  color: #707070;
-  text-align: center;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  margin-bottom: 12px;
-  font-weight: 700;
-}
-
-.express-btns-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-  margin-bottom: 20px;
-}
-
-.btn-express-shoppay {
-  background: #5A31F4;
-  color: #FFF;
-  padding: 14px;
-  border-radius: 8px;
-  font-weight: 800;
-  font-size: 14px;
-  text-align: center;
-  border: none;
-}
-
-.btn-express-gpay {
-  background: #000000;
-  color: #FFF;
-  padding: 14px;
-  border-radius: 8px;
-  font-weight: 800;
-  font-size: 14px;
-  text-align: center;
-  border: none;
-}
-
-.divider-or {
-  display: flex;
+.section-badge-step {
+  display: inline-flex;
   align-items: center;
-  gap: 16px;
-  color: #8E8E8E;
-  font-size: 12px;
-  font-weight: 600;
-  margin: 24px 0;
-}
-
-.divider-or::before,
-.divider-or::after {
-  content: '';
-  flex: 1;
-  height: 1px;
-  background: #E6E6E6;
+  gap: 8px;
+  background: rgba(77, 9, 9, 0.08);
+  color: var(--cherry);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  padding: 4px 12px;
+  border-radius: 100px;
+  margin-bottom: 10px;
+  text-transform: uppercase;
 }
 
 .form-section-title {
   font-family: var(--font-heading);
-  font-size: 1.1rem;
+  font-size: 1.2rem;
   font-weight: 800;
   color: var(--cherry);
-  margin-bottom: 14px;
+  margin-bottom: 16px;
 }
 
 .form-group {
   margin-bottom: 16px;
+}
+
+.form-row-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.form-label {
+  display: block;
+  font-size: 12px;
+  font-weight: 700;
+  color: #444;
+  margin-bottom: 6px;
 }
 
 .form-input {
@@ -125,62 +93,197 @@
 
 .form-input:focus {
   border-color: var(--cherry);
-  box-shadow: 0 0 0 2px rgba(77, 9, 9, 0.1);
+  box-shadow: 0 0 0 3px rgba(77, 9, 9, 0.1);
 }
 
-.form-row-2 {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-}
-
-.form-row-3 {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  gap: 12px;
-}
-
-.checkbox-label {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  font-size: 13px;
-  color: #545454;
-  margin-top: 8px;
-  cursor: pointer;
-}
-
-/* Payment Box Accordion */
-.payment-methods-box {
-  border: 1px solid #D9D9D9;
-  border-radius: 8px;
-  overflow: hidden;
+/* BANK-GRADE UPI PAYMENT BOX */
+.upi-payment-container {
+  background: #FFF9F6;
+  border: 2px solid rgba(77, 9, 9, 0.2);
+  border-radius: 14px;
+  padding: 24px;
   margin-bottom: 24px;
 }
 
-.payment-option-header {
-  padding: 16px;
-  background: #FFF8F6;
-  border-bottom: 1px solid #D9D9D9;
+.upi-box-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid rgba(77, 9, 9, 0.1);
+  padding-bottom: 14px;
+  margin-bottom: 18px;
+}
+
+.upi-brand-badges {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.upi-badge {
+  background: #000;
+  color: #FFF;
+  font-size: 10px;
+  font-weight: 800;
+  padding: 3px 8px;
+  border-radius: 4px;
+  letter-spacing: 0.5px;
+}
+
+.upi-badge.hdfc {
+  background: #004C8F;
+}
+
+.upi-badge.npci {
+  background: #E85E22;
+}
+
+.upi-grid {
+  display: grid;
+  grid-template-columns: 180px 1fr;
+  gap: 24px;
+  align-items: center;
+}
+
+.qr-code-wrapper {
+  background: #FFFFFF;
+  border: 1px solid rgba(77, 9, 9, 0.15);
+  border-radius: 10px;
+  padding: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  text-align: center;
+}
+
+.qr-code-wrapper img {
+  width: 100%;
+  height: auto;
+  border-radius: 6px;
+  display: block;
+}
+
+.qr-caption {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-muted);
+  margin-top: 8px;
+}
+
+.upi-details-pane {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.upi-amount-callout {
+  font-size: 24px;
+  font-weight: 900;
+  color: var(--cherry);
+  font-family: var(--font-heading);
+}
+
+.upi-field-box {
+  background: #FFFFFF;
+  border: 1px solid #E0E0E0;
+  border-radius: 8px;
+  padding: 10px 14px;
   display: flex;
   align-items: center;
   justify-content: space-between;
 }
 
-.payment-radio-label {
+.upi-field-label {
+  font-size: 11px;
+  color: #777;
+  font-weight: 600;
+}
+
+.upi-field-val {
+  font-size: 14px;
+  font-weight: 800;
+  color: #222;
+  font-family: monospace;
+}
+
+.btn-copy-upi {
+  background: var(--cherry);
+  color: var(--cream);
+  padding: 6px 14px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 700;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.btn-copy-upi:hover {
+  background: var(--cherry-dark);
+}
+
+/* MOBILE 1-CLICK PAY BUTTONS */
+.mobile-pay-header {
+  font-size: 12px;
+  font-weight: 800;
+  color: #777;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-top: 14px;
+  margin-bottom: 8px;
+}
+
+.mobile-intent-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+
+.btn-upi-app {
   display: flex;
   align-items: center;
-  gap: 10px;
+  justify-content: center;
+  gap: 6px;
+  padding: 10px 8px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 800;
+  color: #FFF;
+  text-decoration: none;
+  text-align: center;
+  transition: transform 0.15s, opacity 0.15s;
+}
+
+.btn-upi-app:hover {
+  transform: translateY(-2px);
+  opacity: 0.95;
+}
+
+.btn-upi-gpay { background: #0F9D58; }
+.btn-upi-phonepe { background: #5F259F; }
+.btn-upi-paytm { background: #002970; }
+
+/* UTR HELP ACCORDION */
+.utr-helper-box {
+  background: #F4F6F8;
+  border: 1px solid #E1E4E8;
+  border-radius: 8px;
+  padding: 12px 14px;
+  font-size: 12px;
+  color: #444;
+  margin-top: 8px;
+  line-height: 1.5;
+}
+
+.utr-helper-summary {
+  cursor: pointer;
   font-weight: 700;
-  font-size: 14px;
   color: var(--cherry);
+  display: flex;
+  align-items: center;
+  gap: 6px;
 }
 
-.payment-card-inputs {
-  padding: 16px;
-  background: #FFF;
-}
-
+/* PRIMARY CTA */
 .btn-pay-now-primary {
   width: 100%;
   padding: 18px;
@@ -192,13 +295,29 @@
   border-radius: 8px;
   border: none;
   cursor: pointer;
-  transition: background 0.2s;
+  transition: all 0.2s;
   box-shadow: var(--shadow-md);
-  margin-top: 24px;
+  margin-top: 20px;
+  letter-spacing: 0.5px;
 }
 
 .btn-pay-now-primary:hover {
   background: var(--cherry-dark);
+  transform: translateY(-2px);
+}
+
+.checkout-footer-links {
+  display: flex;
+  gap: 16px;
+  font-size: 12px;
+  margin-top: 32px;
+  padding-top: 20px;
+  border-top: 1px solid #EBEBEB;
+}
+
+.checkout-footer-links a {
+  color: #666;
+  text-decoration: underline;
 }
 
 /* Right Column: Order Summary */
@@ -217,8 +336,8 @@
 
 .summary-thumb-wrap {
   position: relative;
-  width: 64px;
-  height: 64px;
+  width: 72px;
+  height: 72px;
   border-radius: 8px;
   border: 1px solid var(--border);
   overflow: hidden;
@@ -238,110 +357,82 @@
   right: -6px;
   background: var(--cherry);
   color: var(--cream);
-  font-size: 10px;
-  font-weight: 800;
   width: 20px;
   height: 20px;
   border-radius: 50%;
+  font-size: 11px;
+  font-weight: 800;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
-.summary-item-info {
-  flex: 1;
-}
-
 .summary-item-title {
-  font-family: var(--font-heading);
   font-size: 15px;
   font-weight: 800;
   color: var(--cherry);
-  line-height: 1.3;
 }
 
 .summary-item-desc {
   font-size: 12px;
-  color: var(--text-sub);
+  color: var(--text-muted);
+  margin-top: 4px;
 }
 
 .summary-item-price {
-  font-weight: 800;
   font-size: 15px;
-  color: var(--cherry);
-}
-
-.discount-form-row {
-  display: flex;
-  gap: 10px;
-  margin-bottom: 24px;
-  padding-bottom: 24px;
-  border-bottom: 1px solid var(--border);
-}
-
-.discount-input {
-  flex: 1;
-  padding: 12px 14px;
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  font-size: 13px;
-  outline: none;
-  background: #FFF;
-}
-
-.btn-apply-discount {
-  padding: 12px 20px;
-  background: var(--cherry);
-  color: var(--cream);
-  font-size: 12px;
   font-weight: 800;
-  border-radius: 8px;
-  border: none;
-  cursor: pointer;
+  color: var(--cherry);
+  margin-left: auto;
 }
 
-.total-summary-lines {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  font-size: 14px;
-  margin-bottom: 24px;
-}
-
-.summary-line {
+.summary-calc-row {
   display: flex;
   justify-content: space-between;
-  color: var(--text-sub);
+  padding: 10px 0;
+  font-size: 14px;
+  color: #555;
+  border-bottom: 1px solid rgba(77, 9, 9, 0.08);
 }
 
-.summary-line.total {
-  font-size: 1.3rem;
-  font-weight: 900;
-  color: var(--cherry);
-  padding-top: 16px;
-  border-top: 1px solid var(--border);
-}
-
-.checkout-footer-links {
-  margin-top: 32px;
+.summary-total-row {
   display: flex;
-  gap: 16px;
-  font-size: 12px;
-  color: var(--text-sub);
-}
-
-.checkout-footer-links a {
+  justify-content: space-between;
+  padding: 18px 0;
+  font-size: 18px;
+  font-weight: 800;
   color: var(--cherry);
-  text-decoration: underline;
 }
 
-@media (max-width: 960px) {
-  .checkout-grid-container {
-    grid-template-columns: 1fr;
-  }
-  .checkout-main-col, .checkout-summary-col {
-    padding: 30px 24px;
-  }
+.trust-bullets-box {
+  background: #FFF;
+  border: 1px solid rgba(77, 9, 9, 0.1);
+  border-radius: 8px;
+  padding: 16px;
+  margin-top: 24px;
+  font-size: 12px;
+  color: #555;
+  line-height: 1.7;
+}
+
+.trust-bullets-box div {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.trust-bullets-box svg {
+  color: var(--success);
+  flex-shrink: 0;
+}
+
+@media (max-width: 900px) {
+  .checkout-grid-container { grid-template-columns: 1fr; }
+  .checkout-main-col { padding: 30px 20px; }
+  .checkout-summary-col { padding: 30px 20px; order: -1; }
+  .upi-grid { grid-template-columns: 1fr; text-align: center; }
+  .qr-code-wrapper { max-width: 220px; margin: 0 auto; }
 }
 </style>
 </head>
@@ -353,7 +444,9 @@
   <header class="checkout-header">
     <div class="container" style="display:flex; align-items:center; justify-content:space-between;">
       <a href="index.html" class="store-logo"><img src="img/logo.png" alt="KRITO Logo" style="height: 55px; width: auto; display: block;"></a>
-      <span style="font-size: 12px; font-weight: 700; color: var(--cherry); letter-spacing: 1px; text-transform: uppercase;">🔒 256-Bit SSL Encrypted Checkout</span>
+      <span style="font-size: 12px; font-weight: 700; color: var(--cherry); letter-spacing: 1px; text-transform: uppercase;">
+        🔒 Direct UPI Secure Settlement
+      </span>
     </div>
   </header>
 
@@ -363,105 +456,125 @@
     <!-- LEFT COLUMN: FORM & PAYMENT -->
     <div class="checkout-main-col">
       
-      <!-- EXPRESS CHECKOUT -->
-      <div class="express-checkout-wrap">
-        <div class="express-tag">Express checkout</div>
-        <div class="express-btns-row">
-          <button class="btn-express-shoppay" onclick="alert('Proceeding via Shop Pay...');">shop pay</button>
-          <button class="btn-express-gpay" onclick="alert('Proceeding via Google Pay...');">G Pay</button>
-        </div>
-      </div>
-
-      <div class="divider-or">OR</div>
-
-      <!-- CONTACT -->
+      <!-- STEP 1: CONTACT INFO -->
       <div class="form-group">
-        <div class="form-section-title">Contact</div>
-        <input type="email" class="form-input" id="cEmail" placeholder="Email address" required>
-        <label class="checkbox-label">
-          <input type="checkbox" checked> Email me with news, free beat packs, and discount offers
-        </label>
-      </div>
-
-      <!-- PAYMENT METHOD -->
-      <div class="form-group" style="margin-top: 32px;">
-        <div class="form-section-title">Payment</div>
-        <p style="font-size: 12px; color: #707070; margin-bottom: 12px;">All transactions are secure and encrypted via Razorpay.</p>
-        
-        <div class="payment-methods-box">
-          <div class="payment-option-header">
-            <label class="payment-radio-label">
-              <input type="radio" name="paymethod" checked> Credit / Debit Card or UPI
-            </label>
-            <div style="display:flex; gap:4px;">
-              <span class="payment-badge">VISA</span>
-              <span class="payment-badge">MC</span>
-              <span class="payment-badge">UPI</span>
-            </div>
-          </div>
-          
-          <div class="payment-card-inputs">
-            <div class="form-group">
-              <input type="text" class="form-input" placeholder="Card number or UPI ID">
-            </div>
-            <div class="form-row-2 form-group">
-              <input type="text" class="form-input" placeholder="Expiration date (MM / YY)">
-              <input type="text" class="form-input" placeholder="Security code (CVV)">
-            </div>
-            <div class="form-group">
-              <input type="text" class="form-input" placeholder="Name on card">
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- BILLING ADDRESS -->
-      <div class="form-group" style="margin-top: 32px;">
-        <div class="form-section-title">Billing address</div>
+        <span class="section-badge-step">Step 1 of 2</span>
+        <div class="form-section-title">Artist &amp; Delivery Information</div>
         
         <div class="form-group">
-          <select class="form-input" style="color: #333;">
-            <option value="IN">India</option>
-          </select>
+          <label class="form-label">Full Name / Artist Pseudonym *</label>
+          <input type="text" class="form-input" id="cName" placeholder="e.g. Aman Verma" required>
         </div>
 
         <div class="form-row-2 form-group">
-          <input type="text" class="form-input" placeholder="First name">
-          <input type="text" class="form-input" placeholder="Last name">
+          <div>
+            <label class="form-label">Delivery Email Address *</label>
+            <input type="email" class="form-input" id="cEmail" placeholder="you@email.com (Link arrives here)" required>
+          </div>
+          <div>
+            <label class="form-label">WhatsApp Mobile Number *</label>
+            <input type="tel" class="form-input" id="cPhone" placeholder="10-digit number" required>
+          </div>
         </div>
+      </div>
 
-        <div class="form-group">
-          <input type="text" class="form-input" placeholder="Address">
+      <!-- STEP 2: BANK-VERIFIED UPI PAYMENT -->
+      <div class="form-group" style="margin-top: 36px;">
+        <span class="section-badge-step">Step 2 of 2</span>
+        <div class="form-section-title">Direct UPI Instant Payment</div>
+        
+        <div class="upi-payment-container">
+          
+          <div class="upi-box-header">
+            <div>
+              <div style="font-weight: 800; font-size: 14px; color: var(--cherry);">Bank-Verified UPI Settlement</div>
+              <div style="font-size: 11px; color: #777;">Payee: Kanik Chaudhary (KRITO Official)</div>
+            </div>
+            <div class="upi-brand-badges">
+              <span class="upi-badge hdfc">HDFC BANK</span>
+              <span class="upi-badge npci">UPI / NPCI</span>
+            </div>
+          </div>
+
+          <div class="upi-grid">
+            <!-- QR CODE -->
+            <div class="qr-code-wrapper">
+              <img src="img/upi-qr.png" alt="KRITO Official UPI QR Code">
+              <div class="qr-caption">Scan with Any UPI App</div>
+            </div>
+
+            <!-- DETAILS PANE -->
+            <div class="upi-details-pane">
+              <div>
+                <div style="font-size: 11px; color: #777; font-weight: 600; text-transform: uppercase;">Amount to Pay</div>
+                <div class="upi-amount-callout" id="cAmountDisplay">₹4,999</div>
+              </div>
+
+              <div class="upi-field-box">
+                <div>
+                  <div class="upi-field-label">Official UPI ID</div>
+                  <div class="upi-field-val" id="valUpiId">9319448422@pthdfc</div>
+                </div>
+                <button type="button" class="btn-copy-upi" id="btnCopyUpi" onclick="copyUpiId()">Copy UPI ID</button>
+              </div>
+
+              <!-- MOBILE 1-CLICK BUTTONS -->
+              <div class="mobile-pay-header">Mobile 1-Tap Pay:</div>
+              <div class="mobile-intent-grid">
+                <a href="upi://pay?pa=9319448422@pthdfc&pn=Kanik%20Chaudhary&am=4999&cu=INR&tn=KRITO%20THE%20ARCHIVE%20BEAT%20PACK" class="btn-upi-app btn-upi-gpay">
+                  <span>GPay</span>
+                </a>
+                <a href="upi://pay?pa=9319448422@pthdfc&pn=Kanik%20Chaudhary&am=4999&cu=INR&tn=KRITO%20THE%20ARCHIVE%20BEAT%20PACK" class="btn-upi-app btn-upi-phonepe">
+                  <span>PhonePe</span>
+                </a>
+                <a href="upi://pay?pa=9319448422@pthdfc&pn=Kanik%20Chaudhary&am=4999&cu=INR&tn=KRITO%20THE%20ARCHIVE%20BEAT%20PACK" class="btn-upi-app btn-upi-paytm">
+                  <span>Paytm</span>
+                </a>
+              </div>
+
+            </div>
+          </div>
+
         </div>
+      </div>
 
-        <div class="form-group">
-          <input type="text" class="form-input" placeholder="Apartment, suite, etc. (optional)">
-        </div>
+      <!-- STEP 3: SUBMIT UTR -->
+      <div class="form-group" style="margin-top: 24px;">
+        <label class="form-label" style="font-size: 13px; font-weight: 800; color: var(--cherry);">
+          Enter 12-Digit UPI Ref / UTR Number *
+        </label>
+        <input type="text" class="form-input" id="cUtr" placeholder="e.g. 428192019281 (Generated by UPI App after payment)" maxlength="12" style="font-family: monospace; font-size: 16px; font-weight: 700; letter-spacing: 1px;" required>
 
-        <div class="form-row-3 form-group">
-          <input type="text" class="form-input" placeholder="City">
-          <select class="form-input" style="color: #333;">
-            <option value="PB">Punjab</option>
-            <option value="DL">Delhi</option>
-            <option value="MH">Maharashtra</option>
-            <option value="KA">Karnataka</option>
-            <option value="HR">Haryana</option>
-          </select>
-          <input type="text" class="form-input" placeholder="PIN code">
-        </div>
+        <!-- ACCORDION GUIDE -->
+        <details class="utr-helper-box">
+          <summary class="utr-helper-summary">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+            Where to find the 12-Digit UTR Number?
+          </summary>
+          <div style="margin-top: 8px; line-height: 1.6;">
+            <strong>Google Pay:</strong> Open payment receipt &rarr; Look for "UPI transaction ID" (12 digits).<br>
+            <strong>PhonePe:</strong> Open transaction history &rarr; Look for "UTR" or "Debited from" reference.<br>
+            <strong>Paytm:</strong> Tap on the transaction &rarr; Look for "UPI Ref No." (starts with digits like 4xxxx...).
+          </div>
+        </details>
 
-        <label class="checkbox-label">
-          <input type="checkbox" checked> Save my information for a faster checkout next time
+        <label style="display:flex; align-items:flex-start; gap:10px; margin-top:16px; font-size:12px; color:#555; cursor:pointer;">
+          <input type="checkbox" id="cAgree" checked style="margin-top: 3px;">
+          <span>I have completed the payment via UPI and agree that upon admin verification, digital cloud delivery is instant and non-refundable.</span>
         </label>
       </div>
 
-      <!-- PAY NOW BUTTON -->
-      <button class="btn-pay-now-primary" onclick="handlePayNow();">Pay Now — <span id="cPayBtnTotal">₹4,999</span></button>
+      <!-- PAY / VERIFY NOW BUTTON -->
+      <button class="btn-pay-now-primary" id="btnSubmitOrder" onclick="handlePayNow();">
+        SUBMIT VERIFICATION &amp; GET DOWNLOAD LINK &rarr;
+      </button>
 
       <div class="checkout-footer-links">
         <a href="refund-policy.html" target="_blank">Refund policy</a>
         <a href="privacy-policy.html" target="_blank">Privacy policy</a>
         <a href="terms.html" target="_blank">Terms of service</a>
+        <a href="shipping-policy.html" target="_blank">Shipping policy</a>
+        <a href="contact.html" target="_blank">Contact Support</a>
       </div>
 
     </div>
@@ -482,29 +595,44 @@
         <div class="summary-item-price" id="cPrice">₹4,999</div>
       </div>
 
-      <!-- DISCOUNT CODE INPUT -->
-      <div class="discount-form-row">
-        <input type="text" class="discount-input" id="discountCodeInput" placeholder="Discount code or gift card">
-        <button class="btn-apply-discount" onclick="applyDiscount();">Apply</button>
+      <!-- CALCULATIONS -->
+      <div class="summary-calc-row">
+        <span>Subtotal</span>
+        <span id="subtotalAmount">₹4,999</span>
       </div>
 
-      <!-- TOTAL SUMMARY LINES -->
-      <div class="total-summary-lines">
-        <div class="summary-line">
-          <span>Subtotal</span>
-          <span id="subtotalAmount">₹4,999</span>
+      <div class="summary-calc-row">
+        <span>Electronic Cloud Delivery</span>
+        <span style="color: var(--success); font-weight: 700;">FREE (₹0)</span>
+      </div>
+
+      <div class="summary-calc-row">
+        <span>All Applicable Taxes</span>
+        <span>Included (₹0 Extra)</span>
+      </div>
+
+      <div class="summary-total-row">
+        <span>Total Payable</span>
+        <span id="finalTotal">₹4,999</span>
+      </div>
+
+      <!-- TRUST BULLETS -->
+      <div class="trust-bullets-box">
+        <div>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+          <strong>100% Royalty-Free Commercial License</strong>
         </div>
-        <div class="summary-line">
-          <span>Shipping / Digital Delivery</span>
-          <span style="color: var(--success); font-weight: 700;">FREE (Instant Email)</span>
+        <div>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+          <strong>50+ Industry Instrumentals (WAV + MP3 + Stems)</strong>
         </div>
-        <div class="summary-line" id="discountRow" style="display:none; color: var(--success); font-weight: 700;">
-          <span>Discount (KRITO20)</span>
-          <span id="discountAmount">-₹1,000</span>
+        <div>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+          <strong>Lifetime Access via Google Drive Cloud Link</strong>
         </div>
-        <div class="summary-line total">
-          <span>Total</span>
-          <span id="finalTotal">₹4,999</span>
+        <div>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+          <strong>Direct WhatsApp Support (+91 93194 48422)</strong>
         </div>
       </div>
 
@@ -515,7 +643,17 @@
 </div>
 
 <script>
-// Catalog (THE ARCHIVE BEAT PACK Only)
+// ==================== CONFIGURATION ====================
+// Discord Instant Alert Webhook URL
+var DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/1544144412638969876/wmFbmNvGp40XRJIK7s2JudfDCblukV239goMfZK1NbbDxad0cbqgg5S5uer_KCMEcP6D";
+
+// Deployed Google Apps Script Web App URL:
+var GOOGLE_SCRIPT_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbz3IO2JtlD-SyHN7jHRAp0cN9JmoIe0JIcNNCAJu8xM0QOYojElguJlrSj-IBiHWJ79pA/exec"; 
+
+// Fallback webhook / FormSubmit email
+var BACKUP_ALERT_EMAIL = "kritobeats@gmail.com";
+
+// Catalog
 var products = {
   'p1': { title: 'THE ARCHIVE Beat Pack (50+ Beats)', genre: 'Full Beat Pack', price: 4999, img: 'img/beats/beat-b1.png?v=archive1' }
 };
@@ -531,40 +669,233 @@ function initCheckout() {
   document.getElementById('cTitle').innerText = p.title;
   document.getElementById('cGenre').innerText = p.genre + ' · WAV + MP3 + Stems';
   document.getElementById('cImg').src = p.img;
-  document.getElementById('cPrice').innerText = '₹' + p.price;
-  document.getElementById('subtotalAmount').innerText = '₹' + p.price;
-  document.getElementById('finalTotal').innerText = '₹' + p.price;
-  document.getElementById('cPayBtnTotal').innerText = '₹' + p.price;
+  document.getElementById('cPrice').innerText = '₹' + p.price.toLocaleString('en-IN');
+  document.getElementById('subtotalAmount').innerText = '₹' + p.price.toLocaleString('en-IN');
+  document.getElementById('finalTotal').innerText = '₹' + p.price.toLocaleString('en-IN');
+  document.getElementById('cAmountDisplay').innerText = '₹' + p.price.toLocaleString('en-IN');
 }
 initCheckout();
 
-function applyDiscount() {
-  var code = document.getElementById('discountCodeInput').value.trim().toUpperCase();
-  if (code === 'KRITO20') {
-    var discount = Math.round(currentPrice * 0.20);
-    var newTotal = currentPrice - discount;
-
-    document.getElementById('discountRow').style.display = 'flex';
-    document.getElementById('discountAmount').innerText = '-₹' + discount;
-    document.getElementById('finalTotal').innerText = '₹' + newTotal;
-    document.getElementById('cPayBtnTotal').innerText = '₹' + newTotal;
-    alert('Coupon KRITO20 applied! You saved ₹' + discount);
+// Copy UPI ID function with bulletproof fallback
+function copyUpiId() {
+  var upiId = document.getElementById('valUpiId').innerText.trim();
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(upiId).then(showCopiedState).catch(function() {
+      fallbackCopy(upiId);
+    });
   } else {
-    alert('Invalid coupon code. Try KRITO20 for 20% off!');
+    fallbackCopy(upiId);
   }
 }
 
+function fallbackCopy(text) {
+  var ta = document.createElement('textarea');
+  ta.value = text;
+  ta.style.position = 'fixed';
+  ta.style.opacity = '0';
+  document.body.appendChild(ta);
+  ta.select();
+  try {
+    document.execCommand('copy');
+  } catch(e) {}
+  document.body.removeChild(ta);
+  showCopiedState();
+}
+
+function showCopiedState() {
+  var btn = document.getElementById('btnCopyUpi');
+  btn.innerText = 'Copied! ✓';
+  btn.style.background = '#2D6A4F';
+  setTimeout(function() {
+    btn.innerText = 'Copy UPI ID';
+    btn.style.background = 'var(--cherry)';
+  }, 2500);
+}
+
+// Handle Order Submission
 function handlePayNow() {
+  var name = document.getElementById('cName').value.trim();
   var email = document.getElementById('cEmail').value.trim();
-  if (!email) {
-    alert('Please enter your email address for digital instant delivery.');
+  var phone = document.getElementById('cPhone').value.trim();
+  var utr = document.getElementById('cUtr').value.trim();
+  var agree = document.getElementById('cAgree').checked;
+
+  if (!name) {
+    alert('Please enter your full name or artist name.');
+    document.getElementById('cName').focus();
+    return;
+  }
+  if (!email || email.indexOf('@') === -1 || email.indexOf('.') === -1) {
+    alert('Please enter a valid email address for delivery.');
     document.getElementById('cEmail').focus();
     return;
   }
-  
-  // Razorpay Link Integration
-  window.location.href = 'index.html#BUY_LINK';
+  var cleanPhone = phone.replace(/[^0-9]/g, '');
+  if (!phone || cleanPhone.length < 10) {
+    alert('Please enter a valid 10-digit WhatsApp phone number.');
+    document.getElementById('cPhone').focus();
+    return;
+  }
+  if (!utr || utr.length < 8) {
+    alert('Please enter the 12-digit UPI UTR / Transaction Reference number generated by your payment app.');
+    document.getElementById('cUtr').focus();
+    return;
+  }
+  if (!agree) {
+    alert('Please accept the digital delivery terms to proceed.');
+    return;
+  }
+
+  var btn = document.getElementById('btnSubmitOrder');
+  btn.disabled = true;
+  btn.innerText = 'Submitting Verification Data...';
+
+  var orderId = 'KB-' + Math.floor(1000 + Math.random() * 9000);
+  var formattedAmount = '₹' + currentPrice.toLocaleString('en-IN');
+  var packTitle = document.getElementById('cTitle').innerText;
+
+  var orderData = {
+    orderId: orderId,
+    name: name,
+    email: email,
+    phone: phone,
+    utr: utr,
+    amount: formattedAmount,
+    packName: packTitle,
+    timestamp: new Date().toISOString()
+  };
+
+  // Store in sessionStorage for order-status.html
+  try {
+    sessionStorage.setItem('krito_last_order', JSON.stringify(orderData));
+  } catch(e) {}
+
+  // ==================== 1. DISCORD AUTOMATIC INSTANT NOTIFICATION ====================
+  var customerWaDigits = cleanPhone.length === 10 ? ('91' + cleanPhone) : cleanPhone;
+  var customerWaLink = 'https://wa.me/' + customerWaDigits;
+  var DRIVE_LINK = "https://drive.google.com/drive/folders/1p859tC-iofpuGif4kfs_TA_8C1oQK-he?usp=sharing";
+
+  // Base site URL for the producer approval gateway (Cleanly encoded URL)
+  var currentOrigin = window.location.origin;
+  var currentPath = window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/'));
+  var siteBase = currentOrigin + currentPath;
+  var webApprovePageUrl = siteBase + "/approve.html?orderId=" + encodeURIComponent(orderId) + "&email=" + encodeURIComponent(email) + "&name=" + encodeURIComponent(name);
+
+  // 1-Tap WhatsApp Message to Buyer with Drive Link
+  var waText = encodeURIComponent("Payment Verified! Here is your official Google Drive download link for " + packTitle + ":\n" + DRIVE_LINK);
+  var waBuyerSendLink = "https://wa.me/" + customerWaDigits + "?text=" + waText;
+
+  var orderDesc = 
+    "**Customer ne form submit kar diya hai.** Niche diye gaye simple steps follow karein:\n\n" +
+    "━━━━━━━━━━━━━━━━━━━━━━━━━━━\n" +
+    "📋 **ORDER KI DETAILS (Customer Info)**\n" +
+    "━━━━━━━━━━━━━━━━━━━━━━━━━━━\n" +
+    "👤 **Buyer Name:** " + name + "\n" +
+    "💰 **Amount Paid:** **" + formattedAmount + "** (UPI Payment)\n" +
+    "📦 **Beat Pack:** " + packTitle + "\n" +
+    "📧 **Delivery Email:** `" + email + "`\n" +
+    "📱 **WhatsApp:** `+91 " + cleanPhone + "` • [💬 Chat on WhatsApp](" + customerWaLink + ")\n\n" +
+    "━━━━━━━━━━━━━━━━━━━━━━━━━━━\n" +
+    "🔢 **UPI REFERENCE NUMBER (Bank UTR)**\n" +
+    "━━━━━━━━━━━━━━━━━━━━━━━━━━━\n" +
+    "```\n" + utr + "\n```\n" +
+    "*👉 Apne HDFC Bank SMS ya UPI App me check karein ki ye 12-digit UTR match ho raha hai aur paise aa gaye hain.*\n\n" +
+    "━━━━━━━━━━━━━━━━━━━━━━━━━━━\n" +
+    "⚡ **1-CLICK APPROVAL (Aapka Step)**\n" +
+    "━━━━━━━━━━━━━━━━━━━━━━━━━━━\n" +
+    "Paise check karne ke baad bas is button par click karein:\n\n" +
+    "👉 **[ ✅ CLICK HERE TO APPROVE & SEND DOWNLOAD LINK ](" + webApprovePageUrl + ")**\n\n" +
+    "*✨ Tap karte hi customer ke email (`" + email + "`) par Google Drive folder link aur Commercial License apne aap chala jayega!*\n\n" +
+    "━━━━━━━━━━━━━━━━━━━━━━━━━━━\n" +
+    "🛠️ **DIRECT SHORTCUTS (Agar Zaroorat Pade)**\n" +
+    "━━━━━━━━━━━━━━━━━━━━━━━━━━━\n" +
+    "• 💬 **[Buyer Ke WhatsApp Par Link Bhejein](" + waBuyerSendLink + ")**\n" +
+    "• 📁 **[Google Drive Beat Pack Folder Kholein](" + DRIVE_LINK + ")**";
+
+  var discordPayload = {
+    username: 'KRITO Beat Store Alert',
+    embeds: [{
+      author: {
+        name: 'KRITO OFFICIAL BEAT STORE — PRODUCER DESK'
+      },
+      title: '🚨 NAYA BEAT ORDER AAYA HAI — #' + orderId + ' (' + formattedAmount + ')',
+      description: orderDesc,
+      color: 13938487, // Luxe Gold
+      footer: {
+        text: 'Order #' + orderId + ' • KRITO Automated Cloud Engine • Zero Manual Work'
+      },
+      timestamp: new Date().toISOString()
+    }]
+  };
+
+  // 1. Direct Discord Webhook Notification
+  try {
+    fetch(DISCORD_WEBHOOK_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(discordPayload)
+    }).catch(function(err) {
+      console.log('Discord webhook log:', err);
+    });
+  } catch(e) {
+    console.log('Discord send error:', e);
+  }
+
+  // 2. Backup Email Alert
+  try {
+    fetch('https://formsubmit.co/ajax/' + BACKUP_ALERT_EMAIL, {
+      method: 'POST',
+      headers: { 
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      },
+      body: JSON.stringify({
+        _subject: '🚨 NEW BEAT ORDER #' + orderId + ' (' + formattedAmount + ') - UTR: ' + utr,
+        order_id: orderId,
+        customer_name: name,
+        email: email,
+        phone: phone,
+        product: packTitle,
+        amount: formattedAmount,
+        upi_utr_number: utr
+      })
+    }).catch(function(e) {
+      console.log('FormSubmit log:', e);
+    });
+  } catch(e) {}
+
+  // 3. Google Apps Script Logging with Proper Completion Wait & Keepalive
+  var redirected = false;
+  function goToOrderStatus() {
+    if (redirected) return;
+    redirected = true;
+    window.location.href = 'order-status.html?id=' + orderId;
+  }
+
+  // Max wait timer of 2.2 seconds so user is never stuck
+  var maxWaitTimer = setTimeout(goToOrderStatus, 2200);
+
+  if (GOOGLE_SCRIPT_WEBAPP_URL && GOOGLE_SCRIPT_WEBAPP_URL.startsWith('http')) {
+    fetch(GOOGLE_SCRIPT_WEBAPP_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      keepalive: true,
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify(orderData)
+    }).then(function() {
+      clearTimeout(maxWaitTimer);
+      setTimeout(goToOrderStatus, 200);
+    }).catch(function(err) {
+      console.log('Google Script log error:', err);
+      clearTimeout(maxWaitTimer);
+      goToOrderStatus();
+    });
+  } else {
+    clearTimeout(maxWaitTimer);
+    setTimeout(goToOrderStatus, 500);
+  }
 }
 </script>
+
 </body>
 </html>
