@@ -1,11 +1,11 @@
 /* ============================================================
-   KRITO STOREFRONT — Sticky Bottom Add-to-Cart Engine
+   KRITO STOREFRONT — Full-Width Luxury Sticky Bottom Buy Bar
    Features:
-   - Ultra-smooth Scroll Trigger (IntersectionObserver + Scroll Fallback)
+   - Reliable Scroll Trigger (Scroll Position + Target Detection)
+   - Zero Permanent Lockouts (Never permanently blocked)
    - Dynamic Product Synchronization
-   - Interactive License/Variant Selector Pill (As in Reference)
-   - High-Conversion 1-Click Buy & Slide-Over Cart Drawer Integration
-   - Fully Mobile Responsive & Non-Intrusive
+   - Interactive License Selector Menu
+   - High-Conversion 1-Click Buy & Slide-Over Cart Drawer
    ============================================================ */
 
 (function() {
@@ -17,11 +17,8 @@
     var dock = document.getElementById('stickyBuyDock');
     if (!dock) return;
 
-    // Check if dismissed in this tab session
-    if (sessionStorage.getItem('krito_sticky_dismissed') === '1') {
-      isDismissed = true;
-      return;
-    }
+    // Reset dismissed state on page load
+    isDismissed = false;
 
     // Determine target product
     var urlParams = new URLSearchParams(window.location.search);
@@ -64,42 +61,43 @@
   }
 
   function setupScrollTrigger(dock) {
-    // Priority: Observe primary CTA buttons area if on product page
     var triggerTarget = document.querySelector('.product-actions-area') || 
-                        document.querySelector('.product-pricing-box') || 
-                        document.querySelector('.product-card');
+                        document.querySelector('.product-pricing-box');
 
-    if ('IntersectionObserver' in window && triggerTarget) {
-      var observer = new IntersectionObserver(function(entries) {
-        if (isDismissed) return;
-        entries.forEach(function(entry) {
-          // If hero CTA has scrolled out of view (above the viewport), reveal sticky bar
-          if (!entry.isIntersecting && entry.boundingClientRect.top < 0) {
-            dock.classList.add('is-visible');
-          } else {
-            dock.classList.remove('is-visible');
-          }
-        });
-      }, {
-        threshold: 0,
-        rootMargin: '-50px 0px 0px 0px'
-      });
+    function checkVisibility() {
+      var scrollY = window.pageYOffset || document.documentElement.scrollTop;
+      
+      // Auto reset dismissal if user scrolls back to top
+      if (scrollY < 60) {
+        isDismissed = false;
+      }
+      if (isDismissed) return;
 
-      observer.observe(triggerTarget);
-    } else {
-      // Fallback scroll listener
-      var lastScrollY = 0;
-      window.addEventListener('scroll', function() {
-        if (isDismissed) return;
-        var scrollY = window.pageYOffset || document.documentElement.scrollTop;
-        if (scrollY > 380) {
-          dock.classList.add('is-visible');
-        } else {
-          dock.classList.remove('is-visible');
+      var shouldShow = false;
+      if (triggerTarget) {
+        var rect = triggerTarget.getBoundingClientRect();
+        // Show if user scrolled past 120px OR hero actions button is scrolled up
+        if (scrollY > 120 || rect.bottom < 220) {
+          shouldShow = true;
         }
-        lastScrollY = scrollY;
-      }, { passive: true });
+      } else {
+        if (scrollY > 120) {
+          shouldShow = true;
+        }
+      }
+
+      if (shouldShow) {
+        dock.classList.add('is-visible');
+      } else {
+        dock.classList.remove('is-visible');
+      }
     }
+
+    window.addEventListener('scroll', checkVisibility, { passive: true });
+    // Check on load
+    checkVisibility();
+    setTimeout(checkVisibility, 200);
+    setTimeout(checkVisibility, 600);
   }
 
   // Global functions accessible by inline HTML handlers
@@ -153,9 +151,6 @@
     if (dock) {
       dock.classList.remove('is-visible');
       isDismissed = true;
-      try {
-        sessionStorage.setItem('krito_sticky_dismissed', '1');
-      } catch (err) {}
     }
   };
 

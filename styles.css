@@ -2604,60 +2604,66 @@ ul { list-style: none; }
 }
 
 /* ============================================================
-   STICKY BOTTOM BUY BAR (Floating High-Converting Add-to-Cart Dock)
-   Inspired by Top Luxury E-commerce & High-Conversion Audio Brands
+   STICKY BOTTOM BUY BAR (Full-Width High-Converting Add-to-Cart Dock)
+   Edge-to-Edge Luxury Design utilizing full screen width
    ============================================================ */
 .sticky-buy-dock {
   position: fixed;
-  bottom: 22px;
-  left: 50%;
-  transform: translateX(-50%) translateY(140%);
+  bottom: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
+  transform: translateY(105%);
   opacity: 0;
   pointer-events: none;
-  width: calc(100% - 36px);
-  max-width: 1060px;
-  background: rgba(255, 252, 246, 0.95);
+  background: rgba(255, 252, 246, 0.98);
   backdrop-filter: blur(24px) saturate(180%);
   -webkit-backdrop-filter: blur(24px) saturate(180%);
-  border: 1.5px solid rgba(77, 9, 9, 0.16);
-  border-radius: 24px;
-  box-shadow: 
-    0 20px 50px rgba(77, 9, 9, 0.14),
-    0 4px 14px rgba(77, 9, 9, 0.05),
-    inset 0 1px 0 rgba(255, 255, 255, 0.9);
-  padding: 10px 20px;
-  z-index: 989;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.35s ease;
+  border-top: 1.5px solid rgba(77, 9, 9, 0.16);
+  border-bottom: none;
+  border-left: none;
+  border-right: none;
+  border-radius: 0;
+  box-shadow: 0 -8px 30px rgba(77, 9, 9, 0.12);
+  padding: 12px 0;
+  z-index: 9999;
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease;
 }
 
 .sticky-buy-dock.is-visible {
-  transform: translateX(-50%) translateY(0);
+  transform: translateY(0);
   opacity: 1;
   pointer-events: auto;
 }
 
-/* Left: Product Media & Meta */
+.sticky-dock-container {
+  width: 100%;
+  max-width: 1680px;
+  margin: 0 auto;
+  padding: 0 40px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+/* Left: Full Product Presentation */
 .sticky-product-meta {
   display: flex;
   align-items: center;
-  gap: 14px;
+  gap: 16px;
   min-width: 0;
   flex: 0 1 auto;
-  max-width: 420px;
 }
 
 .sticky-thumb-wrap {
   position: relative;
-  width: 50px;
-  height: 50px;
+  width: 54px;
+  height: 54px;
   border-radius: 12px;
   overflow: hidden;
   border: 1.5px solid rgba(77, 9, 9, 0.18);
-  box-shadow: 0 4px 12px rgba(77, 9, 9, 0.12);
+  box-shadow: 0 4px 14px rgba(77, 9, 9, 0.15);
   flex-shrink: 0;
 }
 
@@ -2677,25 +2683,22 @@ ul { list-style: none; }
 
 .sticky-title {
   font-family: var(--font-heading);
-  font-size: 14px;
+  font-size: 15.5px;
   font-weight: 900;
   color: var(--cherry);
   white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  letter-spacing: 0.2px;
+  letter-spacing: 0.3px;
   line-height: 1.2;
 }
 
 .sticky-meta-sub {
-  font-size: 11px;
+  font-size: 11.5px;
   font-weight: 700;
   color: var(--cherry-light);
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
   white-space: nowrap;
-  line-height: 1.2;
 }
 
 .sticky-meta-sub .stars {
@@ -2706,13 +2709,13 @@ ul { list-style: none; }
 }
 
 .sticky-rating-pill {
-  font-size: 10px;
+  font-size: 10.5px;
   font-weight: 800;
   color: var(--cherry);
   background: rgba(77, 9, 9, 0.06);
-  padding: 1px 6px;
-  border-radius: 4px;
-  border: 1px solid rgba(77, 9, 9, 0.12);
+  padding: 2px 7px;
+  border-radius: 6px;
+  border: 1px solid rgba(77, 9, 9, 0.14);
 }
 
 .sticky-royalty-pill {
@@ -2720,22 +2723,23 @@ ul { list-style: none; }
   font-weight: 800;
   color: #2D6A4F;
   background: rgba(45, 106, 79, 0.08);
-  padding: 1px 6px;
-  border-radius: 4px;
-  border: 1px solid rgba(45, 106, 79, 0.2);
+  padding: 2px 8px;
+  border-radius: 6px;
+  border: 1px solid rgba(45, 106, 79, 0.22);
+  letter-spacing: 0.4px;
 }
 
-/* Middle: License/Variant Selector Pill (Cream & Cherry Elegance) */
+/* Middle: License & Tier Selector Pill */
 .sticky-variant-selector {
   display: flex;
   align-items: center;
-  gap: 12px;
-  background: #FFF;
-  border: 1.5px solid rgba(77, 9, 9, 0.16);
+  gap: 14px;
+  background: #FFFFFF;
+  border: 1.5px solid rgba(77, 9, 9, 0.18);
   border-radius: 14px;
-  padding: 8px 16px;
+  padding: 8px 20px;
   cursor: pointer;
-  flex-shrink: 0;
+  flex: 0 0 auto;
   transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
   box-shadow: 0 2px 8px rgba(77, 9, 9, 0.04);
@@ -2757,7 +2761,7 @@ ul { list-style: none; }
 
 .sticky-variant-name {
   font-family: var(--font-heading);
-  font-size: 11.5px;
+  font-size: 12.5px;
   font-weight: 800;
   color: var(--cherry);
   letter-spacing: 0.4px;
@@ -2770,12 +2774,11 @@ ul { list-style: none; }
 .sticky-variant-badge {
   background: var(--gold);
   color: #1A0404;
-  font-size: 9px;
+  font-size: 9.5px;
   font-weight: 800;
   padding: 2px 7px;
   border-radius: 100px;
   letter-spacing: 0.5px;
-  box-shadow: 0 1px 4px rgba(212, 168, 83, 0.35);
 }
 
 .sticky-variant-detail {
@@ -2787,26 +2790,26 @@ ul { list-style: none; }
 
 .sticky-variant-arrow {
   color: var(--cherry);
-  width: 14px;
-  height: 14px;
+  width: 15px;
+  height: 15px;
   transition: transform 0.2s ease;
 }
 
 /* Dropdown Menu for Variant Selector */
 .sticky-variant-menu {
   position: absolute;
-  bottom: calc(100% + 10px);
+  bottom: calc(100% + 12px);
   left: 0;
-  width: 300px;
+  width: 340px;
   background: #FFFDF9;
-  border: 1.5px solid rgba(77, 9, 9, 0.2);
+  border: 1.5px solid rgba(77, 9, 9, 0.22);
   border-radius: 16px;
-  box-shadow: 0 16px 40px rgba(77, 9, 9, 0.16);
-  padding: 8px;
+  box-shadow: 0 16px 40px rgba(77, 9, 9, 0.18);
+  padding: 10px;
   display: none;
   flex-direction: column;
-  gap: 6px;
-  z-index: 1000;
+  gap: 8px;
+  z-index: 10000;
 }
 
 .sticky-variant-menu.show {
@@ -2820,7 +2823,7 @@ ul { list-style: none; }
 }
 
 .sticky-variant-option {
-  padding: 10px 12px;
+  padding: 10px 14px;
   border-radius: 10px;
   cursor: pointer;
   display: flex;
@@ -2833,28 +2836,28 @@ ul { list-style: none; }
 .sticky-variant-option:hover,
 .sticky-variant-option.selected {
   background: rgba(77, 9, 9, 0.06);
-  border-color: rgba(77, 9, 9, 0.15);
+  border-color: rgba(77, 9, 9, 0.18);
 }
 
 .sticky-variant-option-name {
   font-family: var(--font-heading);
-  font-size: 12px;
+  font-size: 12.5px;
   font-weight: 800;
   color: var(--cherry);
 }
 
 .sticky-variant-option-desc {
-  font-size: 10px;
+  font-size: 10.5px;
   color: #7A2E2E;
   font-weight: 500;
   margin-top: 2px;
 }
 
-/* Right: Pricing & CTA Button */
+/* Right: Pricing & Full CTAs */
 .sticky-actions-group {
   display: flex;
   align-items: center;
-  gap: 14px;
+  gap: 16px;
   flex-shrink: 0;
 }
 
@@ -2867,37 +2870,37 @@ ul { list-style: none; }
 
 .sticky-price-now {
   font-family: var(--font-heading);
-  font-size: 19px;
+  font-size: 22px;
   font-weight: 900;
   color: var(--cherry);
   letter-spacing: 0.2px;
 }
 
 .sticky-price-was {
-  font-size: 11.5px;
+  font-size: 12px;
   color: var(--text-muted);
   text-decoration: line-through;
 }
 
-/* Primary Store Button: Signature Royal Cherry with Gold Border */
+/* Primary Store Button */
 .btn-sticky-cart {
   position: relative;
   overflow: hidden;
   background: var(--cherry);
   color: var(--cream);
   font-family: var(--font-heading);
-  font-size: 12.5px;
+  font-size: 13.5px;
   font-weight: 800;
   letter-spacing: 1px;
   text-transform: uppercase;
-  padding: 13px 24px;
+  padding: 14px 30px;
   border-radius: 100px;
   border: 1.5px solid var(--cherry);
   box-shadow: 0 4px 18px rgba(77, 9, 9, 0.28);
   cursor: pointer;
   display: inline-flex;
   align-items: center;
-  gap: 8px;
+  gap: 9px;
   transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
   white-space: nowrap;
 }
@@ -2919,7 +2922,7 @@ ul { list-style: none; }
   left: -120%;
   width: 60%;
   height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.35), transparent);
   transform: skewX(-20deg);
   animation: stickyBtnShimmer 3.5s infinite;
 }
@@ -2929,16 +2932,16 @@ ul { list-style: none; }
   25%, 100% { left: 160%; }
 }
 
-/* 1-Click Instant Buy Button (Antique Gold) */
+/* 1-Click Instant Buy Button */
 .btn-sticky-quickpay {
   background: var(--gold);
   color: #1A0404;
   font-family: var(--font-heading);
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 800;
   letter-spacing: 0.8px;
   text-transform: uppercase;
-  padding: 13px 20px;
+  padding: 14px 24px;
   border-radius: 100px;
   border: 1px solid rgba(255, 255, 255, 0.4);
   box-shadow: 0 4px 14px rgba(212, 168, 83, 0.35);
@@ -2962,11 +2965,11 @@ ul { list-style: none; }
 .sticky-close-btn {
   background: none;
   border: none;
-  color: rgba(77, 9, 9, 0.4);
-  font-size: 20px;
+  color: rgba(77, 9, 9, 0.45);
+  font-size: 22px;
   line-height: 1;
   cursor: pointer;
-  padding: 4px;
+  padding: 6px;
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -2979,35 +2982,45 @@ ul { list-style: none; }
   background: rgba(77, 9, 9, 0.08);
 }
 
-/* RESPONSIVE DESIGN FOR MOBILE & TABLET */
-@media (max-width: 900px) {
+/* RESPONSIVE DESIGN FOR TABLET & MOBILE */
+@media (max-width: 1280px) {
+  .sticky-dock-container {
+    padding: 0 24px;
+    gap: 16px;
+  }
+}
+
+@media (max-width: 1080px) {
   .sticky-variant-selector {
     display: none;
   }
 }
 
-@media (max-width: 640px) {
+@media (max-width: 768px) {
   .sticky-buy-dock {
-    bottom: 12px;
-    width: calc(100% - 20px);
-    padding: 8px 12px;
-    border-radius: 18px;
-    gap: 10px;
+    padding: 10px 0;
+  }
+
+  .sticky-dock-container {
+    padding: 0 16px;
+    gap: 12px;
   }
 
   .sticky-thumb-wrap {
-    width: 42px;
-    height: 42px;
+    width: 46px;
+    height: 46px;
     border-radius: 10px;
   }
 
   .sticky-title {
-    font-size: 12.5px;
-    max-width: 140px;
+    font-size: 13.5px;
+    max-width: 170px;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   .sticky-meta-sub {
-    font-size: 10px;
+    font-size: 10.5px;
     gap: 4px;
   }
 
@@ -3016,7 +3029,7 @@ ul { list-style: none; }
   }
 
   .sticky-actions-group {
-    gap: 6px;
+    gap: 10px;
   }
 
   .sticky-price-block {
@@ -3024,8 +3037,8 @@ ul { list-style: none; }
   }
 
   .btn-sticky-cart {
-    padding: 10px 14px;
-    font-size: 11px;
+    padding: 12px 18px;
+    font-size: 12px;
     letter-spacing: 0.6px;
   }
 
@@ -3043,7 +3056,7 @@ ul { list-style: none; }
 .search-overlay-backdrop.show ~ .sticky-buy-dock {
   opacity: 0 !important;
   pointer-events: none !important;
-  transform: translateX(-50%) translateY(140%) !important;
+  transform: translateY(105%) !important;
 }
 
 
