@@ -12,96 +12,236 @@
 <link rel="stylesheet" href="styles.css?v=checkout_upi2">
 
 <style>
-/* SHOPIFY STYLE DEDICATED CHECKOUT PAGE */
+/* ============================================================
+   KRITO OFFICIAL CHECKOUT — Full-Width Split Layout (Shopify Pro Style)
+   Theme: Pure Cherry (#4D0909) & Cream (#FFFCF6)
+   ============================================================ */
+:root {
+  --cherry: #4D0909;
+  --cherry-dark: #330505;
+  --cherry-deep: #1A0404;
+  --cherry-medium: #6B1A1A;
+  --cherry-light: #8B2C2C;
+  --cherry-soft: rgba(77, 9, 9, 0.05);
+  --cherry-border: rgba(77, 9, 9, 0.14);
+  --cream: #FFFCF6;
+  --text-main: #4D0909;
+  --text-body: #4D0909;
+  --text-sub: #4D0909;
+  --text-muted: #7A3333;
+  --border: rgba(77, 9, 9, 0.14);
+  --border-light: rgba(77, 9, 9, 0.09);
+  --gold: #D4A853;
+  --success: #2D6A4F;
+  --font-heading: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-body: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  --transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 20px;
+  --shadow-sm: 0 2px 10px rgba(77, 9, 9, 0.04);
+  --shadow-md: 0 8px 24px rgba(77, 9, 9, 0.07);
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  overflow-x: hidden;
+  width: 100%;
+  max-width: 100%;
+  background-color: #FFFFFF;
+  color: var(--text-body);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+}
+
 .checkout-wrapper {
   min-height: 100vh;
-  background: #FAFAFA;
-  color: var(--text-body);
+  display: flex;
+  flex-direction: column;
+  width: 100%;
 }
 
+/* ============================================================
+   TOP HEADER — Warm Ivory Cream with Left Logo & Right Secure Lock
+   ============================================================ */
 .checkout-header {
-  padding: 20px 0;
-  background: var(--cream);
+  background-color: var(--cream);
   border-bottom: 1px solid var(--border-light);
+  width: 100%;
 }
 
-.checkout-grid-container {
+.checkout-header-inner {
   display: grid;
-  grid-template-columns: 1.2fr 0.8fr;
-  min-height: calc(100vh - 80px);
+  grid-template-columns: 58% 42%;
+  width: 100%;
+  align-items: center;
+  min-height: 64px;
 }
 
-/* Left Column: Form & Payment */
-.checkout-main-col {
-  padding: 40px 60px 80px;
-  background: #FFFFFF;
-  border-right: 1px solid #E6E6E6;
+.header-left {
+  display: flex;
+  justify-content: flex-end;
+  padding: 12px 0;
 }
 
-.section-badge-step {
+.header-left-inner {
+  width: 100%;
+  max-width: 580px;
+  padding: 0 40px 0 24px;
+  display: flex;
+  align-items: center;
+}
+
+.checkout-logo {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  background: rgba(77, 9, 9, 0.08);
-  color: var(--cherry);
+}
+
+.checkout-logo img {
+  height: 38px;
+  width: auto;
+  display: block;
+}
+
+.header-right {
+  display: flex;
+  justify-content: flex-start;
+  padding: 12px 0;
+}
+
+.header-right-inner {
+  width: 100%;
+  max-width: 440px;
+  padding: 0 24px 0 40px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.header-secure-text {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
   font-size: 11px;
   font-weight: 800;
   letter-spacing: 1px;
-  padding: 4px 12px;
-  border-radius: 100px;
-  margin-bottom: 10px;
   text-transform: uppercase;
+  color: var(--cherry);
+}
+
+.header-secure-text svg {
+  color: var(--cherry);
+  flex-shrink: 0;
+}
+
+/* ============================================================
+   FULL-WIDTH TWO-COLUMN SPLIT GRID
+   ============================================================ */
+.checkout-grid-container {
+  display: grid;
+  grid-template-columns: 58% 42%;
+  flex: 1;
+  min-height: calc(100vh - 64px);
+  width: 100%;
+}
+
+/* ============================================================
+   LEFT COLUMN: FORM & PAYMENT (Pure White Background)
+   ============================================================ */
+.checkout-main-col {
+  background: #FFFFFF;
+  border-right: 1px solid var(--border-light);
+  display: flex;
+  justify-content: flex-end;
+  padding: 36px 0 70px;
+}
+
+.checkout-main-inner {
+  width: 100%;
+  max-width: 580px;
+  padding: 0 40px 0 24px;
+}
+
+.section-badge-step {
+  display: inline-block;
+  font-family: var(--font-heading);
+  font-size: 10.5px;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--cherry);
+  border: 1px solid rgba(77, 9, 9, 0.22);
+  border-radius: 100px;
+  padding: 4px 12px;
+  margin-bottom: 10px;
+  background: transparent;
 }
 
 .form-section-title {
   font-family: var(--font-heading);
-  font-size: 1.2rem;
+  font-size: 1.35rem;
   font-weight: 800;
   color: var(--cherry);
-  margin-bottom: 16px;
+  margin-bottom: 18px;
+  letter-spacing: -0.2px;
 }
 
 .form-group {
-  margin-bottom: 16px;
+  margin-bottom: 18px;
 }
 
 .form-row-2 {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 12px;
+  gap: 16px;
 }
 
 .form-label {
   display: block;
-  font-size: 12px;
-  font-weight: 700;
-  color: #444;
-  margin-bottom: 6px;
+  font-size: 11.5px;
+  font-weight: 800;
+  letter-spacing: 0.4px;
+  color: var(--cherry);
+  margin-bottom: 8px;
 }
 
 .form-input {
   width: 100%;
-  padding: 14px 16px;
-  border: 1px solid #D9D9D9;
+  padding: 12px 15px;
+  border: 1.5px solid rgba(77, 9, 9, 0.18);
   border-radius: 8px;
-  font-size: 14px;
+  font-size: 13.5px;
+  font-weight: 600;
   font-family: var(--font-body);
+  color: var(--cherry);
   outline: none;
-  background: #FFF;
-  transition: border-color 0.2s;
+  background: #FFFFFF;
+  transition: all var(--transition);
+}
+
+.form-input::placeholder {
+  color: rgba(77, 9, 9, 0.38);
+  font-weight: 500;
 }
 
 .form-input:focus {
   border-color: var(--cherry);
-  box-shadow: 0 0 0 3px rgba(77, 9, 9, 0.1);
+  box-shadow: 0 0 0 3px rgba(77, 9, 9, 0.08);
 }
 
-/* BANK-GRADE UPI PAYMENT BOX */
+/* ============================================================
+   BANK-VERIFIED UPI PAYMENT CONTAINER
+   ============================================================ */
 .upi-payment-container {
-  background: #FFF9F6;
-  border: 2px solid rgba(77, 9, 9, 0.2);
-  border-radius: 14px;
-  padding: 24px;
+  background: #FFFDF9;
+  border: 1px solid rgba(77, 9, 9, 0.18);
+  border-radius: 12px;
+  padding: 22px;
   margin-bottom: 24px;
 }
 
@@ -112,36 +252,58 @@
   border-bottom: 1px solid rgba(77, 9, 9, 0.1);
   padding-bottom: 14px;
   margin-bottom: 18px;
+  gap: 12px;
 }
 
-.upi-brand-badges {
+.upi-box-title {
+  font-family: var(--font-heading);
+  font-weight: 800;
+  font-size: 14.5px;
+  color: var(--cherry);
+}
+
+.upi-box-subtitle {
+  font-size: 11.5px;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+.upi-bank-badges {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
 }
 
-.upi-badge {
-  background: #000;
-  color: #FFF;
+.bank-tag-hdfc {
+  background: #004C8F;
+  color: #FFFFFF;
+  font-family: var(--font-heading);
   font-size: 10px;
   font-weight: 800;
-  padding: 3px 8px;
+  padding: 4px 10px;
   border-radius: 4px;
   letter-spacing: 0.5px;
+  display: inline-block;
+  line-height: 1.2;
 }
 
-.upi-badge.hdfc {
-  background: #004C8F;
-}
-
-.upi-badge.npci {
-  background: #E85E22;
+.bank-tag-npci {
+  background: #E85D04;
+  color: #FFFFFF;
+  font-family: var(--font-heading);
+  font-size: 10px;
+  font-weight: 800;
+  padding: 4px 10px;
+  border-radius: 4px;
+  letter-spacing: 0.5px;
+  display: inline-block;
+  line-height: 1.2;
 }
 
 .upi-grid {
   display: grid;
-  grid-template-columns: 180px 1fr;
-  gap: 24px;
+  grid-template-columns: 160px 1fr;
+  gap: 22px;
   align-items: center;
 }
 
@@ -150,8 +312,8 @@
   border: 1px solid rgba(77, 9, 9, 0.15);
   border-radius: 10px;
   padding: 10px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
   text-align: center;
+  box-shadow: 0 2px 8px rgba(77, 9, 9, 0.04);
 }
 
 .qr-code-wrapper img {
@@ -162,9 +324,10 @@
 }
 
 .qr-caption {
-  font-size: 11px;
+  font-size: 10px;
   font-weight: 700;
   color: var(--text-muted);
+  letter-spacing: 0.3px;
   margin-top: 8px;
 }
 
@@ -174,46 +337,60 @@
   gap: 12px;
 }
 
+.upi-amount-label {
+  font-size: 10px;
+  font-weight: 800;
+  color: var(--text-muted);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
 .upi-amount-callout {
-  font-size: 24px;
+  font-size: 28px;
   font-weight: 900;
   color: var(--cherry);
   font-family: var(--font-heading);
+  line-height: 1.1;
+  margin-top: 2px;
 }
 
 .upi-field-box {
   background: #FFFFFF;
-  border: 1px solid #E0E0E0;
+  border: 1px solid rgba(77, 9, 9, 0.15);
   border-radius: 8px;
-  padding: 10px 14px;
+  padding: 8px 14px;
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 10px;
 }
 
 .upi-field-label {
-  font-size: 11px;
-  color: #777;
-  font-weight: 600;
+  font-size: 9.5px;
+  font-weight: 700;
+  color: var(--text-muted);
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
 }
 
 .upi-field-val {
-  font-size: 14px;
+  font-size: 14.5px;
   font-weight: 800;
-  color: #222;
+  color: var(--cherry);
   font-family: monospace;
+  letter-spacing: 0.3px;
 }
 
 .btn-copy-upi {
   background: var(--cherry);
   color: var(--cream);
-  padding: 6px 14px;
+  padding: 7px 14px;
   border-radius: 6px;
-  font-size: 12px;
-  font-weight: 700;
+  font-size: 11.5px;
+  font-weight: 800;
   border: none;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all var(--transition);
   white-space: nowrap;
 }
 
@@ -221,15 +398,13 @@
   background: var(--cherry-dark);
 }
 
-/* MOBILE 1-CLICK PAY BUTTONS */
 .mobile-pay-header {
-  font-size: 12px;
+  font-size: 10px;
   font-weight: 800;
-  color: #777;
-  text-transform: uppercase;
+  color: var(--text-muted);
   letter-spacing: 1px;
-  margin-top: 14px;
-  margin-bottom: 8px;
+  text-transform: uppercase;
+  margin-top: 4px;
 }
 
 .mobile-intent-grid {
@@ -242,106 +417,152 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 6px;
-  padding: 10px 8px;
-  border-radius: 8px;
+  padding: 9px 12px;
+  border-radius: 6px;
+  font-family: var(--font-heading);
   font-size: 12px;
   font-weight: 800;
-  color: #FFF;
+  color: #FFFFFF;
   text-decoration: none;
   text-align: center;
-  transition: transform 0.15s, opacity 0.15s;
+  transition: all var(--transition);
 }
 
-.btn-upi-app:hover {
-  transform: translateY(-2px);
-  opacity: 0.95;
+.btn-upi-app.gpay {
+  background: #0F9D58;
 }
 
-.btn-upi-gpay { background: #0F9D58; }
-.btn-upi-phonepe { background: #5F259F; }
-.btn-upi-paytm { background: #002970; }
+.btn-upi-app.gpay:hover {
+  background: #0b8043;
+  transform: translateY(-1px);
+}
 
-/* UTR HELP ACCORDION */
+.btn-upi-app.phonepe {
+  background: #5F259F;
+}
+
+.btn-upi-app.phonepe:hover {
+  background: #4a1d7c;
+  transform: translateY(-1px);
+}
+
+.btn-upi-app.paytm {
+  background: #002970;
+}
+
+.btn-upi-app.paytm:hover {
+  background: #001f54;
+  transform: translateY(-1px);
+}
+
+/* ============================================================
+   UTR HELPER & PRIMARY BUTTON
+   ============================================================ */
 .utr-helper-box {
-  background: #F4F6F8;
-  border: 1px solid #E1E4E8;
-  border-radius: 8px;
+  background: rgba(77, 9, 9, 0.04);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-sm);
   padding: 12px 14px;
-  font-size: 12px;
-  color: #444;
-  margin-top: 8px;
-  line-height: 1.5;
+  font-size: 12.5px;
+  color: var(--text-muted);
+  margin-top: 10px;
+  line-height: 1.6;
 }
 
 .utr-helper-summary {
   cursor: pointer;
-  font-weight: 700;
+  font-weight: 800;
   color: var(--cherry);
   display: flex;
   align-items: center;
   gap: 6px;
+  font-size: 12.5px;
 }
 
-/* PRIMARY CTA */
 .btn-pay-now-primary {
   width: 100%;
-  padding: 18px;
+  padding: 16px 28px;
   background: var(--cherry);
   color: var(--cream);
   font-family: var(--font-heading);
-  font-size: 16px;
+  font-size: 13.5px;
   font-weight: 800;
-  border-radius: 8px;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  border-radius: 100px;
   border: none;
   cursor: pointer;
-  transition: all 0.2s;
-  box-shadow: var(--shadow-md);
-  margin-top: 20px;
-  letter-spacing: 0.5px;
+  transition: all var(--transition);
+  box-shadow: 0 6px 20px rgba(77, 9, 9, 0.2);
+  margin-top: 24px;
 }
 
 .btn-pay-now-primary:hover {
   background: var(--cherry-dark);
   transform: translateY(-2px);
+  box-shadow: 0 10px 26px rgba(77, 9, 9, 0.28);
+}
+
+.btn-pay-now-primary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
 }
 
 .checkout-footer-links {
   display: flex;
+  flex-wrap: wrap;
   gap: 16px;
   font-size: 12px;
   margin-top: 32px;
-  padding-top: 20px;
-  border-top: 1px solid #EBEBEB;
+  padding-top: 18px;
+  border-top: 1px solid var(--border-light);
 }
 
 .checkout-footer-links a {
-  color: #666;
+  color: var(--text-muted);
   text-decoration: underline;
+  font-weight: 600;
+  transition: color var(--transition);
 }
 
-/* Right Column: Order Summary */
+.checkout-footer-links a:hover {
+  color: var(--cherry);
+}
+
+/* ============================================================
+   RIGHT COLUMN: ORDER SUMMARY (Warm Cream Background)
+   ============================================================ */
 .checkout-summary-col {
-  padding: 40px 60px 80px;
   background: var(--cream);
-  border-left: 1px solid var(--border);
+  display: flex;
+  justify-content: flex-start;
+  padding: 36px 0 70px;
+}
+
+.checkout-summary-inner {
+  width: 100%;
+  max-width: 440px;
+  padding: 0 24px 0 40px;
+  position: sticky;
+  top: 20px;
 }
 
 .summary-item-card {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 14px;
   margin-bottom: 24px;
 }
 
 .summary-thumb-wrap {
   position: relative;
-  width: 72px;
-  height: 72px;
+  width: 64px;
+  height: 64px;
   border-radius: 8px;
-  border: 1px solid var(--border);
+  border: 1px solid rgba(77, 9, 9, 0.15);
   overflow: hidden;
-  background: var(--cream-dark);
+  background: #FFFFFF;
   flex-shrink: 0;
 }
 
@@ -349,77 +570,81 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
+  display: block;
 }
 
-.summary-thumb-count {
-  position: absolute;
-  top: -6px;
-  right: -6px;
-  background: var(--cherry);
-  color: var(--cream);
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  font-size: 11px;
-  font-weight: 800;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+.summary-item-info {
+  flex: 1 1 auto;
+  min-width: 0;
 }
 
 .summary-item-title {
-  font-size: 15px;
+  font-family: var(--font-heading);
+  font-size: 14px;
   font-weight: 800;
   color: var(--cherry);
+  line-height: 1.3;
 }
 
 .summary-item-desc {
-  font-size: 12px;
+  font-size: 11.5px;
   color: var(--text-muted);
-  margin-top: 4px;
+  margin-top: 3px;
 }
 
 .summary-item-price {
   font-size: 15px;
   font-weight: 800;
   color: var(--cherry);
-  margin-left: auto;
+  flex-shrink: 0;
+  margin-left: 12px;
 }
 
 .summary-calc-row {
   display: flex;
   justify-content: space-between;
-  padding: 10px 0;
-  font-size: 14px;
-  color: #555;
-  border-bottom: 1px solid rgba(77, 9, 9, 0.08);
+  align-items: center;
+  padding: 12px 0;
+  font-size: 13.5px;
+  color: var(--text-muted);
+  font-weight: 600;
+  border-bottom: 1px dashed rgba(77, 9, 9, 0.12);
 }
 
 .summary-total-row {
   display: flex;
   justify-content: space-between;
-  padding: 18px 0;
-  font-size: 18px;
-  font-weight: 800;
+  align-items: center;
+  padding: 18px 0 10px;
+  font-size: 22px;
+  font-weight: 900;
   color: var(--cherry);
+  font-family: var(--font-heading);
+  border-top: 1.5px solid rgba(77, 9, 9, 0.18);
+  margin-top: 6px;
 }
 
 .trust-bullets-box {
-  background: #FFF;
-  border: 1px solid rgba(77, 9, 9, 0.1);
-  border-radius: 8px;
-  padding: 16px;
+  background: #FFFFFF;
+  border: 1px solid rgba(77, 9, 9, 0.12);
+  border-radius: 10px;
+  padding: 18px 20px;
   margin-top: 24px;
-  font-size: 12px;
-  color: #555;
-  line-height: 1.7;
+  font-size: 12.5px;
+  color: var(--cherry);
+  line-height: 1.6;
+  box-shadow: 0 2px 8px rgba(77, 9, 9, 0.03);
 }
 
 .trust-bullets-box div {
   display: flex;
   align-items: center;
-  gap: 8px;
-  margin-bottom: 6px;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.trust-bullets-box div:last-child {
+  margin-bottom: 0;
 }
 
 .trust-bullets-box svg {
@@ -427,220 +652,300 @@
   flex-shrink: 0;
 }
 
-@media (max-width: 900px) {
-  .checkout-grid-container { grid-template-columns: 1fr; }
-  .checkout-main-col { padding: 30px 20px; }
-  .checkout-summary-col { padding: 30px 20px; order: -1; }
-  .upi-grid { grid-template-columns: 1fr; text-align: center; }
-  .qr-code-wrapper { max-width: 220px; margin: 0 auto; }
+/* ============================================================
+   RESPONSIVE (Mobile & Tablet)
+   ============================================================ */
+@media (max-width: 960px) {
+  .checkout-header-inner {
+    display: flex;
+    justify-content: space-between;
+    padding: 12px 16px;
+    min-height: auto;
+  }
+  .header-left, .header-right {
+    padding: 0;
+    width: auto;
+  }
+  .header-left-inner, .header-right-inner {
+    padding: 0;
+    max-width: 100%;
+  }
+  .checkout-logo img {
+    height: 34px;
+  }
+  .checkout-grid-container {
+    grid-template-columns: 1fr;
+    min-height: auto;
+  }
+  .checkout-summary-col {
+    order: -1;
+    padding: 24px 0 28px;
+    border-bottom: 1px solid rgba(77, 9, 9, 0.12);
+  }
+  .checkout-summary-inner {
+    max-width: 100%;
+    padding: 0 16px;
+    position: static;
+  }
+  .checkout-main-col {
+    padding: 28px 0 60px;
+    border-right: none;
+    justify-content: center;
+  }
+  .checkout-main-inner {
+    max-width: 100%;
+    padding: 0 16px;
+  }
+  .form-row-2 {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+  .upi-payment-container {
+    padding: 16px 14px;
+  }
+  .upi-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+    text-align: center;
+  }
+  .qr-code-wrapper {
+    max-width: 160px;
+    margin: 0 auto;
+  }
+  .upi-field-box {
+    flex-direction: column;
+    gap: 8px;
+    text-align: center;
+  }
+  .mobile-intent-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 480px) {
+  .mobile-intent-grid {
+    grid-template-columns: 1fr;
+  }
 }
 </style>
 </head>
 <body>
 
 <div class="checkout-wrapper">
-  
-  <!-- HEADER -->
+
+  <!-- TOP HEADER -->
   <header class="checkout-header">
-    <div class="container" style="display:flex; align-items:center; justify-content:space-between;">
-      <a href="index.html" class="store-logo"><img src="img/logo.png" alt="KRITO Logo" style="height: 55px; width: auto; display: block;"></a>
-      <span style="font-size: 12px; font-weight: 700; color: var(--cherry); letter-spacing: 1px; text-transform: uppercase;">
-        🔒 Direct UPI Secure Settlement
-      </span>
+    <div class="checkout-header-inner">
+      <div class="header-left">
+        <div class="header-left-inner">
+          <a href="index.html" class="checkout-logo" title="Back to Beat Store">
+            <img src="img/logo.png" alt="KRITO Beat Store">
+          </a>
+        </div>
+      </div>
+      <div class="header-right">
+        <div class="header-right-inner">
+          <div class="header-secure-text">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            <span>DIRECT UPI SECURE SETTLEMENT</span>
+          </div>
+        </div>
+      </div>
     </div>
   </header>
 
-  <!-- TWO COLUMN CHECKOUT GRID -->
+  <!-- FULL-WIDTH TWO-COLUMN SPLIT -->
   <div class="checkout-grid-container">
 
     <!-- LEFT COLUMN: FORM & PAYMENT -->
     <div class="checkout-main-col">
-      
-      <!-- STEP 1: CONTACT INFO -->
-      <div class="form-group">
-        <span class="section-badge-step">Step 1 of 2</span>
-        <div class="form-section-title">Artist &amp; Delivery Information</div>
+      <div class="checkout-main-inner">
         
+        <!-- STEP 1: CONTACT INFO -->
         <div class="form-group">
-          <label class="form-label">Full Name / Artist Pseudonym *</label>
-          <input type="text" class="form-input" id="cName" placeholder="e.g. Aman Verma" required>
-        </div>
-
-        <div class="form-row-2 form-group">
-          <div>
-            <label class="form-label">Delivery Email Address *</label>
-            <input type="email" class="form-input" id="cEmail" placeholder="you@email.com (Link arrives here)" required>
-          </div>
-          <div>
-            <label class="form-label">WhatsApp Mobile Number *</label>
-            <input type="tel" class="form-input" id="cPhone" placeholder="10-digit number" required>
-          </div>
-        </div>
-      </div>
-
-      <!-- STEP 2: BANK-VERIFIED UPI PAYMENT -->
-      <div class="form-group" style="margin-top: 36px;">
-        <span class="section-badge-step">Step 2 of 2</span>
-        <div class="form-section-title">Direct UPI Instant Payment</div>
-        
-        <div class="upi-payment-container">
+          <span class="section-badge-step">STEP 1 OF 2</span>
+          <h2 class="form-section-title">Artist &amp; Delivery Information</h2>
           
-          <div class="upi-box-header">
+          <div class="form-group">
+            <label class="form-label">Full Name / Artist Pseudonym *</label>
+            <input type="text" class="form-input" id="cName" placeholder="e.g. Aman Verma" required>
+          </div>
+
+          <div class="form-row-2 form-group">
             <div>
-              <div style="font-weight: 800; font-size: 14px; color: var(--cherry);">Bank-Verified UPI Settlement</div>
-              <div style="font-size: 11px; color: #777;">Payee: Kanik Chaudhary (KRITO Official)</div>
+              <label class="form-label">Delivery Email Address *</label>
+              <input type="email" class="form-input" id="cEmail" placeholder="you@email.com (Link arrives here)" required>
             </div>
-            <div class="upi-brand-badges">
-              <span class="upi-badge hdfc">HDFC BANK</span>
-              <span class="upi-badge npci">UPI / NPCI</span>
-            </div>
-          </div>
-
-          <div class="upi-grid">
-            <!-- QR CODE -->
-            <div class="qr-code-wrapper">
-              <img src="img/upi-qr.png" alt="KRITO Official UPI QR Code">
-              <div class="qr-caption">Scan with Any UPI App</div>
-            </div>
-
-            <!-- DETAILS PANE -->
-            <div class="upi-details-pane">
-              <div>
-                <div style="font-size: 11px; color: #777; font-weight: 600; text-transform: uppercase;">Amount to Pay</div>
-                <div class="upi-amount-callout" id="cAmountDisplay">₹4,999</div>
-              </div>
-
-              <div class="upi-field-box">
-                <div>
-                  <div class="upi-field-label">Official UPI ID</div>
-                  <div class="upi-field-val" id="valUpiId">9319448422@pthdfc</div>
-                </div>
-                <button type="button" class="btn-copy-upi" id="btnCopyUpi" onclick="copyUpiId()">Copy UPI ID</button>
-              </div>
-
-              <!-- MOBILE 1-CLICK BUTTONS -->
-              <div class="mobile-pay-header">Mobile 1-Tap Pay:</div>
-              <div class="mobile-intent-grid">
-                <a href="upi://pay?pa=9319448422@pthdfc&pn=Kanik%20Chaudhary&am=4999&cu=INR&tn=KRITO%20THE%20ARCHIVE%20BEAT%20PACK" class="btn-upi-app btn-upi-gpay">
-                  <span>GPay</span>
-                </a>
-                <a href="upi://pay?pa=9319448422@pthdfc&pn=Kanik%20Chaudhary&am=4999&cu=INR&tn=KRITO%20THE%20ARCHIVE%20BEAT%20PACK" class="btn-upi-app btn-upi-phonepe">
-                  <span>PhonePe</span>
-                </a>
-                <a href="upi://pay?pa=9319448422@pthdfc&pn=Kanik%20Chaudhary&am=4999&cu=INR&tn=KRITO%20THE%20ARCHIVE%20BEAT%20PACK" class="btn-upi-app btn-upi-paytm">
-                  <span>Paytm</span>
-                </a>
-              </div>
-
+            <div>
+              <label class="form-label">WhatsApp Mobile Number *</label>
+              <input type="tel" class="form-input" id="cPhone" placeholder="10-digit number" required>
             </div>
           </div>
-
         </div>
-      </div>
 
-      <!-- STEP 3: SUBMIT UTR -->
-      <div class="form-group" style="margin-top: 24px;">
-        <label class="form-label" style="font-size: 13px; font-weight: 800; color: var(--cherry);">
-          Enter 12-Digit UPI Ref / UTR Number *
-        </label>
-        <input type="text" class="form-input" id="cUtr" placeholder="e.g. 428192019281 (Generated by UPI App after payment)" maxlength="12" style="font-family: monospace; font-size: 16px; font-weight: 700; letter-spacing: 1px;" required>
+        <!-- STEP 2: BANK-VERIFIED UPI PAYMENT -->
+        <div class="form-group" style="margin-top: 36px;">
+          <span class="section-badge-step">STEP 2 OF 2</span>
+          <h2 class="form-section-title">Direct UPI Instant Payment</h2>
+          
+          <div class="upi-payment-container">
+            
+            <div class="upi-box-header">
+              <div>
+                <div class="upi-box-title">Bank-Verified UPI Settlement</div>
+                <div class="upi-box-subtitle">Payee: Kanik Chaudhary (KRITO Official)</div>
+              </div>
+              <div class="upi-bank-badges">
+                <span class="bank-tag-hdfc">HDFC BANK</span>
+                <span class="bank-tag-npci">UPI / NPCI</span>
+              </div>
+            </div>
 
-        <!-- ACCORDION GUIDE -->
-        <details class="utr-helper-box">
-          <summary class="utr-helper-summary">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
-            Where to find the 12-Digit UTR Number?
-          </summary>
-          <div style="margin-top: 8px; line-height: 1.6;">
-            <strong>Google Pay:</strong> Open payment receipt &rarr; Look for "UPI transaction ID" (12 digits).<br>
-            <strong>PhonePe:</strong> Open transaction history &rarr; Look for "UTR" or "Debited from" reference.<br>
-            <strong>Paytm:</strong> Tap on the transaction &rarr; Look for "UPI Ref No." (starts with digits like 4xxxx...).
+            <div class="upi-grid">
+              <!-- QR CODE -->
+              <div class="qr-code-wrapper">
+                <img src="img/upi-qr.png" alt="KRITO Official UPI QR Code">
+                <div class="qr-caption">Scan with Any UPI App</div>
+              </div>
+
+              <!-- DETAILS PANE -->
+              <div class="upi-details-pane">
+                <div>
+                  <div class="upi-amount-label">AMOUNT TO PAY</div>
+                  <div class="upi-amount-callout" id="cAmountDisplay">₹4,999</div>
+                </div>
+
+                <div class="upi-field-box">
+                  <div>
+                    <div class="upi-field-label">Official UPI ID</div>
+                    <div class="upi-field-val" id="valUpiId">9319448422@pthdfc</div>
+                  </div>
+                  <button type="button" class="btn-copy-upi" id="btnCopyUpi" onclick="copyUpiId()">Copy UPI ID</button>
+                </div>
+
+                <!-- MOBILE 1-TAP PAY -->
+                <div class="mobile-pay-header">MOBILE 1-TAP PAY:</div>
+                <div class="mobile-intent-grid">
+                  <a href="upi://pay?pa=9319448422@pthdfc&pn=Kanik%20Chaudhary&am=4999&cu=INR&tn=KRITO%20THE%20ARCHIVE%20BEAT%20PACK" class="btn-upi-app gpay">
+                    <span>GPay</span>
+                  </a>
+                  <a href="upi://pay?pa=9319448422@pthdfc&pn=Kanik%20Chaudhary&am=4999&cu=INR&tn=KRITO%20THE%20ARCHIVE%20BEAT%20PACK" class="btn-upi-app phonepe">
+                    <span>PhonePe</span>
+                  </a>
+                  <a href="upi://pay?pa=9319448422@pthdfc&pn=Kanik%20Chaudhary&am=4999&cu=INR&tn=KRITO%20THE%20ARCHIVE%20BEAT%20PACK" class="btn-upi-app paytm">
+                    <span>Paytm</span>
+                  </a>
+                </div>
+
+              </div>
+            </div>
+
           </div>
-        </details>
+        </div>
 
-        <label style="display:flex; align-items:flex-start; gap:10px; margin-top:16px; font-size:12px; color:#555; cursor:pointer;">
-          <input type="checkbox" id="cAgree" checked style="margin-top: 3px;">
-          <span>I have completed the payment via UPI and agree that upon admin verification, digital cloud delivery is instant and non-refundable.</span>
-        </label>
+        <!-- UTR NUMBER & VERIFICATION -->
+        <div class="form-group" style="margin-top: 24px;">
+          <label class="form-label">
+            Enter 12-Digit UPI Ref / UTR Number *
+          </label>
+          <input type="text" class="form-input" id="cUtr" placeholder="e.g. 428192019281 (Generated by UPI App after payment)" maxlength="12" style="font-family: monospace; font-size: 14.5px; font-weight: 700; letter-spacing: 1px;" required>
+
+          <!-- ACCORDION GUIDE -->
+          <details class="utr-helper-box">
+            <summary class="utr-helper-summary">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+              Where to find the 12-Digit UTR Number?
+            </summary>
+            <div style="margin-top: 8px; line-height: 1.6;">
+              <strong>Google Pay:</strong> Open payment receipt &rarr; Look for "UPI transaction ID" (12 digits).<br>
+              <strong>PhonePe:</strong> Open transaction history &rarr; Look for "UTR" or "Debited from" reference.<br>
+              <strong>Paytm:</strong> Tap on the transaction &rarr; Look for "UPI Ref No." (starts with digits like 4xxxx...).
+            </div>
+          </details>
+
+          <label style="display:flex; align-items:flex-start; gap:10px; margin-top:16px; font-size:12px; color:var(--text-muted); cursor:pointer; line-height: 1.5;">
+            <input type="checkbox" id="cAgree" checked style="margin-top: 3px; accent-color: var(--cherry);">
+            <span>I have completed the payment via UPI and agree that upon verification, digital cloud delivery is instant and non-refundable.</span>
+          </label>
+        </div>
+
+        <!-- SUBMIT CTA -->
+        <button class="btn-pay-now-primary" id="btnSubmitOrder" onclick="handlePayNow();">
+          SUBMIT VERIFICATION &amp; GET DOWNLOAD LINK &rarr;
+        </button>
+
+        <div class="checkout-footer-links">
+          <a href="refund-policy.html" target="_blank">Refund policy</a>
+          <a href="privacy-policy.html" target="_blank">Privacy policy</a>
+          <a href="terms.html" target="_blank">Terms of service</a>
+          <a href="shipping-policy.html" target="_blank">Shipping policy</a>
+          <a href="contact.html" target="_blank">Contact Support</a>
+        </div>
+
       </div>
-
-      <!-- PAY / VERIFY NOW BUTTON -->
-      <button class="btn-pay-now-primary" id="btnSubmitOrder" onclick="handlePayNow();">
-        SUBMIT VERIFICATION &amp; GET DOWNLOAD LINK &rarr;
-      </button>
-
-      <div class="checkout-footer-links">
-        <a href="refund-policy.html" target="_blank">Refund policy</a>
-        <a href="privacy-policy.html" target="_blank">Privacy policy</a>
-        <a href="terms.html" target="_blank">Terms of service</a>
-        <a href="shipping-policy.html" target="_blank">Shipping policy</a>
-        <a href="contact.html" target="_blank">Contact Support</a>
-      </div>
-
     </div>
 
     <!-- RIGHT COLUMN: ORDER SUMMARY -->
     <div class="checkout-summary-col">
-      
-      <!-- ITEM CARD -->
-      <div class="summary-item-card">
-        <div class="summary-thumb-wrap">
-          <img src="img/beats/beat-b1.png?v=archive1" id="cImg" alt="Thumbnail">
-          <span class="summary-thumb-count">1</span>
-        </div>
-        <div class="summary-item-info">
-          <div class="summary-item-title" id="cTitle">THE ARCHIVE Beat Pack (50+ Beats)</div>
-          <div class="summary-item-desc" id="cGenre">Full Beat Pack · WAV + MP3 + Stems · Instant Email Delivery</div>
-        </div>
-        <div class="summary-item-price" id="cPrice">₹4,999</div>
-      </div>
+      <div class="checkout-summary-inner">
 
-      <!-- CALCULATIONS -->
-      <div class="summary-calc-row">
-        <span>Subtotal</span>
-        <span id="subtotalAmount">₹4,999</span>
-      </div>
-
-      <div class="summary-calc-row">
-        <span>Electronic Cloud Delivery</span>
-        <span style="color: var(--success); font-weight: 700;">FREE (₹0)</span>
-      </div>
-
-      <div class="summary-calc-row">
-        <span>All Applicable Taxes</span>
-        <span>Included (₹0 Extra)</span>
-      </div>
-
-      <div class="summary-total-row">
-        <span>Total Payable</span>
-        <span id="finalTotal">₹4,999</span>
-      </div>
-
-      <!-- TRUST BULLETS -->
-      <div class="trust-bullets-box">
-        <div>
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-          <strong>100% Royalty-Free Commercial License</strong>
+        <!-- ITEM CARD -->
+        <div class="summary-item-card">
+          <div class="summary-thumb-wrap">
+            <img src="img/beats/beat-b1.png?v=archive1" id="cImg" alt="Thumbnail">
+          </div>
+          <div class="summary-item-info">
+            <div class="summary-item-title" id="cTitle">THE ARCHIVE Beat Pack (50+ Beats)</div>
+            <div class="summary-item-desc" id="cGenre">Full Beat Pack · WAV + MP3 + Stems</div>
+          </div>
+          <div class="summary-item-price" id="cPrice">₹4,999</div>
         </div>
-        <div>
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-          <strong>50+ Industry Instrumentals (WAV + MP3 + Stems)</strong>
-        </div>
-        <div>
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-          <strong>Lifetime Access via Google Drive Cloud Link</strong>
-        </div>
-        <div>
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-          <strong>Direct WhatsApp Support (+91 93194 48422)</strong>
-        </div>
-      </div>
 
+        <!-- CALCULATIONS -->
+        <div class="summary-calc-row">
+          <span>Subtotal</span>
+          <span id="subtotalAmount">₹4,999</span>
+        </div>
+
+        <div class="summary-calc-row">
+          <span>Electronic Cloud Delivery</span>
+          <span style="color: var(--success); font-weight: 700;">FREE (₹0)</span>
+        </div>
+
+        <div class="summary-calc-row">
+          <span>All Applicable Taxes</span>
+          <span>Included (₹0 Extra)</span>
+        </div>
+
+        <div class="summary-total-row">
+          <span>Total Payable</span>
+          <span id="finalTotal">₹4,999</span>
+        </div>
+
+        <!-- TRUST BULLETS -->
+        <div class="trust-bullets-box">
+          <div>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+            <strong>100% Royalty-Free Commercial License</strong>
+          </div>
+          <div>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+            <strong>50+ Industry Instrumentals (WAV + MP3 + Stems)</strong>
+          </div>
+          <div>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+            <strong>Lifetime Access via Google Drive Cloud Link</strong>
+          </div>
+          <div>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+            <strong>Direct WhatsApp Support (+91 93194 48422)</strong>
+          </div>
+        </div>
+
+      </div>
     </div>
 
   </div>
-
-</div>
 
 <script>
 // ==================== CONFIGURATION ====================
@@ -897,6 +1202,5 @@ function handlePayNow() {
   }
 }
 </script>
-
 </body>
 </html>
