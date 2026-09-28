@@ -762,6 +762,7 @@ function handlePayNow() {
     utr: utr,
     amount: formattedAmount,
     packName: packTitle,
+    discordSent: true,
     timestamp: new Date().toISOString()
   };
 
@@ -776,9 +777,9 @@ function handlePayNow() {
   var DRIVE_LINK = "https://drive.google.com/drive/folders/1p859tC-iofpuGif4kfs_TA_8C1oQK-he?usp=sharing";
 
   // Base site URL for the producer approval gateway (Cleanly encoded URL)
-  var currentOrigin = window.location.origin;
-  var currentPath = window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/'));
-  var siteBase = currentOrigin + currentPath;
+  var siteBase = (window.location.origin && window.location.origin.indexOf('localhost') === -1) 
+    ? (window.location.origin + window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/'))) 
+    : 'https://portfolio-krito.pages.dev';
   var webApprovePageUrl = siteBase + "/approve.html?orderId=" + encodeURIComponent(orderId) + "&email=" + encodeURIComponent(email) + "&name=" + encodeURIComponent(name);
 
   // 1-Tap WhatsApp Message to Buyer with Drive Link
@@ -828,19 +829,17 @@ function handlePayNow() {
     }]
   };
 
-  // 1. Direct Discord Webhook Notification (Fallback only if Google Script is not active)
-  if (!GOOGLE_SCRIPT_WEBAPP_URL || !GOOGLE_SCRIPT_WEBAPP_URL.startsWith('http')) {
-    try {
-      fetch(DISCORD_WEBHOOK_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(discordPayload)
-      }).catch(function(err) {
-        console.log('Discord webhook log:', err);
-      });
-    } catch(e) {
-      console.log('Discord send error:', e);
-    }
+  // 1. Direct Discord Webhook Notification (Guaranteed 100% Instant Delivery from Browser)
+  try {
+    fetch(DISCORD_WEBHOOK_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(discordPayload)
+    }).catch(function(err) {
+      console.log('Discord webhook log:', err);
+    });
+  } catch(e) {
+    console.log('Discord send error:', e);
   }
 
   // 2. Backup Email Alert

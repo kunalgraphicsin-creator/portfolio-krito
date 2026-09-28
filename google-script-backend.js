@@ -136,14 +136,21 @@ function doPost(e) {
         '</p>' +
       '</div>';
       
-    MailApp.sendEmail({
-      to: CONFIG.ADMIN_EMAIL,
-      subject: adminSubject,
-      htmlBody: adminHtmlBody
-    });
+    // 3. Send Instant Alert Email to Seller (You)
+    try {
+      MailApp.sendEmail({
+        to: CONFIG.ADMIN_EMAIL,
+        subject: adminSubject,
+        htmlBody: adminHtmlBody
+      });
+    } catch (mailErr) {
+      Logger.log("MailApp Error: " + mailErr.toString());
+    }
 
-    // 4. Send Instant Push Alert to Discord Webhook
-    sendDiscordWebhookAlert(orderId, name, email, phone, packName, amount, utr, approveUrl, buyerWaLink);
+    // 4. Send Instant Push Alert to Discord Webhook (Only if not already sent by browser)
+    if (!data.discordSent) {
+      sendDiscordWebhookAlert(orderId, name, email, phone, packName, amount, utr, approveUrl, buyerWaLink);
+    }
     
     return ContentService.createTextOutput(JSON.stringify({
       status: "success",
@@ -415,7 +422,8 @@ function sendDiscordWebhookAlert(orderId, name, email, phone, packName, amount, 
     var options = {
       method: "post",
       contentType: "application/json",
-      payload: JSON.stringify(payload)
+      payload: JSON.stringify(payload),
+      muteHttpExceptions: true
     };
     
     UrlFetchApp.fetch(CONFIG.DISCORD_WEBHOOK_URL, options);
