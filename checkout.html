@@ -254,30 +254,31 @@ html, body {
 .upi-bank-badges {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
 }
 
 .bank-tag-hdfc {
-  background: #004C8F;
-  color: #FFFFFF;
+  background: var(--cherry);
+  color: var(--cream);
   font-family: var(--font-heading);
-  font-size: 10px;
+  font-size: 10.5px;
   font-weight: 800;
-  padding: 4px 10px;
-  border-radius: 4px;
+  padding: 5px 11px;
+  border-radius: 6px;
   letter-spacing: 0.5px;
   display: inline-block;
   line-height: 1.2;
 }
 
 .bank-tag-npci {
-  background: #E85D04;
-  color: #FFFFFF;
+  background: rgba(77, 9, 9, 0.07);
+  color: var(--cherry);
+  border: 1px solid rgba(77, 9, 9, 0.2);
   font-family: var(--font-heading);
-  font-size: 10px;
+  font-size: 10.5px;
   font-weight: 800;
   padding: 4px 10px;
-  border-radius: 4px;
+  border-radius: 6px;
   letter-spacing: 0.5px;
   display: inline-block;
   line-height: 1.2;
@@ -292,7 +293,7 @@ html, body {
 
 .qr-code-wrapper {
   background: #FFFFFF;
-  border: 1px solid rgba(77, 9, 9, 0.15);
+  border: 1.5px solid var(--border);
   border-radius: 10px;
   padding: 12px;
   text-align: center;
@@ -339,7 +340,7 @@ html, body {
 
 .upi-field-box {
   background: #FFFFFF;
-  border: 1px solid rgba(77, 9, 9, 0.15);
+  border: 1.5px solid var(--border);
   border-radius: 8px;
   padding: 10px 16px;
   display: flex;
@@ -400,45 +401,25 @@ html, body {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 11px 16px;
-  border-radius: 6px;
+  padding: 12px 16px;
+  border-radius: 8px;
   font-family: var(--font-heading);
   font-size: 13px;
   font-weight: 800;
-  color: #FFFFFF;
+  background: #FFFFFF;
+  border: 1.5px solid rgba(77, 9, 9, 0.2);
+  color: var(--cherry);
   text-decoration: none;
   text-align: center;
   transition: all var(--transition);
 }
 
-.btn-upi-app.gpay {
-  background: #0F9D58;
-}
-
-.btn-upi-app.gpay:hover {
-  background: #0b8043;
+.btn-upi-app:hover {
+  background: var(--cherry);
+  color: var(--cream);
+  border-color: var(--cherry);
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(15, 157, 88, 0.28);
-}
-
-.btn-upi-app.phonepe {
-  background: #5F259F;
-}
-
-.btn-upi-app.phonepe:hover {
-  background: #4a1d7c;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(95, 37, 159, 0.28);
-}
-
-.btn-upi-app.paytm {
-  background: #002970;
-}
-
-.btn-upi-app.paytm:hover {
-  background: #001f54;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 41, 112, 0.28);
+  box-shadow: 0 4px 14px rgba(77, 9, 9, 0.15);
 }
 
 /* ============================================================
@@ -633,7 +614,7 @@ html, body {
 }
 
 .trust-bullets-box svg {
-  color: var(--success);
+  color: var(--cherry);
   flex-shrink: 0;
 }
 
@@ -818,13 +799,13 @@ html, body {
                 <!-- MOBILE 1-TAP PAY -->
                 <div class="mobile-pay-header">MOBILE 1-TAP PAY:</div>
                 <div class="mobile-intent-grid">
-                  <a href="upi://pay?pa=9319448422@pthdfc&pn=Kanik%20Chaudhary&am=4999&cu=INR&tn=KRITO%20THE%20ARCHIVE%20BEAT%20PACK" class="btn-upi-app gpay">
+                  <a href="upi://pay?pa=9319448422@pthdfc&pn=Kanik%20Chaudhary&am=4999&cu=INR&tn=KRITO%20THE%20ARCHIVE%20BEAT%20PACK" class="btn-upi-app">
                     <span>GPay</span>
                   </a>
-                  <a href="upi://pay?pa=9319448422@pthdfc&pn=Kanik%20Chaudhary&am=4999&cu=INR&tn=KRITO%20THE%20ARCHIVE%20BEAT%20PACK" class="btn-upi-app phonepe">
+                  <a href="upi://pay?pa=9319448422@pthdfc&pn=Kanik%20Chaudhary&am=4999&cu=INR&tn=KRITO%20THE%20ARCHIVE%20BEAT%20PACK" class="btn-upi-app">
                     <span>PhonePe</span>
                   </a>
-                  <a href="upi://pay?pa=9319448422@pthdfc&pn=Kanik%20Chaudhary&am=4999&cu=INR&tn=KRITO%20THE%20ARCHIVE%20BEAT%20PACK" class="btn-upi-app paytm">
+                  <a href="upi://pay?pa=9319448422@pthdfc&pn=Kanik%20Chaudhary&am=4999&cu=INR&tn=KRITO%20THE%20ARCHIVE%20BEAT%20PACK" class="btn-upi-app">
                     <span>Paytm</span>
                   </a>
                 </div>
@@ -901,7 +882,7 @@ html, body {
 
         <div class="summary-calc-row">
           <span>Electronic Cloud Delivery</span>
-          <span style="color: var(--success); font-weight: 700;">FREE (₹0)</span>
+          <span style="color: var(--cherry); font-weight: 700;">FREE (₹0)</span>
         </div>
 
         <div class="summary-calc-row">
@@ -1002,10 +983,12 @@ function fallbackCopy(text) {
 function showCopiedState() {
   var btn = document.getElementById('btnCopyUpi');
   btn.innerText = 'Copied! ✓';
-  btn.style.background = '#2D6A4F';
+  btn.style.background = 'var(--cherry-dark)';
+  btn.style.color = 'var(--cream)';
   setTimeout(function() {
     btn.innerText = 'Copy UPI ID';
     btn.style.background = 'var(--cherry)';
+    btn.style.color = 'var(--cream)';
   }, 2500);
 }
 
