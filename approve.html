@@ -249,7 +249,7 @@ p.subtitle {
 </div>
 
 <script>
-var GOOGLE_SCRIPT_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbwsFr1F1VM68MwNftkxDoW-Q0rP0eZODvDeEWadgilNrrx2aymHffT7qH13o_JkNLQa/exec";
+var GOOGLE_SCRIPT_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbz-yyiONXqc8gq_OdJhEInr5SOr1sp_P9SaT45dWEEbS6CmCQZqcQkKssQlXLKDIXbx3w/exec";
 var DRIVE_LINK = "https://drive.google.com/drive/folders/1p859tC-iofpuGif4kfs_TA_8C1oQK-he?usp=sharing";
 
 function initApproval() {
@@ -310,6 +310,13 @@ function showSuccess(orderId, email) {
   document.getElementById('subTitle').innerHTML = 'Official delivery email containing the Google Drive download link has been sent from <strong>kritobeats@gmail.com</strong> to <strong>' + (email || 'buyer') + '</strong>.';
 
   document.getElementById('actionsWrap').style.display = 'flex';
+
+  // Broadcast real-time approval to any open order-status.html tab
+  try {
+    var bc = new BroadcastChannel('krito_order_channel');
+    bc.postMessage({ orderId: orderId, status: 'APPROVED', driveLink: DRIVE_LINK });
+    localStorage.setItem('krito_approved_' + orderId, DRIVE_LINK);
+  } catch(e) {}
 }
 
 window.onload = initApproval;

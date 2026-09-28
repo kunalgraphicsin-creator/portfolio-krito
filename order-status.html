@@ -212,6 +212,214 @@
   margin-bottom: 28px;
 }
 
+/* Progress Fill Bar */
+.progress-line-fill {
+  position: absolute;
+  top: 22px;
+  left: 40px;
+  width: 50%;
+  height: 3px;
+  background: var(--success);
+  z-index: 1;
+  transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Unlocked State Header Badge */
+.status-header-badge.unlocked {
+  background: rgba(45, 106, 79, 0.15);
+  border-color: rgba(45, 106, 79, 0.4);
+  color: #1B4332;
+}
+
+.status-header-badge.unlocked .pulse-dot {
+  background: #2D6A4F;
+  box-shadow: 0 0 0 0 rgba(45, 106, 79, 0.7);
+  animation: pulseGreen 1.8s infinite;
+}
+
+@keyframes pulseGreen {
+  0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(45, 106, 79, 0.7); }
+  70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(45, 106, 79, 0); }
+  100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(45, 106, 79, 0); }
+}
+
+/* Unlocked Hero Card */
+.unlocked-hero-box {
+  background: linear-gradient(145deg, #170A0A 0%, #240E0E 100%);
+  border: 2px solid #2D6A4F;
+  border-radius: var(--radius-md);
+  padding: 34px 26px;
+  text-align: center;
+  color: #FFFCF6;
+  margin-bottom: 28px;
+  box-shadow: 0 16px 48px rgba(45, 106, 79, 0.3), 0 0 0 1px rgba(212, 168, 83, 0.2);
+  animation: slideFadeIn 0.6s ease-out;
+  position: relative;
+  overflow: hidden;
+}
+
+.unlocked-hero-box::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 200%;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #2D6A4F, #D4A853, transparent);
+  animation: shineLine 3s infinite linear;
+}
+
+@keyframes shineLine {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(50%); }
+}
+
+@keyframes slideFadeIn {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.unlocked-top-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(45, 106, 79, 0.25);
+  border: 1px solid rgba(45, 106, 79, 0.5);
+  color: #52B788;
+  padding: 5px 16px;
+  border-radius: 100px;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  margin-bottom: 14px;
+}
+
+.unlocked-title {
+  font-family: var(--font-heading);
+  font-size: 24px;
+  font-weight: 800;
+  color: #FFFCF6;
+  margin: 0 0 8px;
+}
+
+.unlocked-subtitle {
+  font-size: 14px;
+  color: #CFC2C2;
+  margin: 0 0 24px;
+  line-height: 1.5;
+}
+
+.btn-download-hero {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  background: linear-gradient(135deg, #2D6A4F 0%, #1B4332 100%);
+  color: #FFFFFF !important;
+  font-size: 15px;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  padding: 16px 28px;
+  border-radius: 12px;
+  text-decoration: none;
+  border: 1px solid #52B788;
+  box-shadow: 0 8px 24px rgba(45, 106, 79, 0.45);
+  transition: all 0.25s ease;
+  width: 100%;
+  max-width: 560px;
+  margin: 0 auto 18px;
+  animation: pulseButtonGlow 2.5s infinite;
+}
+
+.btn-download-hero:hover {
+  background: linear-gradient(135deg, #388663 0%, #225740 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 12px 32px rgba(45, 106, 79, 0.65);
+}
+
+@keyframes pulseButtonGlow {
+  0% { box-shadow: 0 6px 20px rgba(45, 106, 79, 0.4); }
+  50% { box-shadow: 0 10px 30px rgba(45, 106, 79, 0.7); }
+  100% { box-shadow: 0 6px 20px rgba(45, 106, 79, 0.4); }
+}
+
+.unlocked-details-grid {
+  background: rgba(0, 0, 0, 0.45);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+  padding: 16px 20px;
+  text-align: left;
+  font-size: 13px;
+  margin-top: 14px;
+}
+
+.unlocked-grid-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 6px 0;
+  color: #D6CBCB;
+}
+
+.unlocked-grid-item strong {
+  color: #FFFCF6;
+}
+
+.live-poll-indicator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-size: 12px;
+  color: #8C6615;
+  margin-top: 14px;
+}
+
+.radar-spinner {
+  width: 12px;
+  height: 12px;
+  border: 2px solid rgba(212, 168, 83, 0.3);
+  border-top-color: #D4A853;
+  border-radius: 50%;
+  animation: spinRadar 1s linear infinite;
+}
+
+@keyframes spinRadar {
+  to { transform: rotate(360deg); }
+}
+
+.tracking-step.celebrate .step-circle {
+  animation: popCelebrate 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes popCelebrate {
+  0% { transform: scale(0.5); opacity: 0; }
+  60% { transform: scale(1.25); opacity: 1; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+.btn-check-manual {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: transparent;
+  border: 1px solid rgba(140, 102, 21, 0.3);
+  color: #8C6615;
+  padding: 4px 12px;
+  border-radius: 100px;
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+  margin-left: 8px;
+  transition: all 0.2s ease;
+}
+
+.btn-check-manual:hover {
+  background: rgba(212, 168, 83, 0.15);
+  border-color: #8C6615;
+}
+
 .btn-whatsapp-priority {
   display: inline-flex;
   align-items: center;
@@ -259,39 +467,83 @@
   </div>
 </header>
 
+<!-- CANVAS FOR CELEBRATORY CONFETTI -->
+<canvas id="confettiCanvas" style="position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:999999;display:none;"></canvas>
+
 <!-- MAIN STATUS CONTENT -->
 <main class="status-page-wrapper">
   <div class="status-card">
     
     <!-- BADGE -->
-    <div class="status-header-badge">
-      <span class="pulse-dot"></span>
-      <span>HDFC Bank Reconciliation in Progress</span>
+    <div class="status-header-badge" id="statusHeaderBadge">
+      <span class="pulse-dot" id="badgePulse"></span>
+      <span id="badgeText">HDFC Bank Reconciliation in Progress</span>
     </div>
 
-    <h1 class="status-main-title">Payment Submitted Successfully</h1>
+    <h1 class="status-main-title" id="statusMainTitle">Payment Submitted Successfully</h1>
     <div class="status-order-id" id="displayOrderId">Order #KB-2026-....</div>
 
     <!-- 3-STEP PROGRESS TRACKER -->
     <div class="tracking-steps-container">
-      <div class="tracking-step done">
+      <div class="progress-line-fill" id="progressFill"></div>
+      <div class="tracking-step done" id="step1">
         <div class="step-circle">✓</div>
         <div class="step-label">Payment<br>Submitted</div>
       </div>
-      <div class="tracking-step active">
-        <div class="step-circle">⏳</div>
-        <div class="step-label">Bank UTR<br>Verification</div>
+      <div class="tracking-step active" id="step2">
+        <div class="step-circle" id="step2Circle">⏳</div>
+        <div class="step-label" id="step2Label">Bank UTR<br>Verification</div>
       </div>
-      <div class="tracking-step">
-        <div class="step-circle">🔒</div>
-        <div class="step-label">Google Drive<br>Link Dispatched</div>
+      <div class="tracking-step" id="step3">
+        <div class="step-circle" id="step3Circle">🔒</div>
+        <div class="step-label" id="step3Label">Google Drive<br>Link Dispatched</div>
       </div>
     </div>
 
-    <!-- REASSURANCE NOTE -->
-    <div class="info-alert-box" style="background:#EBF7EE; border-left:4px solid #2D6A4F; color:#1B4D36;">
-      <strong>✓ Order Automatically Transmitted to KRITO Desk:</strong><br>
-      Your order details have been securely sent to our merchant desk. <strong>You do not need to send any manual message.</strong> We are verifying your 12-digit UTR with our HDFC statement. Once approved (usually 2–5 minutes), your Google Drive Beat Pack Link and Commercial License will be delivered to <strong id="alertEmailTarget">your email</strong>.
+    <!-- DYNAMIC STATUS AREA -->
+    <div id="statusAlertArea">
+      <!-- 1. PENDING REASSURANCE NOTE -->
+      <div class="info-alert-box" id="pendingAlertBox" style="background:#EBF7EE; border-left:4px solid #2D6A4F; color:#1B4D36;">
+        <strong>✓ Order Automatically Transmitted to KRITO Desk:</strong><br>
+        Your order details have been securely sent to our merchant desk. <strong>You do not need to send any manual message.</strong> We are verifying your 12-digit UTR with our HDFC statement. Once approved (usually 2–5 minutes), your Google Drive Beat Pack Link and Commercial License will be delivered to <strong id="alertEmailTarget">your email</strong>.
+        
+        <div class="live-poll-indicator">
+          <span class="radar-spinner"></span>
+          <span>Auto-checking verification in background...</span>
+          <button type="button" class="btn-check-manual" id="btnManualCheck" onclick="manualCheckStatus()">↻ Check Now</button>
+        </div>
+      </div>
+
+      <!-- 2. UNLOCKED HERO CARD (Appears automatically upon producer approval) -->
+      <div class="unlocked-hero-box" id="unlockedHeroBox" style="display:none;">
+        <div class="unlocked-top-tag">
+          ⚡ 100% Verified &amp; Dispatched
+        </div>
+        <h2 class="unlocked-title">Your Beat Pack &amp; License Are Ready!</h2>
+        <p class="unlocked-subtitle">
+          Your payment has been reconciled. All 50+ Beats in studio WAV, MP3 and full stems are now accessible in your private Google Drive folder:
+        </p>
+
+        <a href="https://drive.google.com/drive/folders/1p859tC-iofpuGif4kfs_TA_8C1oQK-he?usp=sharing" target="_blank" id="btnDriveAccess" class="btn-download-hero">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM17 13l-5 5-5-5h3V9h4v4h3z"/></svg>
+          <span>⚡ ACCESS BEAT PACK ON GOOGLE DRIVE NOW &rarr;</span>
+        </a>
+
+        <div class="unlocked-details-grid">
+          <div class="unlocked-grid-item">
+            <span>✉️</span>
+            <div><strong>Permanent Backup Dispatched:</strong> Official download link &amp; licensing contract also sent to <span id="unlockedDeliveredEmail" style="color:#52B788;font-weight:700;">your email</span>.</div>
+          </div>
+          <div class="unlocked-grid-item">
+            <span>📦</span>
+            <div><strong>Folder Contents:</strong> 50+ Track Stems · 24-Bit WAV Masters · 320kbps MP3s · Commercial PDF License.</div>
+          </div>
+          <div class="unlocked-grid-item">
+            <span>💡</span>
+            <div><strong>Fast Download Tip:</strong> Click the folder name dropdown inside Google Drive and tap <strong>"Download"</strong> to save all 50+ beats at once in a single ZIP file.</div>
+          </div>
+        </div>
+      </div>
     </div>
 
     <!-- ORDER DETAILS SUMMARY -->
@@ -341,29 +593,41 @@
 </footer>
 
 <script>
-// Retrieve Order Data from URL or LocalStorage
+// ==================== KRITO REAL-TIME VERIFICATION & UNLOCK ENGINE ====================
+var GOOGLE_SCRIPT_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbz-yyiONXqc8gq_OdJhEInr5SOr1sp_P9SaT45dWEEbS6CmCQZqcQkKssQlXLKDIXbx3w/exec";
+var DEFAULT_DRIVE_LINK = "https://drive.google.com/drive/folders/1p859tC-iofpuGif4kfs_TA_8C1oQK-he?usp=sharing";
+
+var currentOrderId = '';
+var orderData = null;
+var isUnlocked = false;
+var pollTimer = null;
+
+// Initialize Page Data
 (function() {
   var urlParams = new URLSearchParams(window.location.search);
-  var orderId = urlParams.get('id');
+  currentOrderId = urlParams.get('id');
   
-  var orderData = null;
   try {
     var raw = sessionStorage.getItem('krito_last_order');
     if (raw) orderData = JSON.parse(raw);
   } catch(e) {}
 
-  if (!orderId && orderData && orderData.orderId) {
-    orderId = orderData.orderId;
+  if (!currentOrderId && orderData && orderData.orderId) {
+    currentOrderId = orderData.orderId;
   }
-  if (!orderId) {
-    orderId = 'KB-' + Math.floor(1000 + Math.random() * 9000);
+  if (!currentOrderId) {
+    currentOrderId = 'KB-' + Math.floor(1000 + Math.random() * 9000);
   }
 
-  document.getElementById('displayOrderId').innerText = 'Order #' + orderId;
+  document.getElementById('displayOrderId').innerText = 'Order #' + currentOrderId;
   
   if (orderData) {
     if (orderData.name) document.getElementById('displayName').innerText = orderData.name;
-    if (orderData.email) document.getElementById('displayEmail').innerText = orderData.email;
+    if (orderData.email) {
+      document.getElementById('displayEmail').innerText = orderData.email;
+      var alertTarget = document.getElementById('alertEmailTarget');
+      if (alertTarget) alertTarget.innerText = orderData.email;
+    }
     if (orderData.phone) document.getElementById('displayPhone').innerText = orderData.phone;
     if (orderData.utr) document.getElementById('displayUtr').innerText = orderData.utr;
     if (orderData.packName) document.getElementById('displayPack').innerText = orderData.packName;
@@ -377,7 +641,7 @@
   
   var waMessage = 
     "Hi KRITO! I just completed UPI payment for THE ARCHIVE Beat Pack.\n\n" +
-    "📄 Order ID: #" + orderId + "\n" +
+    "📄 Order ID: #" + currentOrderId + "\n" +
     "👤 Name: " + customerName + "\n" +
     "📧 Email: " + customerEmail + "\n" +
     "🔢 UPI UTR: " + customerUtr + "\n\n" +
@@ -385,7 +649,261 @@
     
   var waUrl = "https://wa.me/919319448422?text=" + encodeURIComponent(waMessage);
   document.getElementById('waSupportBtn').href = waUrl;
+
+  // 0. Check URL query parameters for simulated or direct unlocked state
+  var urlStatus = urlParams.get('status');
+  var urlUnlocked = urlParams.get('unlocked');
+  var urlDriveLink = urlParams.get('driveLink');
+  if (urlStatus === 'APPROVED' || urlUnlocked === '1' || urlUnlocked === 'true') {
+    unlockOrder(urlDriveLink || DEFAULT_DRIVE_LINK, true);
+    return;
+  }
+
+  // 1. Check if this order was ALREADY approved (via localStorage or sessionStorage cache)
+  var cachedUnlock = null;
+  try {
+    cachedUnlock = sessionStorage.getItem('krito_unlocked_' + currentOrderId) ||
+                       localStorage.getItem('krito_unlocked_' + currentOrderId) ||
+                       localStorage.getItem('krito_approved_' + currentOrderId);
+  } catch(e) {}
+
+  if (cachedUnlock) {
+    unlockOrder(cachedUnlock, false);
+    return;
+  }
+
+  // 2. Start Live Polling Google Apps Script Every 4.5 seconds
+  startPolling();
+
+  // 3. Listen to Cross-Tab Broadcast Channel (Instant 0ms sync when approved on same device)
+  try {
+    var bc = new BroadcastChannel('krito_order_channel');
+    bc.onmessage = function(ev) {
+      if (ev.data && (ev.data.orderId === currentOrderId || !ev.data.orderId)) {
+        if (ev.data.status === 'APPROVED' || ev.data.approved) {
+          unlockOrder(ev.data.driveLink || DEFAULT_DRIVE_LINK, true);
+        }
+      }
+    };
+  } catch(e) {}
+
+  // 4. Listen to Storage Event (Sync across windows/tabs)
+  window.addEventListener('storage', function(ev) {
+    if (ev.key === 'krito_approved_' + currentOrderId || ev.key === 'krito_unlocked_' + currentOrderId) {
+      unlockOrder(ev.newValue || DEFAULT_DRIVE_LINK, true);
+    }
+  });
+
 })();
+
+// Real-Time Polling Function
+function startPolling() {
+  if (isUnlocked) return;
+  // Poll immediately once
+  pollServer();
+  // Then repeat every 4.5s
+  pollTimer = setInterval(pollServer, 4500);
+}
+
+function pollServer() {
+  if (isUnlocked) {
+    if (pollTimer) clearInterval(pollTimer);
+    return;
+  }
+  if (!GOOGLE_SCRIPT_WEBAPP_URL || !GOOGLE_SCRIPT_WEBAPP_URL.startsWith('http')) return;
+
+  var checkUrl = GOOGLE_SCRIPT_WEBAPP_URL + '?action=checkStatus&orderId=' + encodeURIComponent(currentOrderId) + '&_t=' + Date.now();
+
+  fetch(checkUrl)
+    .then(function(res) {
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      return res.json();
+    })
+    .then(function(data) {
+      if (data && (data.approved === true || data.status === 'APPROVED')) {
+        unlockOrder(data.driveLink || DEFAULT_DRIVE_LINK, true);
+      }
+    })
+    .catch(function(err) {
+      // Background retry silently
+    });
+}
+
+// Manual Check Button Handler
+function manualCheckStatus() {
+  var btn = document.getElementById('btnManualCheck');
+  if (btn) {
+    btn.innerText = 'Checking...';
+    btn.disabled = true;
+  }
+
+  // Local check first
+  var localLink = localStorage.getItem('krito_approved_' + currentOrderId) || localStorage.getItem('krito_unlocked_' + currentOrderId);
+  if (localLink) {
+    unlockOrder(localLink, true);
+    return;
+  }
+
+  if (!GOOGLE_SCRIPT_WEBAPP_URL || !GOOGLE_SCRIPT_WEBAPP_URL.startsWith('http')) {
+    setTimeout(function() {
+      if (btn) {
+        btn.innerText = '↻ Check Now';
+        btn.disabled = false;
+      }
+    }, 1000);
+    return;
+  }
+
+  var checkUrl = GOOGLE_SCRIPT_WEBAPP_URL + '?action=checkStatus&orderId=' + encodeURIComponent(currentOrderId) + '&_t=' + Date.now();
+  fetch(checkUrl)
+    .then(function(res) { return res.json(); })
+    .then(function(data) {
+      if (data && (data.approved === true || data.status === 'APPROVED')) {
+        unlockOrder(data.driveLink || DEFAULT_DRIVE_LINK, true);
+      } else {
+        if (btn) {
+          btn.innerText = '⏳ Still Verifying...';
+          setTimeout(function() {
+            btn.innerText = '↻ Check Now';
+            btn.disabled = false;
+          }, 2500);
+        }
+      }
+    })
+    .catch(function() {
+      if (btn) {
+        btn.innerText = '↻ Check Now';
+        btn.disabled = false;
+      }
+    });
+}
+
+// Core Unlock Function
+function unlockOrder(driveLink, triggerConfetti) {
+  if (isUnlocked) return;
+  isUnlocked = true;
+
+  if (pollTimer) clearInterval(pollTimer);
+
+  var finalLink = driveLink || DEFAULT_DRIVE_LINK;
+
+  // Save to storage
+  try {
+    sessionStorage.setItem('krito_unlocked_' + currentOrderId, finalLink);
+    localStorage.setItem('krito_unlocked_' + currentOrderId, finalLink);
+    localStorage.setItem('krito_approved_' + currentOrderId, finalLink);
+  } catch(e) {}
+
+  // 1. Update Badge
+  var badge = document.getElementById('statusHeaderBadge');
+  badge.className = 'status-header-badge unlocked';
+  document.getElementById('badgeText').innerText = 'Payment Verified & Dispatched';
+
+  // 2. Update Main Title
+  document.getElementById('statusMainTitle').innerText = '🎉 Payment Verified! Beat Pack Ready';
+
+  // 3. Update Progress Tracker Bar
+  document.getElementById('progressFill').style.width = '100%';
+
+  // Step 2 turns green done
+  var step2 = document.getElementById('step2');
+  step2.className = 'tracking-step done';
+  var step2Circle = document.getElementById('step2Circle');
+  step2Circle.innerText = '✓';
+  step2Circle.style.background = 'var(--success)';
+  step2Circle.style.borderColor = 'var(--success)';
+  step2Circle.style.color = '#FFF';
+  document.getElementById('step2Label').innerHTML = 'Bank UTR<br><strong style="color:var(--success);">Verified ✓</strong>';
+
+  // Step 3 turns unlocked & celebrating
+  var step3 = document.getElementById('step3');
+  step3.className = 'tracking-step done celebrate';
+  var step3Circle = document.getElementById('step3Circle');
+  step3Circle.innerText = '✓';
+  step3Circle.style.background = 'var(--success)';
+  step3Circle.style.borderColor = 'var(--success)';
+  step3Circle.style.color = '#FFF';
+  step3Circle.style.boxShadow = '0 0 0 6px rgba(45, 106, 79, 0.2)';
+  document.getElementById('step3Label').innerHTML = 'Google Drive<br><strong style="color:var(--success);">Link Dispatched!</strong>';
+
+  // 4. Swap pending alert box with Unlocked Hero Box
+  document.getElementById('pendingAlertBox').style.display = 'none';
+  var heroBox = document.getElementById('unlockedHeroBox');
+  heroBox.style.display = 'block';
+
+  // 5. Set Drive Link & Customer Email in Hero Box
+  document.getElementById('btnDriveAccess').href = finalLink;
+  var targetEmail = (orderData && orderData.email) ? orderData.email : 'your email address';
+  var emailElement = document.getElementById('unlockedDeliveredEmail');
+  if (emailElement) emailElement.innerText = targetEmail;
+
+  // 6. Launch Festive Confetti
+  if (triggerConfetti !== false) {
+    launchCelebrationConfetti();
+  }
+}
+window.unlockOrder = unlockOrder;
+
+// Lightweight Celebration Confetti Shower
+function launchCelebrationConfetti() {
+  var canvas = document.getElementById('confettiCanvas');
+  if (!canvas) return;
+  canvas.style.display = 'block';
+  var ctx = canvas.getContext('2d');
+  
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+
+  var pieces = [];
+  var colors = ['#D4A853', '#2D6A4F', '#4D0909', '#52B788', '#E5BE6C', '#FFFCF6', '#25D366'];
+  
+  for (var i = 0; i < 90; i++) {
+    pieces.push({
+      x: canvas.width * 0.5 + (Math.random() - 0.5) * 200,
+      y: canvas.height * 0.35,
+      r: Math.random() * 5 + 3,
+      dx: (Math.random() - 0.5) * 14,
+      dy: (Math.random() - 0.75) * 16,
+      color: colors[Math.floor(Math.random() * colors.length)],
+      tilt: Math.random() * 10,
+      tiltSpeed: Math.random() * 0.08 + 0.04,
+      opacity: 1
+    });
+  }
+
+  var startTime = Date.now();
+  function renderFrame() {
+    var elapsed = Date.now() - startTime;
+    if (elapsed > 4000) {
+      canvas.style.display = 'none';
+      return;
+    }
+
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    for (var i = 0; i < pieces.length; i++) {
+      var p = pieces[i];
+      p.x += p.dx;
+      p.y += p.dy;
+      p.dy += 0.32; // subtle gravity
+      p.dx *= 0.985;
+      p.tilt += p.tiltSpeed;
+      p.opacity = Math.max(0, 1 - (elapsed / 3800));
+
+      ctx.save();
+      ctx.globalAlpha = p.opacity;
+      ctx.fillStyle = p.color;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+    }
+
+    requestAnimationFrame(renderFrame);
+  }
+
+  requestAnimationFrame(renderFrame);
+}
 </script>
 
 </body>

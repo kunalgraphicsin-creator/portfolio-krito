@@ -160,11 +160,47 @@ function doPost(e) {
 }
 
 
-// ==================== GET HANDLER: APPROVAL TRIGGER ====================
+// ==================== GET HANDLER: APPROVAL & STATUS ENGINE ====================
 function doGet(e) {
   try {
     var action = e.parameter.action;
     var orderId = e.parameter.orderId;
+
+    // 1. REAL-TIME PUBLIC ORDER STATUS CHECK (For order-status.html live screen unlock)
+    if (action === "checkStatus") {
+      if (!orderId) {
+        return ContentService.createTextOutput(JSON.stringify({
+          error: "Missing orderId",
+          approved: false,
+          status: "PENDING"
+        })).setMimeType(ContentService.MimeType.JSON);
+      }
+      
+      var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+      var data = sheet.getDataRange().getValues();
+      var isApproved = false;
+      var cleanTargetId = String(orderId).trim().toUpperCase();
+      
+      for (var i = 1; i < data.length; i++) {
+        var rowId = String(data[i][1]).trim().toUpperCase();
+        if (rowId === cleanTargetId) {
+          var statusCell = data[i][8] ? String(data[i][8]).toUpperCase() : "";
+          if (statusCell.indexOf("APPROVED") !== -1) {
+            isApproved = true;
+          }
+          break;
+        }
+      }
+      
+      return ContentService.createTextOutput(JSON.stringify({
+        orderId: orderId,
+        approved: isApproved,
+        status: isApproved ? "APPROVED" : "PENDING",
+        driveLink: isApproved ? CONFIG.BEAT_PACK_DRIVE_LINK : null
+      })).setMimeType(ContentService.MimeType.JSON);
+    }
+
+    // 2. PRODUCER APPROVAL (Protected by Security Token)
     var token = e.parameter.token;
     
     // Security check
