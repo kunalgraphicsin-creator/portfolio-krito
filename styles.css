@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,800;0,900;1,700&display=swap');
+
 /* ============================================================
    KRITO STOREFRONT — Premium Cherry & Cream Design System
    Primary Palette:
@@ -112,25 +114,301 @@ ul { list-style: none; }
 }
 
 /* ============================================================
-   ANNOUNCEMENT BAR (Cherry #4D0909)
+   LUXURY SALE & COUNTDOWN TIMER BANNER (Cherry, Cream & Gold)
+   Inspired by premium high-conversion storefront benchmark
    ============================================================ */
+.sale-countdown-banner,
 .announcement-bar {
-  background: var(--cherry);
+  background: linear-gradient(90deg, #280404 0%, #440707 20%, #560A0A 46%, #6C1010 74%, #7C1616 100%);
   color: var(--cream);
-  text-align: center;
-  padding: 10px 20px;
-  font-size: 12px;
-  font-weight: 600;
-  letter-spacing: 0.5px;
-  border-bottom: 1px solid rgba(255, 252, 246, 0.1);
+  position: relative;
+  z-index: 1001;
+  border-bottom: 1px solid rgba(212, 168, 83, 0.28);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.28);
+  padding: 8px 0;
+  overflow: hidden;
+  transition: all var(--transition);
 }
 
-.announcement-bar .code {
-  background: rgba(255, 252, 246, 0.15);
-  padding: 2px 8px;
-  border-radius: 4px;
+.sale-countdown-banner::after,
+.announcement-bar::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 15%;
+  width: 320px;
+  height: 100%;
+  background: radial-gradient(ellipse at center, rgba(212, 168, 83, 0.12) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.banner-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+/* LEFT: OFFER CALLOUT */
+.banner-offer {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-shrink: 0;
+}
+
+.banner-offer-text {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+}
+
+.banner-eyebrow {
+  font-size: 9px;
   font-weight: 800;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--gold);
+  line-height: 1;
+  margin-bottom: 3px;
+  white-space: nowrap;
+}
+
+.banner-discount {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 25px;
+  font-weight: 800;
+  color: #FFFFFF;
+  line-height: 1;
+  letter-spacing: 0.5px;
+  margin: 0;
+  white-space: nowrap;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.35);
+}
+
+.banner-divider {
+  width: 1px;
+  height: 30px;
+  background: rgba(255, 252, 246, 0.22);
+  flex-shrink: 0;
+}
+
+/* MIDDLE: VALUE PROPOSITIONS */
+.banner-perks {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: rgba(255, 252, 246, 0.92);
+  letter-spacing: 0.2px;
+  white-space: nowrap;
+  flex-shrink: 1;
+}
+
+.perk-bullet {
+  color: var(--gold);
+  font-size: 11px;
+  opacity: 0.85;
+}
+
+/* COUNTDOWN TIMER CARDS */
+.banner-timer {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.timer-box {
+  background: rgba(18, 2, 2, 0.58);
+  border: 1px solid rgba(255, 252, 246, 0.16);
+  border-radius: 6px;
+  padding: 4px 8px;
+  min-width: 42px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.08), 0 2px 6px rgba(0, 0, 0, 0.35);
+  transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+.timer-box:hover {
+  border-color: rgba(212, 168, 83, 0.45);
+  transform: translateY(-1px);
+}
+
+.timer-num {
+  font-size: 15px;
+  font-weight: 800;
+  color: #FFFFFF;
+  font-family: 'Plus Jakarta Sans', monospace;
+  line-height: 1;
+  letter-spacing: 0.5px;
+}
+
+.timer-unit {
+  font-size: 8px;
+  font-weight: 800;
+  letter-spacing: 0.8px;
+  color: var(--gold);
+  text-transform: uppercase;
+  margin-top: 2px;
+  line-height: 1;
+}
+
+/* CTA BUTTON */
+.banner-cta-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  background: #FFFCF6;
+  color: #4D0909;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  text-decoration: none;
+  padding: 8px 18px;
+  border-radius: 999px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.25);
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+.banner-cta-btn:hover {
+  background: #FFFFFF;
+  color: #2A0404;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 18px rgba(212, 168, 83, 0.45), 0 2px 8px rgba(0, 0, 0, 0.35);
+}
+
+.banner-cta-btn .cta-arrow {
+  transition: transform 0.2s ease;
+}
+
+.banner-cta-btn:hover .cta-arrow {
+  transform: translateX(3px);
+}
+
+/* RIGHT: BRAND AFFIRMATION / TAGLINE */
+.banner-tagline {
+  display: flex;
+  flex-direction: column;
+  font-size: 8.5px;
+  font-weight: 800;
+  line-height: 1.25;
   letter-spacing: 1px;
+  color: rgba(255, 252, 246, 0.85);
+  text-transform: uppercase;
+  flex-shrink: 0;
+  text-align: left;
+}
+
+/* ACTION HIGHLIGHT PULSE */
+@keyframes saleHighlightPulse {
+  0% { box-shadow: 0 0 0 0 rgba(212, 168, 83, 0.8); transform: scale(1); }
+  50% { box-shadow: 0 0 0 16px rgba(212, 168, 83, 0); transform: scale(1.02); }
+  100% { box-shadow: 0 0 0 0 rgba(212, 168, 83, 0); transform: scale(1); }
+}
+
+.flash-sale-highlight {
+  animation: saleHighlightPulse 1s ease 2;
+}
+
+/* RESPONSIVE DESIGN */
+@media (max-width: 1280px) {
+  .banner-tagline {
+    display: none;
+  }
+  .banner-inner {
+    gap: 14px;
+  }
+}
+
+@media (max-width: 1060px) {
+  .banner-perks {
+    display: none;
+  }
+  .banner-inner {
+    justify-content: center;
+    gap: 24px;
+  }
+}
+
+@media (max-width: 680px) {
+  .sale-countdown-banner,
+  .announcement-bar {
+    padding: 8px 0;
+  }
+  .banner-inner {
+    padding: 0 14px;
+    gap: 12px;
+    justify-content: space-between;
+  }
+  .banner-eyebrow {
+    font-size: 7.5px;
+    letter-spacing: 1px;
+  }
+  .banner-discount {
+    font-size: 20px;
+  }
+  .banner-divider {
+    display: none;
+  }
+  .banner-timer {
+    gap: 4px;
+  }
+  .timer-box {
+    min-width: 33px;
+    padding: 3px 5px;
+  }
+  .timer-num {
+    font-size: 13px;
+  }
+  .timer-unit {
+    font-size: 7px;
+  }
+  .banner-cta-btn {
+    padding: 6px 12px;
+    font-size: 9.5px;
+    letter-spacing: 0.5px;
+  }
+  .banner-cta-btn span {
+    display: none;
+  }
+  .banner-cta-btn::before {
+    content: "CLAIM";
+  }
+}
+
+@media (max-width: 440px) {
+  .banner-inner {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
+  }
+  .banner-offer {
+    width: 100%;
+    justify-content: center;
+    text-align: center;
+  }
+  .banner-offer-text {
+    align-items: center;
+  }
+  .banner-cta-btn span {
+    display: inline;
+  }
+  .banner-cta-btn::before {
+    display: none;
+  }
 }
 
 /* ============================================================

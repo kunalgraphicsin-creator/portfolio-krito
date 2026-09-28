@@ -15,10 +15,66 @@
 
 
 
-<!-- ANNOUNCEMENT BAR -->
-<div class="announcement-bar">
-  🔥 Official Store is LIVE! Grab the most exclusive high-quality Beats & Sample Packs before they sell out!
-</div>
+<!-- LUXURY SALE & COUNTDOWN TIMER BANNER -->
+<aside class="sale-countdown-banner" role="banner" aria-label="Limited Time Welcome Offer">
+  <div class="banner-inner container">
+    
+    <!-- LEFT: OFFER CALLOUT -->
+    <div class="banner-offer">
+      <div class="banner-offer-text">
+        <span class="banner-eyebrow">LIMITED TIME WELCOME OFFER</span>
+        <h2 class="banner-discount">SAVE 68%</h2>
+      </div>
+      <div class="banner-divider" aria-hidden="true"></div>
+    </div>
+
+    <!-- MIDDLE: VALUE PROPOSITIONS -->
+    <div class="banner-perks">
+      <span>50+ WAV Beats &amp; Stems</span>
+      <span class="perk-bullet">&bull;</span>
+      <span>100% Royalty-Free</span>
+      <span class="perk-bullet">&bull;</span>
+      <span>Unlimited Commercial License</span>
+      <div class="banner-divider" aria-hidden="true"></div>
+    </div>
+
+    <!-- COUNTDOWN TIMER -->
+    <div class="banner-timer" aria-label="Flash Offer Countdown">
+      <div class="timer-box">
+        <span class="timer-num" id="bannerDays">00</span>
+        <span class="timer-unit">DAYS</span>
+      </div>
+      <div class="timer-box">
+        <span class="timer-num" id="bannerHours">03</span>
+        <span class="timer-unit">HRS</span>
+      </div>
+      <div class="timer-box">
+        <span class="timer-num" id="bannerMins">28</span>
+        <span class="timer-unit">MINS</span>
+      </div>
+      <div class="timer-box">
+        <span class="timer-num" id="bannerSecs">48</span>
+        <span class="timer-unit">SECS</span>
+      </div>
+    </div>
+
+    <!-- CTA BUTTON -->
+    <a href="product.html#buyBtnLink" class="banner-cta-btn" onclick="handleBannerCta(event)">
+      <span>CLAIM OFFER NOW</span>
+      <svg class="cta-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="9 18 15 12 9 6"></polyline>
+      </svg>
+    </a>
+
+    <!-- RIGHT: BRAND TAGLINE -->
+    <div class="banner-tagline">
+      <span>YOUR NEXT</span>
+      <span>HIT TRACK</span>
+      <span>STARTS TODAY.</span>
+    </div>
+
+  </div>
+</aside>
 
 <!-- STORE HEADER / NAVBAR -->
 <header class="store-header">
@@ -376,5 +432,6 @@ document.querySelectorAll('.mobile-menu a').forEach(function(a) { a.addEventList
 </div>
 
 <script src="search.js"></script>
+<script src="banner-timer.js"></script>
 </body>
 </html>
