@@ -538,6 +538,155 @@ ul { list-style: none; }
   color: var(--cherry);
 }
 
+/* ============================================================
+   NAVBAR TRUST STRIP (Guarantees, Free Shipping & Certification)
+   Inspired by premium high-conversion benchmark (Image 2)
+   ============================================================ */
+.nav-trust-strip {
+  background: linear-gradient(90deg, #160202 0%, #250505 50%, #160202 100%);
+  color: #FFFDF9;
+  border-top: 1px solid rgba(255, 252, 246, 0.08);
+  border-bottom: 1px solid rgba(212, 168, 83, 0.22);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+  padding: 8px 0;
+  position: relative;
+  z-index: 998;
+  transition: all var(--transition);
+}
+
+.trust-strip-inner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 36px;
+}
+
+.trust-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  color: #FFFDF9;
+  text-decoration: none;
+  cursor: default;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.trust-item:hover {
+  transform: translateY(-1px);
+}
+
+.trust-icon-wrap {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: rgba(224, 62, 62, 0.16);
+  border: 1px solid rgba(224, 62, 62, 0.35);
+  color: #E84D4D;
+  flex-shrink: 0;
+  transition: all 0.2s ease;
+}
+
+.trust-item:hover .trust-icon-wrap {
+  background: rgba(224, 62, 62, 0.26);
+  border-color: rgba(224, 62, 62, 0.6);
+  box-shadow: 0 0 10px rgba(224, 62, 62, 0.35);
+}
+
+.trust-icon {
+  width: 13px;
+  height: 13px;
+}
+
+.trust-label {
+  font-family: var(--font-heading);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.9px;
+  text-transform: uppercase;
+  color: rgba(255, 252, 246, 0.95);
+  white-space: nowrap;
+}
+
+.trust-strip-divider {
+  width: 1px;
+  height: 14px;
+  background: rgba(255, 252, 246, 0.18);
+  flex-shrink: 0;
+}
+
+/* CREAM THEME VARIANT (For soft subtle look) */
+.nav-trust-strip.cream-theme {
+  background: #F8F3EA;
+  border-bottom: 1px solid rgba(77, 9, 9, 0.08);
+  box-shadow: 0 1px 4px rgba(77, 9, 9, 0.04);
+}
+
+.nav-trust-strip.cream-theme .trust-label {
+  color: var(--cherry);
+}
+
+.nav-trust-strip.cream-theme .trust-icon-wrap {
+  background: rgba(77, 9, 9, 0.06);
+  border-color: rgba(77, 9, 9, 0.2);
+  color: var(--cherry);
+}
+
+.nav-trust-strip.cream-theme .trust-strip-divider {
+  background: rgba(77, 9, 9, 0.12);
+}
+
+/* RESPONSIVE TRUST STRIP */
+@media (max-width: 900px) {
+  .trust-strip-inner {
+    gap: 20px;
+  }
+  .trust-label {
+    font-size: 10px;
+    letter-spacing: 0.6px;
+  }
+}
+
+@media (max-width: 680px) {
+  .nav-trust-strip {
+    padding: 6px 0;
+  }
+  .trust-strip-inner {
+    gap: 8px;
+    justify-content: space-between;
+    padding: 0 6px;
+  }
+  .trust-strip-divider {
+    display: none;
+  }
+  .trust-icon-wrap {
+    width: 18px;
+    height: 18px;
+  }
+  .trust-icon {
+    width: 11px;
+    height: 11px;
+  }
+  .trust-label {
+    font-size: 8.5px;
+    letter-spacing: 0.4px;
+  }
+  .hide-mobile {
+    display: none !important;
+  }
+}
+
+@media (max-width: 380px) {
+  .trust-label {
+    font-size: 8px;
+  }
+  .trust-item {
+    gap: 5px;
+  }
+}
+
 /* Mobile hamburger */
 .hamburger {
   display: none;
