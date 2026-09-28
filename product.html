@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="icon" type="image/png" href="img/favicon.png">
-<link rel="stylesheet" href="styles.css?v=purepage_v7">
+<link rel="stylesheet" href="styles.css?v=btn_swap_v8">
 <style>
 /* Dedicated Product Details Page Styles */
 .product-page-section {
@@ -807,20 +807,23 @@ document.querySelectorAll('.mobile-menu a').forEach(function(a) { a.addEventList
         <span class="sticky-price-was" id="stickyPriceOld">₹15,999</span>
       </div>
 
-      <!-- MAIN HIGH-ENERGY ADD TO CART BUTTON (KRITO Royal Cherry) -->
-      <button type="button" class="btn-sticky-cart" id="stickyAddToCartBtn" onclick="handleStickyAddToCart()">
+      <!-- PRIMARY HIGH-ENERGY BUY NOW BUTTON (KRITO Royal Cherry with shimmer) -->
+      <a href="checkout.html?id=p1" class="btn-sticky-buynow" id="stickyQuickBuyBtn" onclick="handleStickyBuyNow(event)">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"></path>
+        </svg>
+        <span>BUY NOW — <span id="stickyBtnPrice">₹4,999</span></span>
+      </a>
+
+      <!-- SECONDARY ADD TO CART BUTTON (Antique Champagne Gold) -->
+      <button type="button" class="btn-sticky-addcart" id="stickyAddToCartBtn" onclick="handleStickyAddToCart(event)">
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
           <circle cx="9" cy="21" r="1"></circle>
           <circle cx="20" cy="21" r="1"></circle>
           <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
         </svg>
-        <span>ADD TO CART — <span id="stickyBtnPrice">₹4,999</span></span>
+        <span>ADD TO CART</span>
       </button>
-
-      <!-- 1-CLICK INSTANT BUY (Antique Gold) -->
-      <a href="checkout.html?id=p1" class="btn-sticky-quickpay" id="stickyQuickBuyBtn">
-        <span>⚡ 1-Click Pay</span>
-      </a>
 
       <!-- CLOSE / MINIMIZE BUTTON -->
       <button type="button" class="sticky-close-btn" onclick="dismissStickyBuyDock(event)" title="Dismiss sticky bar" aria-label="Dismiss">
@@ -833,6 +836,6 @@ document.querySelectorAll('.mobile-menu a').forEach(function(a) { a.addEventList
 
 <script src="search.js"></script>
 <script src="banner-timer.js"></script>
-<script src="sticky-buy.js?v=purepage_v7"></script>
+<script src="sticky-buy.js?v=btn_swap_v8"></script>
 </body>
 </html>

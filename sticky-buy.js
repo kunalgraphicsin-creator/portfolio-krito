@@ -101,7 +101,15 @@
   }
 
   // Global functions accessible by inline HTML handlers
-  window.handleStickyAddToCart = function() {
+  window.handleStickyBuyNow = function(e) {
+    if (e && e.preventDefault) e.preventDefault();
+    var urlParams = new URLSearchParams(window.location.search);
+    var pid = urlParams.get('id') || 'p1';
+    window.location.href = 'checkout.html?id=' + pid;
+  };
+
+  window.handleStickyAddToCart = function(e) {
+    if (e && e.preventDefault) e.preventDefault();
     var urlParams = new URLSearchParams(window.location.search);
     var pid = urlParams.get('id') || 'p1';
     
