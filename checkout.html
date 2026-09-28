@@ -218,12 +218,12 @@ html, body {
 }
 
 /* ============================================================
-   BANK-VERIFIED UPI PAYMENT CONTAINER
+   BANK-VERIFIED UPI PAYMENT CONTAINER (Signature Cherry & Cream)
    ============================================================ */
 .upi-payment-container {
-  background: #FFFDF9;
-  border: 1px solid rgba(77, 9, 9, 0.18);
-  border-radius: 12px;
+  background: var(--cream);
+  border: 1.5px solid var(--border);
+  border-radius: 14px;
   padding: 24px 28px;
   margin-bottom: 24px;
 }
@@ -232,7 +232,7 @@ html, body {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  border-bottom: 1px solid rgba(77, 9, 9, 0.1);
+  border-bottom: 1px solid var(--border-light);
   padding-bottom: 14px;
   margin-bottom: 18px;
   gap: 12px;
@@ -254,33 +254,36 @@ html, body {
 .upi-bank-badges {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
 }
 
-.bank-tag-hdfc {
-  background: #004C8F;
-  color: #FFFFFF;
+.upi-badge-verified {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: rgba(45, 106, 79, 0.08);
+  border: 1px solid rgba(45, 106, 79, 0.25);
+  color: var(--success);
   font-family: var(--font-heading);
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 800;
-  padding: 4px 10px;
-  border-radius: 4px;
-  letter-spacing: 0.5px;
-  display: inline-block;
-  line-height: 1.2;
+  padding: 5px 12px;
+  border-radius: 100px;
+  letter-spacing: 0.4px;
 }
 
-.bank-tag-npci {
-  background: #E85D04;
-  color: #FFFFFF;
+.upi-badge-official {
+  display: inline-flex;
+  align-items: center;
+  background: rgba(77, 9, 9, 0.06);
+  border: 1px solid rgba(77, 9, 9, 0.16);
+  color: var(--cherry);
   font-family: var(--font-heading);
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 800;
-  padding: 4px 10px;
-  border-radius: 4px;
-  letter-spacing: 0.5px;
-  display: inline-block;
-  line-height: 1.2;
+  padding: 5px 12px;
+  border-radius: 100px;
+  letter-spacing: 0.4px;
 }
 
 .upi-grid {
@@ -292,7 +295,7 @@ html, body {
 
 .qr-code-wrapper {
   background: #FFFFFF;
-  border: 1px solid rgba(77, 9, 9, 0.15);
+  border: 1.5px solid var(--border);
   border-radius: 10px;
   padding: 12px;
   text-align: center;
@@ -339,7 +342,7 @@ html, body {
 
 .upi-field-box {
   background: #FFFFFF;
-  border: 1px solid rgba(77, 9, 9, 0.15);
+  border: 1.5px solid var(--border);
   border-radius: 8px;
   padding: 10px 16px;
   display: flex;
@@ -382,7 +385,7 @@ html, body {
 }
 
 .mobile-pay-header {
-  font-size: 10px;
+  font-size: 10.5px;
   font-weight: 800;
   color: var(--text-muted);
   letter-spacing: 1px;
@@ -401,41 +404,24 @@ html, body {
   align-items: center;
   justify-content: center;
   padding: 11px 16px;
-  border-radius: 6px;
+  border-radius: 8px;
   font-family: var(--font-heading);
   font-size: 13px;
   font-weight: 800;
-  color: #FFFFFF;
+  background: #FFFFFF;
+  border: 1.5px solid var(--border);
+  color: var(--cherry);
   text-decoration: none;
   text-align: center;
   transition: all var(--transition);
 }
 
-.btn-upi-app.gpay {
-  background: #0F9D58;
-}
-
-.btn-upi-app.gpay:hover {
-  background: #0b8043;
-  transform: translateY(-1px);
-}
-
-.btn-upi-app.phonepe {
-  background: #5F259F;
-}
-
-.btn-upi-app.phonepe:hover {
-  background: #4a1d7c;
-  transform: translateY(-1px);
-}
-
-.btn-upi-app.paytm {
-  background: #002970;
-}
-
-.btn-upi-app.paytm:hover {
-  background: #001f54;
-  transform: translateY(-1px);
+.btn-upi-app:hover {
+  background: var(--cherry);
+  color: var(--cream);
+  border-color: var(--cherry);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 14px rgba(77, 9, 9, 0.15);
 }
 
 /* ============================================================
@@ -785,8 +771,11 @@ html, body {
                 <div class="upi-box-subtitle">Payee: Kanik Chaudhary (KRITO Official)</div>
               </div>
               <div class="upi-bank-badges">
-                <span class="bank-tag-hdfc">HDFC BANK</span>
-                <span class="bank-tag-npci">UPI / NPCI</span>
+                <span class="upi-badge-verified">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                  HDFC Bank Verified
+                </span>
+                <span class="upi-badge-official">NPCI / UPI Official</span>
               </div>
             </div>
 
@@ -815,13 +804,13 @@ html, body {
                 <!-- MOBILE 1-TAP PAY -->
                 <div class="mobile-pay-header">MOBILE 1-TAP PAY:</div>
                 <div class="mobile-intent-grid">
-                  <a href="upi://pay?pa=9319448422@pthdfc&pn=Kanik%20Chaudhary&am=4999&cu=INR&tn=KRITO%20THE%20ARCHIVE%20BEAT%20PACK" class="btn-upi-app gpay">
+                  <a href="upi://pay?pa=9319448422@pthdfc&pn=Kanik%20Chaudhary&am=4999&cu=INR&tn=KRITO%20THE%20ARCHIVE%20BEAT%20PACK" class="btn-upi-app">
                     <span>GPay</span>
                   </a>
-                  <a href="upi://pay?pa=9319448422@pthdfc&pn=Kanik%20Chaudhary&am=4999&cu=INR&tn=KRITO%20THE%20ARCHIVE%20BEAT%20PACK" class="btn-upi-app phonepe">
+                  <a href="upi://pay?pa=9319448422@pthdfc&pn=Kanik%20Chaudhary&am=4999&cu=INR&tn=KRITO%20THE%20ARCHIVE%20BEAT%20PACK" class="btn-upi-app">
                     <span>PhonePe</span>
                   </a>
-                  <a href="upi://pay?pa=9319448422@pthdfc&pn=Kanik%20Chaudhary&am=4999&cu=INR&tn=KRITO%20THE%20ARCHIVE%20BEAT%20PACK" class="btn-upi-app paytm">
+                  <a href="upi://pay?pa=9319448422@pthdfc&pn=Kanik%20Chaudhary&am=4999&cu=INR&tn=KRITO%20THE%20ARCHIVE%20BEAT%20PACK" class="btn-upi-app">
                     <span>Paytm</span>
                   </a>
                 </div>
