@@ -13,7 +13,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
 <link rel="icon" type="image/png" href="img/favicon.png">
-<link rel="stylesheet" href="styles.css?v=truststrip1">
+<link rel="stylesheet" href="styles.css?v=single_line_v9">
 </head>
 <body>
 
@@ -520,89 +520,94 @@ document.querySelectorAll('.mobile-menu a').forEach(function(a) { a.addEventList
   </div>
 </div>
 
-<!-- STICKY BOTTOM BUY BAR (Floating High-Converting Add-to-Cart Dock) -->
+<!-- STICKY BOTTOM BUY BAR (Full-Width High-Converting Add-to-Cart Dock) -->
 <div class="sticky-buy-dock" id="stickyBuyDock" role="complementary" aria-label="Quick Add to Cart">
-  
-  <!-- LEFT: PRODUCT INFO -->
-  <div class="sticky-product-meta">
-    <div class="sticky-thumb-wrap">
-      <img src="img/beats/beat-b1.png?v=archive1" alt="THE ARCHIVE Beat Pack" class="sticky-thumb-img" id="stickyThumbImg" width="50" height="50">
-    </div>
-    <div class="sticky-info">
-      <span class="sticky-title" id="stickyTitle">THE ARCHIVE Beat Pack</span>
-      <div class="sticky-meta-sub">
-        <span class="stars">★★★★★</span>
-        <span class="sticky-rating-pill">4.9</span>
-        <span class="sticky-royalty-pill">100% ROYALTY-FREE</span>
+  <div class="sticky-dock-container">
+    
+    <!-- LEFT: PRODUCT INFO -->
+    <div class="sticky-product-meta">
+      <div class="sticky-thumb-wrap">
+        <img src="img/beats/beat-b1.png?v=archive1" alt="THE ARCHIVE Beat Pack" class="sticky-thumb-img" id="stickyThumbImg" width="48" height="48">
       </div>
-    </div>
-  </div>
-
-  <!-- MIDDLE: VARIANT / LICENSE SELECTOR PILL -->
-  <div class="sticky-variant-selector" id="stickyVariantBtn" onclick="toggleStickyVariantMenu(event)">
-    <div class="sticky-variant-text">
-      <div class="sticky-variant-name">
-        <span id="stickySelectedTier">Unlimited License (50+ Beats)</span>
-        <span class="sticky-variant-badge">SAVE 68%</span>
-      </div>
-      <div class="sticky-variant-detail" id="stickySelectedDesc">Keep 100% Profits • Instant WAV + Stems</div>
-    </div>
-    <svg class="sticky-variant-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-      <polyline points="6 9 12 15 18 9"></polyline>
-    </svg>
-
-    <!-- VARIANT DROPDOWN MENU -->
-    <div class="sticky-variant-menu" id="stickyVariantMenu" onclick="event.stopPropagation()">
-      <div class="sticky-variant-option selected" onclick="selectStickyTier('Unlimited License (50+ Beats)', 'Keep 100% Profits • Instant WAV + Stems', 'SAVE 68%')">
-        <div>
-          <div class="sticky-variant-option-name">Unlimited Commercial License</div>
-          <div class="sticky-variant-option-desc">Keep 100% Streaming &amp; Beat Royalties</div>
+      <div class="sticky-info">
+        <span class="sticky-title" id="stickyTitle">THE ARCHIVE Beat Pack (50+ Beats)</span>
+        <div class="sticky-meta-sub">
+          <span class="stars">★★★★★</span>
+          <span class="sticky-rating-pill">4.9</span>
+          <span class="sticky-royalty-pill">100% ROYALTY-FREE</span>
         </div>
-        <span style="color:var(--cherry); font-weight:800; font-size:12px;">₹4,999</span>
       </div>
-      <div class="sticky-variant-option" onclick="selectStickyTier('WAV + MP3 + Stems Edition', '24-Bit Studio Masters Included', 'FULL ACCESS')">
-        <div>
-          <div class="sticky-variant-option-name">Complete Stems &amp; MIDI Edition</div>
-          <div class="sticky-variant-option-desc">Individual Trackouts for DAW Mixing</div>
+    </div>
+
+    <!-- MIDDLE: VARIANT / LICENSE SELECTOR PILL -->
+    <div class="sticky-variant-selector" id="stickyVariantBtn" onclick="toggleStickyVariantMenu(event)">
+      <div class="sticky-variant-text">
+        <div class="sticky-variant-name">
+          <span id="stickySelectedTier">Unlimited License (50+ Beats)</span>
+          <span class="sticky-variant-badge">SAVE 68%</span>
         </div>
-        <span style="color:var(--cherry); font-weight:800; font-size:12px;">INCLUDED</span>
+        <div class="sticky-variant-detail" id="stickySelectedDesc">Keep 100% Profits • Instant WAV + Stems</div>
       </div>
-    </div>
-  </div>
-
-  <!-- RIGHT: PRICING & ACTIONS -->
-  <div class="sticky-actions-group">
-    <div class="sticky-price-block">
-      <span class="sticky-price-now" id="stickyPriceNow">₹4,999</span>
-      <span class="sticky-price-was" id="stickyPriceOld">₹15,999</span>
-    </div>
-
-    <!-- MAIN HIGH-ENERGY ADD TO CART BUTTON (KRITO Royal Cherry) -->
-    <button type="button" class="btn-sticky-cart" id="stickyAddToCartBtn" onclick="handleStickyAddToCart()">
-      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
-        <circle cx="9" cy="21" r="1"></circle>
-        <circle cx="20" cy="21" r="1"></circle>
-        <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+      <svg class="sticky-variant-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="6 9 12 15 18 9"></polyline>
       </svg>
-      <span>ADD TO CART — <span id="stickyBtnPrice">₹4,999</span></span>
-    </button>
 
-    <!-- 1-CLICK INSTANT BUY (Antique Gold) -->
-    <a href="checkout.html?id=p1" class="btn-sticky-quickpay" id="stickyQuickBuyBtn">
-      <span>⚡ 1-Click Pay</span>
-    </a>
+      <!-- VARIANT DROPDOWN MENU -->
+      <div class="sticky-variant-menu" id="stickyVariantMenu" onclick="event.stopPropagation()">
+        <div class="sticky-variant-option selected" onclick="selectStickyTier('Unlimited License (50+ Beats)', 'Keep 100% Profits • Instant WAV + Stems', 'SAVE 68%')">
+          <div>
+            <div class="sticky-variant-option-name">Unlimited Commercial License</div>
+            <div class="sticky-variant-option-desc">Keep 100% Streaming &amp; Beat Royalties</div>
+          </div>
+          <span style="color:var(--cherry); font-weight:800; font-size:12px;">₹4,999</span>
+        </div>
+        <div class="sticky-variant-option" onclick="selectStickyTier('WAV + MP3 + Stems Edition', '24-Bit Studio Masters Included', 'FULL ACCESS')">
+          <div>
+            <div class="sticky-variant-option-name">Complete Stems &amp; MIDI Edition</div>
+            <div class="sticky-variant-option-desc">Individual Trackouts for DAW Mixing</div>
+          </div>
+          <span style="color:var(--cherry); font-weight:800; font-size:12px;">INCLUDED</span>
+        </div>
+      </div>
+    </div>
 
-    <!-- CLOSE / MINIMIZE BUTTON -->
-    <button type="button" class="sticky-close-btn" onclick="dismissStickyBuyDock(event)" title="Dismiss sticky bar" aria-label="Dismiss">
-      &times;
-    </button>
+    <!-- RIGHT: PRICING & ACTIONS -->
+    <div class="sticky-actions-group">
+      <div class="sticky-price-block">
+        <span class="sticky-price-now" id="stickyPriceNow">₹4,999</span>
+        <span class="sticky-price-was" id="stickyPriceOld">₹15,999</span>
+      </div>
+
+      <!-- PRIMARY HIGH-ENERGY BUY NOW BUTTON (KRITO Royal Cherry with shimmer) -->
+      <a href="checkout.html?id=p1" class="btn-sticky-buynow" id="stickyQuickBuyBtn" onclick="handleStickyBuyNow(event)">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"></path>
+        </svg>
+        <span>BUY NOW — <span id="stickyBtnPrice">₹4,999</span></span>
+      </a>
+
+      <!-- SECONDARY ADD TO CART BUTTON (Antique Champagne Gold) -->
+      <button type="button" class="btn-sticky-addcart" id="stickyAddToCartBtn" onclick="handleStickyAddToCart(event)">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="9" cy="21" r="1"></circle>
+          <circle cx="20" cy="21" r="1"></circle>
+          <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+        </svg>
+        <span>ADD TO CART</span>
+      </button>
+
+      <!-- CLOSE / MINIMIZE BUTTON -->
+      <button type="button" class="sticky-close-btn" onclick="dismissStickyBuyDock(event)" title="Dismiss sticky bar" aria-label="Dismiss">
+        &times;
+      </button>
+    </div>
+
   </div>
-
 </div>
 
 <script src="cart.js"></script>
 <script src="search.js"></script>
 <script src="banner-timer.js"></script>
-<script src="sticky-buy.js"></script>
+<script src="sticky-buy.js?v=single_line_v9"></script>
 </body>
 </html>
