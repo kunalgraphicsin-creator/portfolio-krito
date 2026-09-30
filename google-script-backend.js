@@ -51,7 +51,9 @@ var CONFIG = {
   PACK_SPECS: "50+ Beats · 24-Bit WAV + 320 kbps MP3 + Full Stems · 100% Royalty-Free",
 
   // Discord Webhook for Instant Real-Time Push Alerts
-  DISCORD_WEBHOOK_URL: "https://discord.com/api/webhooks/1544144412638969876/wmFbmNvGp40XRJIK7s2JudfDCblukV239goMfZK1NbbDxad0cbqgg5S5uer_KCMEcP6D",
+  // SECURITY: Set your webhook in Apps Script Project Settings -> Script Properties -> DISCORD_WEBHOOK_URL
+  // This keeps your webhook 100% private and prevents GitGuardian/GitHub security warnings.
+  DISCORD_WEBHOOK_URL: PropertiesService.getScriptProperties().getProperty("DISCORD_WEBHOOK_URL") || "",
 
   // Live Website URL for the 1-Click Approval Gateway
   WEBSITE_URL: "https://portfolio-krito.pages.dev"
@@ -147,10 +149,8 @@ function doPost(e) {
       Logger.log("MailApp Error: " + mailErr.toString());
     }
 
-    // 4. Send Instant Push Alert to Discord Webhook (Only if not already sent by browser)
-    if (!data.discordSent) {
-      sendDiscordWebhookAlert(orderId, name, email, phone, packName, amount, utr, approveUrl, buyerWaLink);
-    }
+    // 4. Send Instant Push Alert to Discord Webhook
+    sendDiscordWebhookAlert(orderId, name, email, phone, packName, amount, utr, approveUrl, buyerWaLink);
     
     return ContentService.createTextOutput(JSON.stringify({
       status: "success",
@@ -370,7 +370,10 @@ function sendCustomerDeliveryEmail(toEmail, customerName, orderId, packTitle) {
 // ==================== DISCORD WEBHOOK ALERT SENDER ====================
 function sendDiscordWebhookAlert(orderId, name, email, phone, packName, amount, utr, approveUrl, buyerWaLink) {
   try {
-    if (!CONFIG.DISCORD_WEBHOOK_URL) return;
+    if (!CONFIG.DISCORD_WEBHOOK_URL) {
+      Logger.log("Discord Webhook not configured. Set DISCORD_WEBHOOK_URL in Script Properties to receive push alerts.");
+      return;
+    }
     
     var cleanPhone = (phone || "").replace(/[^0-9]/g, '');
     var customerWaLink = buyerWaLink || ("https://wa.me/" + (cleanPhone.length === 10 ? ("91" + cleanPhone) : cleanPhone));
