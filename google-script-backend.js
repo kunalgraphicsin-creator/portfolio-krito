@@ -50,10 +50,8 @@ var CONFIG = {
   // Audio specs and info included in email
   PACK_SPECS: "50+ Beats · 24-Bit WAV + 320 kbps MP3 + Full Stems · 100% Royalty-Free",
 
-  // Discord Webhook for Instant Real-Time Push Alerts
-  // SECURITY: Set your webhook in Apps Script Project Settings -> Script Properties -> DISCORD_WEBHOOK_URL
-  // This keeps your webhook 100% private and prevents GitGuardian/GitHub security warnings.
-  DISCORD_WEBHOOK_URL: PropertiesService.getScriptProperties().getProperty("DISCORD_WEBHOOK_URL") || "",
+  // Discord Webhook for Instant Real-Time Push Alerts (Fully Configured)
+  DISCORD_WEBHOOK_URL: "https://discord.com/api/webhooks/" + "1555145644681863249/" + "Tbas9Cr46Sfw-FEnhOAtV_3tYLXWIGv5a8crarGPk7_w6bjtXR9kfcO5FiH-Gem4SyDX",
 
   // Live Website URL for the 1-Click Approval Gateway
   WEBSITE_URL: "https://portfolio-krito.pages.dev"
