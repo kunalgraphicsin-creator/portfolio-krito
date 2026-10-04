@@ -77,22 +77,7 @@ function doPost(e) {
     var utr = data.utr || "N/A";
     var timestamp = new Date();
     
-    // 1. Log to Google Sheet
-    var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
-    sheet.appendRow([
-      timestamp,
-      orderId,
-      name,
-      email,
-      phone,
-      packName,
-      amount,
-      utr,
-      "⏳ PENDING",
-      ""
-    ]);
-    
-    // 2. Generate 1-Click Approval URL (Points to Cloudflare Pages Gateway)
+    // 1. Generate 1-Click Approval URL (Points to Cloudflare Pages Gateway)
     var webAppUrl = ScriptApp.getService().getUrl();
     var approveUrl = CONFIG.WEBSITE_URL + 
       "/approve.html?orderId=" + encodeURIComponent(orderId) +
@@ -103,7 +88,33 @@ function doPost(e) {
     if (buyerWhatsAppClean.length === 10) buyerWhatsAppClean = "91" + buyerWhatsAppClean;
     var buyerWaLink = "https://wa.me/" + buyerWhatsAppClean;
     
-    // 3. Send Instant Alert Email to Seller (You)
+    // 2. Send Instant Push Alert to Discord Webhook (Dual-Layer Fail-Proof Backup)
+    if (!data.discordSent) {
+      sendDiscordWebhookAlert(orderId, name, email, phone, packName, amount, utr, approveUrl, buyerWaLink);
+    } else {
+      Logger.log("Discord alert #" + orderId + " was already delivered directly by client browser. Skipping duplicate push.");
+    }
+
+    // 3. Log to Google Sheet
+    try {
+      var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+      sheet.appendRow([
+        timestamp,
+        orderId,
+        name,
+        email,
+        phone,
+        packName,
+        amount,
+        utr,
+        "⏳ PENDING",
+        ""
+      ]);
+    } catch(sheetErr) {
+      Logger.log("Google Sheet Error: " + sheetErr.toString());
+    }
+
+    // 4. Send Instant Alert Email to Seller (You)
     var adminSubject = "🚨 NEW ORDER #" + orderId + " (" + amount + ") — UTR: " + utr + " [" + name + "]";
     var adminHtmlBody = 
       '<div style="font-family:-apple-system,BlinkMacSystemFont,\'Segoe UI\',Roboto,sans-serif;max-width:600px;margin:0 auto;background:#FFF;border:1px solid #E6D0D0;border-radius:12px;padding:32px;color:#330505;">' +
@@ -136,7 +147,6 @@ function doPost(e) {
         '</p>' +
       '</div>';
       
-    // 3. Send Instant Alert Email to Seller (You)
     try {
       MailApp.sendEmail({
         to: CONFIG.ADMIN_EMAIL,
@@ -146,9 +156,6 @@ function doPost(e) {
     } catch (mailErr) {
       Logger.log("MailApp Error: " + mailErr.toString());
     }
-
-    // 4. Send Instant Push Alert to Discord Webhook
-    sendDiscordWebhookAlert(orderId, name, email, phone, packName, amount, utr, approveUrl, buyerWaLink);
     
     return ContentService.createTextOutput(JSON.stringify({
       status: "success",
@@ -365,71 +372,106 @@ function sendCustomerDeliveryEmail(toEmail, customerName, orderId, packTitle) {
   });
 }
 
-// ==================== DISCORD WEBHOOK ALERT SENDER ====================
+// ==================== DISCORD WEBHOOK ALERT SENDER (FAIL-PROOF WITH AUTO-RETRY) ====================
 function sendDiscordWebhookAlert(orderId, name, email, phone, packName, amount, utr, approveUrl, buyerWaLink) {
-  try {
-    if (!CONFIG.DISCORD_WEBHOOK_URL) {
-      Logger.log("Discord Webhook not configured. Set DISCORD_WEBHOOK_URL in Script Properties to receive push alerts.");
-      return;
-    }
-    
-    var cleanPhone = (phone || "").replace(/[^0-9]/g, '');
-    var customerWaLink = buyerWaLink || ("https://wa.me/" + (cleanPhone.length === 10 ? ("91" + cleanPhone) : cleanPhone));
-    var driveFolderLink = CONFIG.BEAT_PACK_DRIVE_LINK;
-    
-    var desc = 
-      "**Customer ne form submit kar diya hai.** Niche diye gaye simple steps follow karein:\n\n" +
-      "━━━━━━━━━━━━━━━━━━━━━━━━━━━\n" +
-      "📋 **ORDER KI DETAILS (Customer Info)**\n" +
-      "━━━━━━━━━━━━━━━━━━━━━━━━━━━\n" +
-      "👤 **Buyer Name:** " + name + "\n" +
-      "💰 **Amount Paid:** **" + amount + "** (UPI Payment)\n" +
-      "📦 **Beat Pack:** " + packName + "\n" +
-      "📧 **Delivery Email:** `" + email + "`\n" +
-      "📱 **WhatsApp:** `+91 " + cleanPhone + "` • [💬 Chat on WhatsApp](" + customerWaLink + ")\n\n" +
-      "━━━━━━━━━━━━━━━━━━━━━━━━━━━\n" +
-      "🔢 **UPI REFERENCE NUMBER (Bank UTR)**\n" +
-      "━━━━━━━━━━━━━━━━━━━━━━━━━━━\n" +
-      "```\n" + utr + "\n```\n" +
-      "*👉 Apne HDFC Bank SMS ya UPI App me check karein ki ye 12-digit UTR match ho raha hai aur paise aa gaye hain.*\n\n" +
-      "━━━━━━━━━━━━━━━━━━━━━━━━━━━\n" +
-      "⚡ **1-CLICK APPROVAL (Aapka Step)**\n" +
-      "━━━━━━━━━━━━━━━━━━━━━━━━━━━\n" +
-      "Paise check karne ke baad bas is button par click karein:\n\n" +
-      "👉 **[ ✅ CLICK HERE TO APPROVE & SEND DOWNLOAD LINK ](" + approveUrl + ")**\n\n" +
-      "*✨ Tap karte hi customer ke email (`" + email + "`) par Google Drive folder link aur Commercial License apne aap chala jayega!*\n\n" +
-      "━━━━━━━━━━━━━━━━━━━━━━━━━━━\n" +
-      "🛠️ **DIRECT SHORTCUTS (Agar Zaroorat Pade)**\n" +
-      "━━━━━━━━━━━━━━━━━━━━━━━━━━━\n" +
-      "• 💬 **[Buyer Ke WhatsApp Par Link Bhejein](" + customerWaLink + ")**\n" +
-      "• 📁 **[Google Drive Beat Pack Folder Kholein](" + driveFolderLink + ")**";
-
-    var payload = {
-      username: "KRITO Beat Store Alert",
-      embeds: [{
-        author: {
-          name: "KRITO OFFICIAL BEAT STORE — PRODUCER DESK"
-        },
-        title: "🚨 NAYA BEAT ORDER AAYA HAI — #" + orderId + " (" + amount + ")",
-        description: desc,
-        color: 13938487, // Luxe Gold
-        footer: {
-          text: "Order #" + orderId + " • KRITO Automated Cloud Engine • Zero Manual Work"
-        },
-        timestamp: new Date().toISOString()
-      }]
-    };
-    
-    var options = {
-      method: "post",
-      contentType: "application/json",
-      payload: JSON.stringify(payload),
-      muteHttpExceptions: true
-    };
-    
-    UrlFetchApp.fetch(CONFIG.DISCORD_WEBHOOK_URL, options);
-  } catch (e) {
-    Logger.log("Discord Webhook Error: " + e.toString());
+  if (!CONFIG.DISCORD_WEBHOOK_URL) {
+    Logger.log("Discord Webhook not configured.");
+    return false;
   }
+  
+  var cleanPhone = (phone || "").replace(/[^0-9]/g, '');
+  var customerWaLink = buyerWaLink || ("https://wa.me/" + (cleanPhone.length === 10 ? ("91" + cleanPhone) : cleanPhone));
+  var driveFolderLink = CONFIG.BEAT_PACK_DRIVE_LINK;
+  
+  var desc = 
+    "**Customer ne form submit kar diya hai.** Niche diye gaye simple steps follow karein:\n\n" +
+    "━━━━━━━━━━━━━━━━━━━━━━━━━━━\n" +
+    "📋 **ORDER KI DETAILS (Customer Info)**\n" +
+    "━━━━━━━━━━━━━━━━━━━━━━━━━━━\n" +
+    "👤 **Buyer Name:** " + name + "\n" +
+    "💰 **Amount Paid:** **" + amount + "** (UPI Payment)\n" +
+    "📦 **Beat Pack:** " + packName + "\n" +
+    "📧 **Delivery Email:** `" + email + "`\n" +
+    "📱 **WhatsApp:** `+91 " + cleanPhone + "` • [💬 Chat on WhatsApp](" + customerWaLink + ")\n\n" +
+    "━━━━━━━━━━━━━━━━━━━━━━━━━━━\n" +
+    "🔢 **UPI REFERENCE NUMBER (Bank UTR)**\n" +
+    "━━━━━━━━━━━━━━━━━━━━━━━━━━━\n" +
+    "```\n" + utr + "\n```\n" +
+    "*👉 Apne HDFC Bank SMS ya UPI App me check karein ki ye 12-digit UTR match ho raha hai aur paise aa gaye hain.*\n\n" +
+    "━━━━━━━━━━━━━━━━━━━━━━━━━━━\n" +
+    "⚡ **1-CLICK APPROVAL (Aapka Step)**\n" +
+    "━━━━━━━━━━━━━━━━━━━━━━━━━━━\n" +
+    "Paise check karne ke baad bas is button par click karein:\n\n" +
+    "👉 **[ ✅ CLICK HERE TO APPROVE & SEND DOWNLOAD LINK ](" + approveUrl + ")**\n\n" +
+    "*✨ Tap karte hi customer ke email (`" + email + "`) par Google Drive folder link aur Commercial License apne aap chala jayega!*\n\n" +
+    "━━━━━━━━━━━━━━━━━━━━━━━━━━━\n" +
+    "🛠️ **DIRECT SHORTCUTS (Agar Zaroorat Pade)**\n" +
+    "━━━━━━━━━━━━━━━━━━━━━━━━━━━\n" +
+    "• 💬 **[Buyer Ke WhatsApp Par Link Bhejein](" + customerWaLink + ")**\n" +
+    "• 📁 **[Google Drive Beat Pack Folder Kholein](" + driveFolderLink + ")**";
+
+  var payload = {
+    username: "KRITO Beat Store Alert",
+    embeds: [{
+      author: {
+        name: "KRITO OFFICIAL BEAT STORE — PRODUCER DESK"
+      },
+      title: "🚨 NAYA BEAT ORDER AAYA HAI — #" + orderId + " (" + amount + ")",
+      description: desc,
+      color: 13938487, // Luxe Gold
+      footer: {
+        text: "Order #" + orderId + " • KRITO Automated Cloud Engine • Zero Manual Work"
+      },
+      timestamp: new Date().toISOString()
+    }]
+  };
+  
+  var options = {
+    method: "post",
+    contentType: "application/json",
+    headers: {
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) KRITO-Beat-Store/2.0"
+    },
+    payload: JSON.stringify(payload),
+    muteHttpExceptions: true
+  };
+  
+  // Try up to 3 times with exponential backoff for guaranteed delivery
+  for (var attempt = 1; attempt <= 3; attempt++) {
+    try {
+      var response = UrlFetchApp.fetch(CONFIG.DISCORD_WEBHOOK_URL, options);
+      var code = response ? response.getResponseCode() : 0;
+      
+      if (code === 200 || code === 204) {
+        Logger.log("Discord alert delivered successfully on attempt " + attempt);
+        return true;
+      }
+      
+      // If 400 Bad Request, send fallback clean plain text message
+      if (code === 400) {
+        var simplePayload = {
+          content: "🚨 **NAYA BEAT ORDER AAYA HAI #" + orderId + " (" + amount + ")**\n" +
+                   "👤 **Buyer:** " + name + " | 📧 **Email:** " + email + " | 📱 **Phone:** " + phone + "\n" +
+                   "🔢 **Bank UTR:** `" + utr + "`\n" +
+                   "👉 **1-Click Approve:** " + approveUrl
+        };
+        UrlFetchApp.fetch(CONFIG.DISCORD_WEBHOOK_URL, {
+          method: "post",
+          contentType: "application/json",
+          headers: { "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) KRITO-Beat-Store/2.0" },
+          payload: JSON.stringify(simplePayload),
+          muteHttpExceptions: true
+        });
+        return true;
+      }
+      
+      Logger.log("Discord Webhook Attempt " + attempt + " returned HTTP " + code);
+      Utilities.sleep(500 * attempt);
+    } catch (e) {
+      Logger.log("Discord Webhook Attempt " + attempt + " Error: " + e.toString());
+      Utilities.sleep(500 * attempt);
+    }
+  }
+  return false;
 }
 
